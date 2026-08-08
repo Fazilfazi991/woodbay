@@ -1,3 +1,5 @@
 export type CatalogueCategory = { id: string; name: string; slug: string; description: string | null; parent_id: string | null; sort_order: number; is_active: boolean };
 export type CatalogueProduct = { id: string; name: string; slug: string; short_description: string | null; product_code: string | null; category_id: string; created_at: string; category?: Pick<CatalogueCategory, "name" | "slug"> | null; images: { storage_key: string; alt_text: string | null; sort_order: number; is_primary: boolean }[] };
+export type ProductVariant = { id: string; name: string; sku: string | null; dimension: string | null; finish: string | null; metadata: Record<string, string>; sort_order: number };
+export type ProductDetail = Omit<CatalogueProduct, "category"> & { category: CatalogueCategory | null; description: string | null; seo_title: string | null; seo_description: string | null; variants: ProductVariant[]; parentCategory: CatalogueCategory | null; features: string[] };
 export type CatalogueParams = { q: string; subcategory: string | null; page: number; sort: "default" | "name-asc" | "name-desc" };
