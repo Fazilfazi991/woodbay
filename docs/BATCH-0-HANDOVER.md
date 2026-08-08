@@ -4,6 +4,6 @@ Implemented: strict TypeScript Next.js foundation, Tailwind token layer, reusabl
 
 Not implemented by design: final public pages, catalogue/furniture/dealer/voucher UIs, full CMS, media upload screens, blog/gallery UI, SEO landing pages, and live voucher verification/redemption endpoints.
 
-Migration: `20260808000100_batch_0_foundation.sql`. Apply it and the development-only seed as described in `SETUP.md`. No Supabase project was linked in this workspace, so no remote migration was applied.
+Migration: `20260808000100_batch_0_foundation.sql` and the development seed have been applied successfully to the connected Supabase project. Local `.env.local` is configured but intentionally gitignored. No service-role key is configured because Batch 0 has no privileged server-side workflow requiring it.
 
-Next recommended batch: build secure server-side enquiry and voucher verification endpoints, then implement the agreed public information architecture without expanding admin scope prematurely.
+The remaining admin-auth setup step is to create an Auth user and matching active `admin_profiles` row. Next recommended batch: build the approved global shell and design system; keep voucher verification as a future secure server-side endpoint.
