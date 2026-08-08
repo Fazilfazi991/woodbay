@@ -1,0 +1,2 @@
+import { Container, Section } from "@/components/layout/primitives";
+export default function ProductsLoading() { return <Section tone="dark"><Container><div className="h-10 w-48 animate-pulse bg-white/10" /><div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{Array.from({ length: 8 }, (_, index) => <div key={index} className="aspect-[4/5] animate-pulse bg-white/10" />)}</div></Container></Section>; }

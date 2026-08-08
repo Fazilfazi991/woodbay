@@ -2,7 +2,7 @@
 
 1. Run `npm install`.
 2. Copy `.env.example` to `.env.local` and provide the required public Supabase values.
-3. Create or link a Supabase project, then apply `supabase/migrations/20260808000100_batch_0_foundation.sql` with the Supabase CLI or SQL editor. Apply `supabase/seed.sql` only to development/staging.
+3. Create or link a Supabase project, then apply `supabase/migrations/20260808000100_batch_0_foundation.sql` with the Supabase CLI or SQL editor. Apply `supabase/seed.sql` only to development/staging. `supabase/seed-products.sql` is an optional repeatable development/staging catalogue seed and is not applied automatically.
 4. Create an Auth user, then insert its `auth.users.id` into `public.admin_profiles` with `is_active = true`.
 5. Run `npm run dev`.
 
