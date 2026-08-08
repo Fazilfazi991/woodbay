@@ -1,0 +1,13 @@
+export const homepage = {
+  assets: { hero: "/images/preview/woodbay-kitchen-preview.png", factory: "/images/homepage/manufacturing-preview.png", interiors: "/images/homepage/furniture-decor-preview.png" },
+  hero: { eyebrow: "Premium hardware. Elegant spaces.", title: "Elevate Every\nDetail of Your Home.", description: "Premium quality kitchen and wardrobe accessories crafted for elegance, durability and performance." },
+  trust: [{ title: "Premium Quality", text: "Sourced from trusted manufacturing partners and facilities." }, { title: "Innovative Design", text: "Smart solutions for modern living." }, { title: "Global Standards", text: "Tested for durability and reliability." }, { title: "Trusted by Experts", text: "Preferred by interior professionals." }],
+  categories: [{ title: "Kitchen Accessories", href: "/products/kitchen-accessories", description: "Precision accessories for effortless kitchens." }, { title: "Wardrobe Accessories", href: "/products/wardrobe-accessories", description: "Organised interiors, beautifully considered." }, { title: "Pantry Solutions", href: "/products/kitchen-accessories", description: "Elevated access for everyday storage." }, { title: "Pullout Solutions", href: "/products/kitchen-accessories", description: "Smart movement, refined function." }, { title: "Corner Solutions", href: "/products/kitchen-accessories", description: "Every corner made useful." }, { title: "Hardware Fittings", href: "/products/kitchen-accessories", description: "Reliable details for lasting spaces." }, { title: "Decor Products", href: "/products/decor", description: "Surfaces with architectural character." }, { title: "Smart Products", href: "/products/smart-products", description: "Intelligent comfort for contemporary living." }],
+  featured: ["Pantry Systems", "Pullout Systems", "Corner Solutions", "Wardrobe Organisers", "Cabinet Hinges", "Tandem Boxes", "Smart Sinks", "Smart Furniture"],
+  manufacturingFeatures: ["Quality Assurance", "Innovation Driven", "On-Time Delivery", "Pan India Distribution", "Dedicated Support"],
+  smart: [{ title: "Smart Furniture", text: "Connected comfort for the way modern homes live." }, { title: "Smart Waterfall Sinks", text: "Functional innovation for contemporary kitchens." }],
+  decor: ["Wallpaper", "PU Stone Panels", "Glass Mosaic Tiles", "3D PVC Panels", "Charcoal Louvers", "Lighting"],
+  projects: ["Kitchen", "Wardrobe", "Bedroom", "TV Unit", "Living Room"],
+  // Keep figures hidden until verified by Woodbay. Labels preserve the future information architecture.
+  capabilityLabels: ["Manufacturing Facility", "Warehouse & Distribution", "Product Innovation", "Skilled Team", "Dealer Network"],
+} as const;
