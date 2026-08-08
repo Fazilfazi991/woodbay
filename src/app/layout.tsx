@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
 
@@ -10,5 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body>{children}</body></html>;
+  return <html lang="en" className={`${display.variable} ${body.variable}`}><body>{children}</body></html>;
 }
+const display = Cormorant_Garamond({ variable: "--font-display", subsets: ["latin"], weight: ["400", "500", "600", "700"] });
+const body = Manrope({ variable: "--font-body", subsets: ["latin"] });

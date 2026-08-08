@@ -1,18 +1,4 @@
 @import "tailwindcss";
 
-:root {
-  --background: #f7f4ee;
-  --foreground: #1a1c1a;
-  --surface: #ffffff;
-  --border: #d9d6cf;
-  --primary: #24553a;
-  --gold: #af8b4b;
-  --muted: #6a6b66;
-  --destructive: #a63d36;
-  --success: #2f7350;
-}
-
-* { box-sizing: border-box; }
-html { background: var(--background); }
-body { margin: 0; background: var(--background); color: var(--foreground); font-family: Arial, Helvetica, sans-serif; }
-button, input, textarea, select { font: inherit; }
+:root { --background-dark:#111210; --background-deep:#191a17; --surface-dark:#22231f; --surface-light:#f3efe7; --foreground-light:#f7f3eb; --foreground-dark:#191a17; --muted:#a5a39d; --muted-dark:#686761; --gold:#b99658; --gold-hover:#d0ae6a; --border-dark:#383932; --border-gold:rgba(185,150,88,.54); --destructive:#a63d36; --success:#2f7350; --background:var(--surface-light); --foreground:var(--foreground-dark); --surface:#fff; --border:#d8d2c6; --primary:#24553a; }
+* { box-sizing: border-box; } html { background:var(--background-dark); scroll-behavior:smooth; } body { margin:0; background:var(--surface-light); color:var(--foreground-dark); font-family:var(--font-body), Arial, sans-serif; } button,input,textarea,select { font:inherit; } a { color:inherit; text-decoration:none; } ::selection { background:var(--gold); color:var(--background-dark); } .font-display { font-family:var(--font-display), Georgia, serif; } .skip-link { position:fixed; left:1rem; top:-5rem; z-index:100; padding:.75rem 1rem; background:var(--gold); color:var(--background-dark); } .skip-link:focus { top:1rem; }

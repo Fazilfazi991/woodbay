@@ -1,0 +1,2 @@
+import Link from "next/link";
+export function BrandMark() { return <Link href="/" className="group inline-flex flex-col leading-none" aria-label="Woodbay home"><span className="font-display text-3xl tracking-[.08em] text-[color:var(--foreground-light)] transition-colors group-hover:text-[color:var(--gold)]">WOODBAY</span><span className="mt-1 text-[8px] font-bold tracking-[.28em] text-[color:var(--gold)]">DECOR &amp; INTERIORS</span></Link>; }
