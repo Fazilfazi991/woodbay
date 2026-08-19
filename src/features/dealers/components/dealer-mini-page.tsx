@@ -28,10 +28,11 @@ function DealerImage({ src, alt }: { src: string | null; alt: string }) {
       loading="lazy"
     />
   ) : (
-    <Image
-      src="/images/preview/woodbay-kitchen-preview.png"
-      alt="Woodbay interior collection"
-      fill
+      <Image
+        src="/images/preview/woodbay-kitchen-preview.png"
+        alt="Woodbay interior collection"
+        fill
+        priority
       sizes="(max-width: 1024px) 100vw, 50vw"
       className="object-cover opacity-60"
     />
