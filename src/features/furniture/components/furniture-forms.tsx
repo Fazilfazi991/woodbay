@@ -6,11 +6,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { furniture } from "@/config/furniture";
 import { factoryVisitInterests } from "../validation/furniture";
 import {
-  furnitureFormInitialState,
   submitFactoryVisit,
   submitFurnitureEnquiry,
   submitFurnitureOutlet,
 } from "../actions/submit";
+const furnitureFormInitialState = { ok: false, message: "" };
 function Field({
   label,
   children,

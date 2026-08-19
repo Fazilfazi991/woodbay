@@ -6,8 +6,6 @@ import {
   furnitureOutletSchema,
 } from "../validation/furniture";
 export type FurnitureFormState = { ok: boolean; message: string };
-const initial: FurnitureFormState = { ok: false, message: "" };
-export { initial as furnitureFormInitialState };
 function safe(values: FormData) {
   return (
     values.get("website") === "" &&
