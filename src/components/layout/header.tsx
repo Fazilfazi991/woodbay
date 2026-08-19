@@ -75,14 +75,14 @@ export function Header() {
                 {open === item.label && (
                   <div
                     id={`${item.label.toLowerCase()}-menu`}
-                    className="absolute top-full left-0 w-60 border border-[color:var(--border-gold)] bg-[color:var(--background-deep)] p-2 shadow-2xl"
+                    className="absolute top-full left-0 z-[70] w-60 border border-[color:var(--gold)] bg-[#191a17] p-2 shadow-2xl"
                   >
                     {item.children.map((child) => (
                       <Link
                         key={child.href}
                         href={child.href}
                         onClick={() => setOpen(null)}
-                        className="block px-3 py-3 text-sm text-[#ded9d0] hover:bg-white/5 hover:text-[color:var(--gold)]"
+                        className="block px-3 py-3 text-sm font-medium !text-[#f7f3eb] opacity-100 hover:bg-white/5 hover:!text-[color:var(--gold)] focus:bg-white/5 focus:outline-2 focus:outline-[color:var(--gold)]"
                       >
                         {child.label}
                       </Link>
