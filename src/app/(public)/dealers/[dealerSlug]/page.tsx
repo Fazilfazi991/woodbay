@@ -1,24 +1,51 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getVisibleDealerBySlug } from "@/features/dealers/data/locator";
+import { siteConfig } from "@/config/site";
+import { DealerMiniPage } from "@/features/dealers/components/dealer-mini-page";
+import {
+  dealerLocalBusinessSchema,
+  dealerLocation,
+  getPublicDealerBySlug,
+  isQaDealer,
+} from "@/features/dealers/data/detail";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ dealerSlug: string }>;
-}) {
-  const dealer = await getVisibleDealerBySlug((await params).dealerSlug);
+type Props = { params: Promise<{ dealerSlug: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const dealer = await getPublicDealerBySlug((await params).dealerSlug);
+  if (!dealer) return {};
+  const location = dealerLocation(dealer);
+  const canonical = `/dealers/${dealer.slug}`;
+  const qa = isQaDealer(dealer);
+  return {
+    title: `${dealer.business_name} | Woodbay Dealer${dealer.district ? ` in ${dealer.district}` : ""}`,
+    description: `Find contact details, location and Woodbay product information for ${dealer.business_name}${location ? ` in ${location}` : ""}.`,
+    alternates: { canonical },
+    robots: qa ? { index: false, follow: false } : undefined,
+    openGraph: {
+      title: `${dealer.business_name} | Authorised Woodbay Dealer`,
+      description: location || "Authorised Woodbay Dealer",
+      images: dealer.shop_image ? [dealer.shop_image] : undefined,
+    },
+  };
+}
+
+export default async function Page({ params }: Props) {
+  const dealer = await getPublicDealerBySlug((await params).dealerSlug);
   if (!dealer) notFound();
+  const schema = dealerLocalBusinessSchema(
+    dealer,
+    `${siteConfig.url}/dealers/${dealer.slug}`,
+  );
   return (
-    <main className="grid min-h-80 place-items-center bg-[color:var(--background-deep)] p-8 text-center text-[color:var(--foreground-light)]">
-      <div>
-        <p className="text-xs tracking-[.14em] text-[color:var(--gold)] uppercase">
-          Woodbay dealer
-        </p>
-        <h1 className="font-display mt-4 text-5xl">{dealer.business_name}</h1>
-        <p className="mt-4 text-sm text-[color:var(--muted)]">
-          Dealer details will be available soon.
-        </p>
-      </div>
-    </main>
+    <>
+      {schema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      )}
+      <DealerMiniPage dealer={dealer} />
+    </>
   );
 }
