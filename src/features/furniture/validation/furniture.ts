@@ -19,6 +19,15 @@ export const furnitureTypes = [
   "Study Furniture",
   "Other",
 ] as const;
+export const factoryVisitInterests = [
+  "Kitchen",
+  "Wardrobe",
+  "Bedroom",
+  "TV Unit",
+  "Living Room",
+  "Study",
+  "General Factory Visit",
+] as const;
 export const furnitureEnquirySchema = z.object({
   name: z.string().trim().min(2).max(120),
   phone: phoneSchema,
@@ -44,7 +53,7 @@ export const factoryVisitSchema = z.object({
   email: z
     .union([emailSchema, z.literal("")])
     .transform((value) => value || null),
-  location: optionalText,
+  location: z.string().trim().min(2).max(160),
   preferred_date: z
     .string()
     .trim()
@@ -55,7 +64,7 @@ export const factoryVisitSchema = z.object({
       "Choose today or a future date.",
     )
     .transform((value) => value || null),
-  furniture_interest: z.string().trim().min(2).max(120),
+  furniture_interest: z.enum(factoryVisitInterests),
   message: optionalText,
 });
 export const furnitureOutletSchema = z.object({

@@ -26,6 +26,7 @@ describe("furniture enquiry validation", () => {
         name: "Amina Rahman",
         phone: "+971501234567",
         email: "",
+        location: "Dubai",
         preferred_date: "2000-01-01",
         furniture_interest: "Kitchen",
       }).success,
@@ -35,10 +36,34 @@ describe("furniture enquiry validation", () => {
       name: "Amina Rahman",
       phone: "+971501234567",
       email: "",
+      location: "Dubai",
       preferred_date: "",
       furniture_interest: "Kitchen",
     });
     expect(result.preferred_date).toBeNull();
+  });
+
+  it("requires a location and a supported furniture interest for factory visits", () => {
+    expect(
+      factoryVisitSchema.safeParse({
+        name: "Amina Rahman",
+        phone: "+971501234567",
+        email: "",
+        location: "",
+        preferred_date: "",
+        furniture_interest: "Kitchen",
+      }).success,
+    ).toBe(false);
+    expect(
+      factoryVisitSchema.safeParse({
+        name: "Amina Rahman",
+        phone: "+971501234567",
+        email: "",
+        location: "Dubai",
+        preferred_date: "",
+        furniture_interest: "Unlisted interest",
+      }).success,
+    ).toBe(false);
   });
 
   it("rejects an invalid furniture outlet size", () => {

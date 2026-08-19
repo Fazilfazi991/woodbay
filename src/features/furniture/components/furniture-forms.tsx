@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { furniture } from "@/config/furniture";
+import { factoryVisitInterests } from "../validation/furniture";
 import {
   furnitureFormInitialState,
   submitFactoryVisit,
@@ -252,7 +253,7 @@ export function FactoryVisitForm() {
           <Input name="email" type="email" />
         </Field>
         <Field label="Location">
-          <Input name="location" />
+          <Input required name="location" />
         </Field>
         <Field label="Preferred date">
           <Input
@@ -267,15 +268,7 @@ export function FactoryVisitForm() {
             name="furniture_interest"
             className="min-h-11 border border-[color:var(--border-dark)] bg-transparent px-3"
           >
-            {[
-              "Kitchen",
-              "Wardrobe",
-              "Bedroom",
-              "TV Unit",
-              "Living Room",
-              "Study",
-              "General Factory Visit",
-            ].map((item) => (
+            {factoryVisitInterests.map((item) => (
               <option key={item}>{item}</option>
             ))}
           </select>
