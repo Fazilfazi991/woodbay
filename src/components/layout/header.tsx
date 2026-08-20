@@ -67,7 +67,7 @@ export function Header() {
                   onClick={() =>
                     setOpen(open === item.label ? null : item.label)
                   }
-                  className="inline-flex min-h-11 items-center gap-1 px-2.5 text-[11px] font-bold tracking-[.12em] text-[#d7d2c8] uppercase hover:text-[color:var(--gold)] focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--gold)]"
+                  className="desktop-nav-link inline-flex min-h-11 items-center gap-1 px-2.5 text-[11px] font-bold tracking-[.12em] uppercase hover:text-[color:var(--gold)] focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--gold)]"
                 >
                   {item.label}
                   <ChevronDown size={14} strokeWidth={1.5} />
@@ -94,7 +94,7 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="inline-flex min-h-11 items-center px-2.5 text-[11px] font-bold tracking-[.12em] text-[#d7d2c8] uppercase hover:text-[color:var(--gold)] focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--gold)]"
+                className="desktop-nav-link inline-flex min-h-11 items-center px-2.5 text-[11px] font-bold tracking-[.12em] uppercase hover:text-[color:var(--gold)] focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--gold)]"
               >
                 {item.label}
               </Link>
@@ -103,7 +103,7 @@ export function Header() {
         </nav>
         <Link
           href="/furniture/factory-visit"
-          className="hidden min-h-11 items-center border border-[color:var(--gold)] px-4 text-[10px] font-bold tracking-[.13em] text-[color:var(--gold)] uppercase transition hover:bg-[color:var(--gold)] hover:text-[color:var(--background-dark)] xl:inline-flex"
+          className="factory-visit-link hidden min-h-11 items-center border border-[color:var(--gold)] px-4 text-[10px] font-bold tracking-[.13em] uppercase transition hover:bg-[color:var(--gold)] hover:text-[color:var(--background-dark)] xl:inline-flex"
         >
           Book Factory Visit
         </Link>

@@ -44,6 +44,17 @@ a {
   color: inherit;
   text-decoration: none;
 }
+.desktop-nav-link {
+  color: #d7d2c8;
+  opacity: 1;
+}
+.desktop-nav-link:hover {
+  color: var(--gold);
+}
+.factory-visit-link {
+  color: var(--gold);
+  opacity: 1;
+}
 ::selection {
   background: var(--gold);
   color: var(--background-dark);
