@@ -52,8 +52,21 @@ a {
   color: var(--gold);
 }
 .factory-visit-link {
-  color: var(--gold);
+  background: var(--gold);
+  color: var(--background-dark);
   opacity: 1;
+}
+.factory-visit-link:hover {
+  background: var(--background-dark);
+  color: var(--gold);
+}
+.woodbay-button > svg,
+.factory-visit-link > svg {
+  transition: transform 250ms ease-out;
+}
+.woodbay-button:hover > svg,
+.factory-visit-link:hover > svg {
+  transform: translateX(4px);
 }
 ::selection {
   background: var(--gold);

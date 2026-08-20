@@ -1,13 +1,12 @@
 "use client";
 import Link from "next/link";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { ArrowRight, ChevronDown, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { primaryNavigation } from "@/config/navigation";
 import { BrandMark } from "./brand-mark";
 
-const hiddenHeaderItems = new Set(["Products", "Services", "Downloads", "Blog"]);
 const headerNavigation = primaryNavigation.filter(
-  (item) => !hiddenHeaderItems.has(item.label),
+  (item) => item.label !== "Projects",
 );
 
 export function Header() {
@@ -72,7 +71,11 @@ export function Header() {
                   onClick={() =>
                     setOpen(open === item.label ? null : item.label)
                   }
-                  className="desktop-nav-link inline-flex min-h-11 items-center gap-1.5 px-3 text-[11px] leading-none font-bold tracking-[.12em] uppercase hover:text-[color:var(--gold)] focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--gold)]"
+                  className={`desktop-nav-link inline-flex min-h-11 items-center gap-1.5 px-3 leading-none uppercase hover:text-[color:var(--gold)] focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--gold)] ${
+                    item.label === "Dealers"
+                      ? "text-base font-medium tracking-[.14em]"
+                      : "text-[11px] font-bold tracking-[.12em]"
+                  }`}
                 >
                   {item.label}
                   <ChevronDown
@@ -112,9 +115,10 @@ export function Header() {
         </nav>
         <Link
           href="/furniture/factory-visit"
-          className="factory-visit-link hidden min-h-11 items-center border border-[color:var(--gold)] px-4 text-[10px] font-bold tracking-[.13em] uppercase transition hover:bg-[color:var(--gold)] hover:text-[color:var(--background-dark)] xl:inline-flex"
+          className="factory-visit-link hidden min-h-11 items-center gap-2 rounded-[3px] border border-[color:var(--gold)] px-5 text-[10px] leading-none font-medium tracking-[.13em] uppercase transition-[background-color,border-color,color] duration-250 ease-out xl:inline-flex"
         >
           Book Factory Visit
+          <ArrowRight size={13} strokeWidth={1.5} />
         </Link>
         <button
           type="button"
@@ -162,9 +166,10 @@ export function Header() {
           <Link
             href="/furniture/factory-visit"
             onClick={() => setDrawer(false)}
-            className="mt-10 flex min-h-12 items-center justify-center bg-[color:var(--gold)] px-5 text-xs font-bold tracking-[.14em] text-[color:var(--background-dark)] uppercase"
+            className="factory-visit-link mt-10 flex min-h-12 items-center justify-center gap-2 rounded-[3px] border border-[color:var(--gold)] px-5 text-[11px] leading-none font-medium tracking-[.14em] uppercase transition-[background-color,border-color,color] duration-250 ease-out"
           >
             Book Factory Visit
+            <ArrowRight size={14} strokeWidth={1.5} />
           </Link>
         </div>
       )}
@@ -196,7 +201,11 @@ function MobileItem({
         onClick={() => setExpanded(!expanded)}
         aria-expanded={expanded}
         aria-controls={`mobile-${item.label.toLowerCase()}`}
-        className="flex min-h-14 w-full items-center justify-between text-left text-sm font-bold tracking-[.12em] text-[color:var(--foreground-light)] uppercase"
+        className={`flex min-h-14 w-full items-center justify-between text-left text-[color:var(--foreground-light)] uppercase ${
+          item.label === "Dealers"
+            ? "text-base font-medium tracking-[.14em]"
+            : "text-sm font-bold tracking-[.12em]"
+        }`}
       >
         {item.label}
         <ChevronDown

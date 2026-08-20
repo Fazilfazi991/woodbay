@@ -51,6 +51,9 @@ export function HeroSection() {
                 Explore Products <ArrowRight size={15} />
               </Button>
             </Link>
+            <Link href="/furniture/factory-visit">
+              <Button variant="secondary">Book Factory Visit</Button>
+            </Link>
           </div>
         </div>
       </Container>
