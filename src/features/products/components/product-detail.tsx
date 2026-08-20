@@ -4,7 +4,6 @@ import Link from "next/link";
 import {
   ChevronLeft,
   ChevronRight,
-  Download,
   MapPin,
   MessageCircle,
   ShieldCheck,
@@ -158,7 +157,10 @@ export function ProductActions({ product }: { product: ProductDetail }) {
         Interested in this product?
       </p>
       <div className="mt-4 grid gap-3 sm:flex sm:flex-row">
-        <Link href={`/contact?product=${product.slug}`} className="max-sm:block">
+        <Link
+          href={`/contact?product=${product.slug}`}
+          className="max-sm:block"
+        >
           <Button className="max-sm:w-full">
             <MessageCircle size={16} /> Enquire now
           </Button>
@@ -166,11 +168,6 @@ export function ProductActions({ product }: { product: ProductDetail }) {
         <Link href="/dealers" className="max-sm:block">
           <Button variant="secondary" className="max-sm:w-full">
             <MapPin size={16} /> Find a dealer
-          </Button>
-        </Link>
-        <Link href="/downloads" className="max-sm:block">
-          <Button variant="secondary" className="max-sm:w-full">
-            <Download size={16} /> View catalogue
           </Button>
         </Link>
         <Link href="/redeem" className="max-sm:block">

@@ -9,6 +9,6 @@ export const about = {
   process: ["Design", "Material", "Production", "Quality Check", "Delivery"],
   journey: [{ title: "A Focus on Better Hardware", text: "A starting point in practical, elevated details for the home." }, { title: "Expanding the Product Range", text: "Growing into broader kitchen and wardrobe solutions." }, { title: "Smart & Interior Solutions", text: "Bringing new possibilities to contemporary spaces." }, { title: "Furniture & Factory-Direct Experiences", text: "Connecting considered interiors with direct consultation." }],
   whyChoose: ["Carefully Selected Product Range", "Contemporary Design", "Reliable Performance", "Practical Solutions", "Dealer Support", "Customer-Focused Service"],
-  locations: [{ title: "Factory", detail: "Factory location and address to be announced." }, { title: "Office", detail: "Office location and address to be announced." }],
+  locations: [{ title: "Factory visits", detail: "Factory visits are confirmed directly with the Woodbay team." }, { title: "Dealer network", detail: "Explore authorised Woodbay availability in your area." }],
   // Replace preview assets and the monogram treatment with approved Woodbay media before launch.
 } as const;

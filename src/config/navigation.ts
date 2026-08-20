@@ -17,7 +17,6 @@ export const primaryNavigation: readonly NavigationItem[] = [
     ],
   },
   { label: "Furniture", href: "/furniture" },
-  { label: "Services", href: "/services" },
   { label: "Projects", href: "/projects" },
   {
     label: "Dealers",
@@ -27,22 +26,17 @@ export const primaryNavigation: readonly NavigationItem[] = [
       { label: "Become a Dealer", href: "/dealers/become-a-dealer" },
     ],
   },
-  { label: "Downloads", href: "/downloads" },
-  { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ] as const;
 export const footerNavigation = {
   products: primaryNavigation[2].children ?? [],
   company: [
     { label: "About", href: "/about" },
-    { label: "Services", href: "/services" },
     { label: "Projects", href: "/projects" },
-    { label: "Blog", href: "/blog" },
   ],
   dealers: primaryNavigation[6].children ?? [],
   support: [
     { label: "Verify Voucher", href: "/redeem" },
-    { label: "Downloads", href: "/downloads" },
     { label: "Contact", href: "/contact" },
     { label: "Book Factory Visit", href: "/furniture/factory-visit" },
   ],

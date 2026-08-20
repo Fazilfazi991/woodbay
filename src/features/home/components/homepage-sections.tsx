@@ -7,11 +7,9 @@ import {
   ChevronRight,
   CirclePlay,
   Cog,
-  Download,
   Handshake,
   Layers3,
   MapPin,
-  PackageCheck,
   Sparkles,
 } from "lucide-react";
 import { homepage } from "@/config/homepage";
@@ -51,11 +49,6 @@ export function HeroSection() {
             <Link href="/products">
               <Button>
                 Explore Products <ArrowRight size={15} />
-              </Button>
-            </Link>
-            <Link href="/downloads">
-              <Button variant="secondary">
-                Download Catalogue <Download size={15} />
               </Button>
             </Link>
           </div>
@@ -200,9 +193,9 @@ export function ManufacturingSection() {
             <div className="group relative aspect-[4/3] overflow-hidden border border-[color:var(--border-gold)]">
               <Image
                 src={homepage.assets.factory}
-                alt="Temporary preview of a precision manufacturing facility"
+                alt="Woodbay precision manufacturing facility"
                 fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
+                sizes="(max-width: 1024px) 100vw, 600px"
                 className="object-cover"
               />
               <div className="absolute inset-0 grid place-items-center bg-black/20">
@@ -294,9 +287,10 @@ export function DecorAndFurnitureSection() {
             <div className="relative aspect-[4/3] overflow-hidden border border-[color:var(--border-gold)]">
               <Image
                 src={homepage.assets.interiors}
-                alt="Temporary preview of a Woodbay decor interior"
+                alt="Woodbay decor interior with material-led finishes"
                 fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
+                sizes="(max-width: 1024px) 100vw, 600px"
+                unoptimized
                 className="object-cover"
               />
             </div>
@@ -331,6 +325,7 @@ export function DecorAndFurnitureSection() {
               alt="Custom furniture interior"
               fill
               sizes="100vw"
+              unoptimized
               className="object-cover opacity-30"
             />
             <div className="relative z-10 max-w-2xl">
@@ -393,9 +388,12 @@ export async function ProjectsSection() {
         </div>
         <div className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-5">
           {projects.map((project) => {
-            const gallery = [...(project.project_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
+            const gallery = [...(project.project_images ?? [])].sort(
+              (a, b) => a.sort_order - b.sort_order,
+            );
             const image = project.featured_image || gallery[0]?.storage_key;
-            const canPreview = image && (image.startsWith("http") || image.startsWith("/"));
+            const canPreview =
+              image && (image.startsWith("http") || image.startsWith("/"));
 
             return (
               <Link
@@ -457,41 +455,6 @@ export function DealerAndCatalogueSection() {
               </Link>
               <Link href="/dealers/become-a-dealer">
                 <Button variant="light">Become a Dealer</Button>
-              </Link>
-            </div>
-          </div>
-        </Container>
-      </Section>
-      <Section tone="dark">
-        <Container>
-          <div className="grid gap-8 border border-[color:var(--border-gold)] p-7 sm:p-10 lg:grid-cols-[.8fr_1.2fr] lg:items-center">
-            <div className="aspect-[4/3] border border-[color:var(--border-gold)] bg-[color:var(--surface-dark)] p-6">
-              <PackageCheck
-                size={34}
-                strokeWidth={1.1}
-                className="text-[color:var(--gold)]"
-              />
-              <p className="font-display mt-12 text-4xl">
-                WOODBAY
-                <br />
-                <span className="text-base tracking-[.25em] text-[color:var(--gold)]">
-                  COLLECTION
-                </span>
-              </p>
-            </div>
-            <div>
-              <Eyebrow>Catalogue</Eyebrow>
-              <h2 className="font-display mt-4 text-5xl leading-none">
-                Explore the Complete Woodbay Collection
-              </h2>
-              <p className="mt-5 max-w-xl text-sm leading-7 text-[color:var(--muted)]">
-                Download our latest catalogue for kitchen accessories, wardrobe
-                solutions, smart products and more.
-              </p>
-              <Link href="/downloads" className="mt-8 inline-block">
-                <Button>
-                  Download Catalogue <Download size={15} />
-                </Button>
               </Link>
             </div>
           </div>

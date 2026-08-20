@@ -1,7 +1,6 @@
 import { ArrowRight, LockKeyhole, ScanLine, ShieldCheck } from "lucide-react";
 import { CTASection, Container, Section } from "@/components/layout/primitives";
 import { Button } from "@/components/ui/button";
-import { siteConfig } from "@/config/site";
 import { RedeemForm } from "./redeem-form";
 export function RedeemPage({ initialCode }: { initialCode: string }) {
   return (
@@ -110,7 +109,7 @@ export function RedeemPage({ initialCode }: { initialCode: string }) {
         description="Our Woodbay team can help if a voucher cannot be redeemed."
         action={{
           label: "Contact Woodbay",
-          href: `mailto:${siteConfig.contact.email}`,
+          href: "/contact",
         }}
       />
     </>

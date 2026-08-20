@@ -129,6 +129,10 @@ export function dealerResultText(count: number, filters: DealerFilters) {
   return `${count} ${count === 1 ? "Dealer" : "Dealers"} Found${suffix ? ` in ${filters.district || filters.state}` : ""}`;
 }
 
+function isSeedQaDealer(dealer: PublicDealer) {
+  return /\bqa\b/i.test(dealer.business_name) || /\bqa\b/i.test(dealer.address);
+}
+
 export async function getVisibleDealers(): Promise<PublicDealer[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -137,7 +141,11 @@ export async function getVisibleDealers(): Promise<PublicDealer[]> {
       "id,business_name,slug,phone,state,district,area,address,google_maps_url,latitude,longitude,shop_image",
     );
   if (error) throw error;
-  return (data ?? []) as PublicDealer[];
+  // The migration also unpublishes these seed records. Keep this guard while
+  // environments are rolling forward so QA data is never visitor-facing.
+  return ((data ?? []) as PublicDealer[]).filter(
+    (dealer) => !isSeedQaDealer(dealer),
+  );
 }
 
 export async function getVisibleDealerBySlug(slug: string) {

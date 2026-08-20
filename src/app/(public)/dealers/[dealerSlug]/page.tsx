@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const dealer = await getPublicDealerBySlug((await params).dealerSlug);
-  if (!dealer) notFound();
+  if (!dealer || isQaDealer(dealer)) notFound();
   const schema = dealerLocalBusinessSchema(
     dealer,
     `${siteConfig.url}/dealers/${dealer.slug}`,

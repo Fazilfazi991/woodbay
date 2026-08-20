@@ -1,14 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- Dealer-managed public asset URLs are resolved at runtime. */
 import Image from "next/image";
 import Link from "next/link";
-import {
-  BadgeCheck,
-  Download,
-  MapPin,
-  Navigation,
-  Phone,
-  Store,
-} from "lucide-react";
+import { BadgeCheck, MapPin, Navigation, Phone, Store } from "lucide-react";
 import { CTASection, Container, Section } from "@/components/layout/primitives";
 import { Button } from "@/components/ui/button";
 import { dealer } from "@/config/dealers";
@@ -28,11 +21,11 @@ function DealerImage({ src, alt }: { src: string | null; alt: string }) {
       loading="lazy"
     />
   ) : (
-      <Image
-        src="/images/preview/woodbay-kitchen-preview.png"
-        alt="Woodbay interior collection"
-        fill
-        priority
+    <Image
+      src="/images/preview/woodbay-kitchen-preview.png"
+      alt="Woodbay interior collection"
+      fill
+      priority
       sizes="(max-width: 1024px) 100vw, 50vw"
       className="object-cover opacity-60"
     />
@@ -172,11 +165,6 @@ export function DealerMiniPage({
             Product availability may vary by dealer. Contact the dealer for
             current availability.
           </p>
-          <Link href="/downloads" className="mt-7 inline-block">
-            <Button variant="light">
-              <Download size={16} /> Download catalogue
-            </Button>
-          </Link>
         </Container>
       </Section>
       <Section tone="dark">
@@ -246,11 +234,6 @@ function ActionRow({
           </Button>
         </a>
       )}
-      <Link href="/downloads">
-        <Button variant="secondary">
-          <Download size={16} /> Download catalogue
-        </Button>
-      </Link>
     </div>
   );
 }
