@@ -157,24 +157,24 @@ export function ProductActions({ product }: { product: ProductDetail }) {
       <p className="text-xs font-bold tracking-[.14em] text-[color:var(--gold)] uppercase">
         Interested in this product?
       </p>
-      <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-        <Link href={`/contact?product=${product.slug}`}>
-          <Button>
+      <div className="mt-4 grid gap-3 sm:flex sm:flex-row">
+        <Link href={`/contact?product=${product.slug}`} className="max-sm:block">
+          <Button className="max-sm:w-full">
             <MessageCircle size={16} /> Enquire now
           </Button>
         </Link>
-        <Link href="/dealers">
-          <Button variant="secondary">
+        <Link href="/dealers" className="max-sm:block">
+          <Button variant="secondary" className="max-sm:w-full">
             <MapPin size={16} /> Find a dealer
           </Button>
         </Link>
-        <Link href="/downloads">
-          <Button variant="secondary">
+        <Link href="/downloads" className="max-sm:block">
+          <Button variant="secondary" className="max-sm:w-full">
             <Download size={16} /> View catalogue
           </Button>
         </Link>
-        <Link href="/redeem">
-          <Button variant="secondary">
+        <Link href="/redeem" className="max-sm:block">
+          <Button variant="secondary" className="max-sm:w-full">
             <ShieldCheck size={16} /> Verify voucher
           </Button>
         </Link>

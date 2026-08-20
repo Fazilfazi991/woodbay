@@ -31,7 +31,7 @@ export async function DealerLocatorPage({
   return (
     <>
       <section className="bg-[color:var(--background-deep)] text-[color:var(--foreground-light)]">
-        <Container className="py-16 sm:py-20">
+        <Container className="py-14 sm:py-20">
           <nav
             aria-label="Breadcrumb"
             className="text-xs tracking-[.1em] text-[color:var(--muted)] uppercase"
@@ -42,19 +42,19 @@ export async function DealerLocatorPage({
           <p className="mt-8 text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
             Woodbay dealer network
           </p>
-          <h1 className="font-display mt-4 text-6xl leading-[.9] sm:text-7xl">
+          <h1 className="font-display mt-4 text-[clamp(2.75rem,12vw,4.5rem)] leading-[.9]">
             Find Woodbay Near You.
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-7 text-[color:var(--muted)]">
             Find authorised Woodbay dealers for kitchen, wardrobe and interior
             product solutions in your area.
           </p>
-          <div className="mt-8 flex gap-3">
-            <a href="#dealer-locator">
-              <Button>Find a dealer</Button>
+          <div className="mt-8 grid gap-3 sm:flex">
+            <a href="#dealer-locator" className="max-sm:block">
+              <Button className="max-sm:w-full">Find a dealer</Button>
             </a>
-            <Link href="/dealers/become-a-dealer">
-              <Button variant="secondary">
+            <Link href="/dealers/become-a-dealer" className="max-sm:block">
+              <Button variant="secondary" className="max-sm:w-full">
                 Become a dealer <ArrowRight size={15} />
               </Button>
             </Link>

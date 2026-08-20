@@ -7,11 +7,11 @@ export function RedeemPage({ initialCode }: { initialCode: string }) {
   return (
     <>
       <section className="bg-[color:var(--background-deep)] text-[color:var(--foreground-light)]">
-        <Container className="py-20 sm:py-28">
+        <Container className="py-16 sm:py-24">
           <p className="text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
             Verify your Woodbay product
           </p>
-          <h1 className="font-display mt-5 max-w-3xl text-6xl leading-[.9] sm:text-8xl">
+          <h1 className="font-display mt-5 max-w-3xl text-[clamp(2.75rem,12vw,6rem)] leading-[.9]">
             Verify &amp; Redeem Your Voucher.
           </h1>
           <p className="mt-7 max-w-2xl text-base leading-7 text-[color:var(--muted)]">
@@ -32,7 +32,7 @@ export function RedeemPage({ initialCode }: { initialCode: string }) {
               <p className="text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
                 Voucher verification
               </p>
-              <h2 className="font-display mt-3 text-5xl">
+              <h2 className="font-display mt-3 text-4xl sm:text-5xl">
                 Complete your redemption.
               </h2>
               <p className="mt-4 max-w-xl text-sm leading-7 text-[color:var(--muted-dark)]">
