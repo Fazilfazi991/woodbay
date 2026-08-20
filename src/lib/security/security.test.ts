@@ -1,13 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { getExpectedMediaObjectKey } from "./media";
 import { isSafeImageUpload } from "./upload";
-import { isSafeHttpsUrl } from "./url";
+import { isSafeHttpUrl } from "./url";
 
 describe("security helpers", () => {
   it("rejects unsafe external URL protocols", () => {
-    expect(isSafeHttpsUrl("https://maps.google.com/?q=woodbay")).toBe(true);
-    expect(isSafeHttpsUrl("javascript:alert(1)")).toBe(false);
-    expect(isSafeHttpsUrl("data:text/html,unsafe")).toBe(false);
+    expect(isSafeHttpUrl("https://maps.google.com/?q=woodbay")).toBe(true);
+    expect(isSafeHttpUrl("http://maps.google.com/?q=woodbay")).toBe(true);
+    expect(isSafeHttpUrl("javascript:alert(1)")).toBe(false);
+    expect(isSafeHttpUrl("data:text/html,unsafe")).toBe(false);
   });
 
   it("only resolves media keys within the owning namespace", () => {

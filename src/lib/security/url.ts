@@ -1,9 +1,9 @@
 import "server-only";
 
-/** Accept only absolute HTTPS URLs for values rendered as external links or media. */
-export function isSafeHttpsUrl(value: string) {
+/** Accept only absolute HTTP(S) URLs for values rendered as external links or media. */
+export function isSafeHttpUrl(value: string) {
   try {
-    return new URL(value).protocol === "https:";
+    return ["http:", "https:"].includes(new URL(value).protocol);
   } catch {
     return false;
   }
