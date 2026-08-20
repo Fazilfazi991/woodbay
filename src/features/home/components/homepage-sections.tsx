@@ -24,6 +24,7 @@ import {
   SectionHeader,
 } from "@/components/layout/primitives";
 import { Button } from "@/components/ui/button";
+import { getPublishedProjects } from "@/features/projects/data";
 
 export function HeroSection() {
   return (
@@ -371,7 +372,9 @@ export function DecorAndFurnitureSection() {
     </>
   );
 }
-export function ProjectsSection() {
+export async function ProjectsSection() {
+  const projects = (await getPublishedProjects()).slice(0, 5);
+
   return (
     <Section tone="dark">
       <Container>
@@ -389,26 +392,41 @@ export function ProjectsSection() {
           </Link>
         </div>
         <div className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-5">
-          {homepage.projects.map((project, index) => (
-            <Link
-              href="/projects"
-              key={project}
-              className="group relative aspect-[3/4] overflow-hidden border border-[color:var(--border-dark)]"
-            >
-              <Image
-                src={
-                  index % 2 ? homepage.assets.interiors : homepage.assets.hero
-                }
-                alt=""
-                fill
-                sizes="(max-width: 768px) 50vw, 20vw"
-                className="object-cover transition duration-500 group-hover:scale-[1.03]"
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 p-5">
-                <h3 className="font-display text-3xl">{project}</h3>
-              </div>
-            </Link>
-          ))}
+          {projects.map((project) => {
+            const gallery = [...(project.project_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
+            const image = project.featured_image || gallery[0]?.storage_key;
+            const canPreview = image && (image.startsWith("http") || image.startsWith("/"));
+
+            return (
+              <Link
+                href={`/projects/${project.slug}`}
+                key={project.id}
+                className="group relative aspect-[3/4] overflow-hidden border border-[color:var(--border-dark)] bg-[color:var(--surface-dark)]"
+              >
+                {canPreview ? (
+                  <Image
+                    src={image}
+                    alt={project.title}
+                    fill
+                    sizes="(max-width: 768px) 50vw, 20vw"
+                    className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                  />
+                ) : (
+                  <div className="grid h-full place-items-center">
+                    <span className="font-display text-3xl tracking-[.12em] text-[color:var(--gold)]">
+                      WOODBAY
+                    </span>
+                  </div>
+                )}
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 p-5">
+                  <p className="mb-2 text-[10px] font-bold tracking-[.14em] text-[color:var(--gold)] uppercase">
+                    {project.category}
+                  </p>
+                  <h3 className="font-display text-3xl">{project.title}</h3>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </Container>
     </Section>
