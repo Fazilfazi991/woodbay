@@ -1,0 +1,2 @@
+import { NextResponse } from "next/server"; import { exportEnquiries } from "@/features/furniture/admin";
+export async function GET(request:Request){try{const p=Object.fromEntries(new URL(request.url).searchParams);const csv=await exportEnquiries(p);return new NextResponse(csv,{headers:{"Content-Type":"text/csv; charset=utf-8","Content-Disposition":"attachment; filename=woodbay-enquiries.csv"}})}catch{return NextResponse.json({error:"Unauthorized"},{status:403})}}

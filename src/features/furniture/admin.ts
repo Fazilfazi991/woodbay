@@ -1,0 +1,14 @@
+"use server";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { getActiveAdmin } from "@/lib/auth/admin";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { escapeCsvValue } from "@/features/vouchers/admin-utils";
+import { ENQUIRY_STATUS_OPTIONS } from "./enquiry-status";
+const statuses = ENQUIRY_STATUS_OPTIONS.map((option) => option.value) as ["new","contacted","consultation_scheduled","quoted","won","lost","closed"];
+const id = z.string().uuid();
+async function admin(){if(!(await getActiveAdmin())) throw new Error("Unauthorized");}
+export async function listEnquiries(input: Record<string,string|undefined>, paginate=true){await admin();const q=(input.q??"").trim().slice(0,120),status=z.enum(["all",...statuses]).catch("all").parse(input.status??"all"),page=Math.max(1,Number(input.page)||1);let query=createAdminClient().from("furniture_enquiries").select("id,name,phone,email,location,furniture_type,requirement_type,status,created_at",{count:"exact"}).order("created_at",{ascending:false});if(q)query=query.or(`name.ilike.%${q}%,phone.ilike.%${q}%,email.ilike.%${q}%,furniture_type.ilike.%${q}%,requirement_type.ilike.%${q}%`);if(status!=="all")query=query.eq("status",status);if(paginate)query=query.range((page-1)*20,page*20-1);const {data,error,count}=await query;if(error)throw new Error("Unable to load enquiries.");return {rows:data??[],count:count??0,q,status,page};}
+export async function getEnquiry(value:string){await admin();const {data,error}=await createAdminClient().from("furniture_enquiries").select("id,name,phone,email,location,district,furniture_type,requirement_type,front_colour_name,body_colour_name,finish_preference,width,height,depth,dimensions_note,message,status,admin_notes,created_at,updated_at").eq("id",id.parse(value)).maybeSingle();if(error||!data)throw new Error("Enquiry not found.");return data;}
+export async function updateEnquiry(form:FormData){await admin();const value=z.object({id,status:z.enum(statuses),admin_notes:z.string().trim().max(1000).optional()}).parse(Object.fromEntries(form));const {error}=await createAdminClient().from("furniture_enquiries").update({status:value.status,admin_notes:value.admin_notes||null}).eq("id",value.id);if(error)throw new Error("Unable to update enquiry.");revalidatePath("/admin/enquiries");revalidatePath(`/admin/enquiries/${value.id}`);}
+export async function exportEnquiries(input:Record<string,string|undefined>){const data=await listEnquiries(input,false);const header="Name,Phone,Email,Location,Furniture Requirement,Source,Status,Submitted";const rows=data.rows.map((r)=>[r.name,r.phone,r.email,r.location,[r.furniture_type,r.requirement_type].filter(Boolean).join(" · "),"Furniture design",r.status,r.created_at].map(escapeCsvValue).map(v=>`"${v}"`).join(","));return `${header}\n${rows.join("\n")}`;}
