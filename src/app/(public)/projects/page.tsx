@@ -11,7 +11,14 @@ function projectImage(project: Awaited<ReturnType<typeof getPublishedProjects>>[
 }
 
 export default async function ProjectsPage() {
-  const projects = await getPublishedProjects();
+  let projects: Awaited<ReturnType<typeof getPublishedProjects>> = [];
+  let unavailable = false;
+
+  try {
+    projects = await getPublishedProjects();
+  } catch {
+    unavailable = true;
+  }
 
   return (
     <Section tone="dark" className="pt-12">
@@ -22,7 +29,11 @@ export default async function ProjectsPage() {
           description="Explore published Woodbay project work from the canonical gallery."
         />
 
-        {projects.length === 0 ? (
+        {unavailable ? (
+          <p className="mt-10 border border-[color:var(--border-dark)] p-6 text-sm text-[color:var(--muted)]">
+            Projects are temporarily unavailable. Please try again shortly.
+          </p>
+        ) : projects.length === 0 ? (
           <p className="mt-10 border border-[color:var(--border-dark)] p-6 text-sm text-[color:var(--muted)]">
             No projects are available yet.
           </p>

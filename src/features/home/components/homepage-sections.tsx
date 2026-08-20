@@ -368,7 +368,16 @@ export function DecorAndFurnitureSection() {
   );
 }
 export async function ProjectsSection() {
-  const projects = (await getPublishedProjects()).slice(0, 5);
+  let projects: Awaited<ReturnType<typeof getPublishedProjects>> = [];
+  let unavailable = false;
+
+  try {
+    projects = (await getPublishedProjects()).slice(0, 5);
+  } catch {
+    // Projects are supplementary homepage content. A failed public query must
+    // not take down the whole site while the data service recovers.
+    unavailable = true;
+  }
 
   return (
     <Section tone="dark">
@@ -386,8 +395,18 @@ export async function ProjectsSection() {
             View All Projects <ArrowRight size={15} />
           </Link>
         </div>
-        <div className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-5">
-          {projects.map((project) => {
+        {unavailable ? (
+          <p className="mt-12 border border-[color:var(--border-gold)] p-6 text-sm text-[color:var(--muted)]">
+            Project highlights are temporarily unavailable. Please check back
+            shortly.
+          </p>
+        ) : projects.length === 0 ? (
+          <p className="mt-12 border border-[color:var(--border-gold)] p-6 text-sm text-[color:var(--muted)]">
+            New Woodbay project highlights will appear here soon.
+          </p>
+        ) : (
+          <div className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-5">
+            {projects.map((project) => {
             const gallery = [...(project.project_images ?? [])].sort(
               (a, b) => a.sort_order - b.sort_order,
             );
@@ -424,8 +443,9 @@ export async function ProjectsSection() {
                 </div>
               </Link>
             );
-          })}
-        </div>
+            })}
+          </div>
+        )}
       </Container>
     </Section>
   );

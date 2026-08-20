@@ -9,13 +9,46 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
+export async function generateMetadata({ params }: PageProps) {
+  try {
+    const project = await getPublishedProject((await params).slug);
+    return project
+      ? {
+          title: project.title,
+          description:
+            project.description ?? `Explore the ${project.title} Woodbay project.`,
+        }
+      : {};
+  } catch {
+    return {};
+  }
+}
+
 function canPreview(src: string | null | undefined) {
   return Boolean(src && (src.startsWith("http") || src.startsWith("/")));
 }
 
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const project = await getPublishedProject(slug);
+  let project: Awaited<ReturnType<typeof getPublishedProject>>;
+
+  try {
+    project = await getPublishedProject(slug);
+  } catch {
+    return (
+      <Section tone="dark" className="pt-12">
+        <Container>
+          <Eyebrow>Our Projects</Eyebrow>
+          <h1 className="font-display mt-4 text-5xl">
+            Projects are temporarily unavailable.
+          </h1>
+          <p className="mt-6 max-w-xl text-sm leading-7 text-[color:var(--muted)]">
+            Please try again shortly, or contact Woodbay for project information.
+          </p>
+        </Container>
+      </Section>
+    );
+  }
   if (!project) notFound();
 
   const gallery = [...(project.project_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
