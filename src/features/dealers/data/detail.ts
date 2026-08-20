@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { dealerDirectionsUrl, dealerPhoneUrl } from "./locator";
 
@@ -85,9 +86,9 @@ export function dealerLocalBusinessSchema(
   return schema;
 }
 
-export async function getPublicDealerBySlug(
+export const getPublicDealerBySlug = cache(async (
   slug: string,
-): Promise<PublicDealerDetail | null> {
+): Promise<PublicDealerDetail | null> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("public_dealer_details")
@@ -98,4 +99,4 @@ export async function getPublicDealerBySlug(
     .maybeSingle();
   if (error) throw error;
   return data as PublicDealerDetail | null;
-}
+});
