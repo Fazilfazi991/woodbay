@@ -4,8 +4,9 @@ import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { isSupportedProductImage } from "@/features/products/admin-utils";
 import { getActiveAdmin } from "@/lib/auth/admin";
+import { getExpectedMediaObjectKey } from "@/lib/security/media";
+import { isSafeImageUpload } from "@/lib/security/upload";
 import { getStorageProvider } from "@/lib/storage";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { PROJECT_STATUSES, projectSlug } from "./admin-utils";
@@ -28,13 +29,6 @@ async function requireProjectAdmin() {
 
 function errorPath(path: string, message: string) {
   return `${path}${path.includes("?") ? "&" : "?"}error=${encodeURIComponent(message)}`;
-}
-
-function storageObjectKey(urlOrKey: string) {
-  const bucket = process.env.SUPABASE_STORAGE_BUCKET ?? "woodbay-media";
-  const marker = `/storage/v1/object/public/${bucket}/`;
-  const index = urlOrKey.indexOf(marker);
-  return index < 0 ? urlOrKey : decodeURIComponent(urlOrKey.slice(index + marker.length));
 }
 
 function parseProject(form: FormData) {
@@ -62,7 +56,7 @@ async function persistProjectMedia(projectId: string, title: string, form: FormD
     .filter((value): value is File => value instanceof File && value.size > 0);
 
   if (cover instanceof File && cover.size > 0) {
-    if (!isSupportedProductImage(cover.type, cover.size)) {
+    if (!(await isSafeImageUpload(cover))) {
       throw new Error("Use a JPG, PNG, WebP or AVIF cover image no larger than 10 MB.");
     }
     const extension = cover.name.split(".").pop()?.replace(/[^a-z0-9]/gi, "").toLowerCase() || "jpg";
@@ -73,7 +67,7 @@ async function persistProjectMedia(projectId: string, title: string, form: FormD
   }
 
   if (!gallery.length) return;
-  if (gallery.length > 8 || gallery.some((file) => !isSupportedProductImage(file.type, file.size))) {
+  if (gallery.length > 8 || !(await Promise.all(gallery.map(isSafeImageUpload))).every(Boolean)) {
     throw new Error("Use up to 8 JPG, PNG, WebP or AVIF gallery images, each no larger than 10 MB.");
   }
 
@@ -206,10 +200,13 @@ export async function removeProjectImage(form: FormData) {
   const { error } = await db.from("project_images").delete().eq("id", imageId).eq("project_id", projectId);
   if (error) redirect(errorPath(`/admin/projects/${projectId}`, "Unable to remove image."));
 
-  try {
-    await getStorageProvider().delete(storageObjectKey(data.storage_key));
-  } catch {
-    // The gallery record is already removed; keep the admin flow moving.
+  const key = getExpectedMediaObjectKey(data.storage_key, "projects", projectId);
+  if (key) {
+    try {
+      await getStorageProvider().delete(key);
+    } catch {
+      // The gallery record is already removed; keep the admin flow moving.
+    }
   }
 
   revalidatePath(`/admin/projects/${projectId}`);

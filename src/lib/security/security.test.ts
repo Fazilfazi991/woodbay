@@ -12,6 +12,7 @@ describe("security helpers", () => {
 
   it("only resolves media keys within the owning namespace", () => {
     expect(getExpectedMediaObjectKey("products/111/image.jpg", "products", "111")).toBe("products/111/image.jpg");
+    expect(getExpectedMediaObjectKey("projects/222/image.jpg", "projects", "222")).toBe("projects/222/image.jpg");
     expect(getExpectedMediaObjectKey("projects/111/image.jpg", "products", "111")).toBeNull();
     expect(getExpectedMediaObjectKey("products/111/../../private.txt", "products", "111")).toBeNull();
   });

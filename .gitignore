@@ -6,3 +6,11 @@ coverage/
 .env
 !.env.example
 *.tsbuildinfo
+
+# Local visual/browser QA artifacts (never source or build inputs).
+.tmp-chrome-profile/
+.tmp-navbar-checks/
+chrome-*/
+cta-*-profile/
+cta-*.png
+navbar-*.png
