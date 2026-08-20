@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getActiveAdmin } from "@/lib/auth/admin";
+import { isSafeHttpsUrl } from "@/lib/security/url";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const statusSchema = z.enum(["all", "new", "approved", "rejected"]);
@@ -67,10 +68,11 @@ export async function reviewDealerApplication(formData: FormData) {
 
 export async function updateDealer(formData: FormData) {
   await requireAdmin();
+  const httpsUrl = z.string().trim().refine((value) => value === "" || isSafeHttpsUrl(value), "Use a valid HTTPS URL.");
   const values = z.object({
     id: idSchema, business_name: z.string().trim().min(2).max(160), contact_person: z.string().trim().max(120).optional(),
     phone: z.string().trim().min(7).max(20), email: z.string().trim().email().or(z.literal("")), state: z.string().trim().min(2).max(120),
-    district: z.string().trim().min(2).max(120), area: z.string().trim().max(160).optional(), address: z.string().trim().min(2).max(500), google_maps_url:z.string().trim().url().or(z.literal("")), payment_qr_image:z.string().trim().url().or(z.literal("")), latitude:z.coerce.number().min(-90).max(90).optional(),longitude:z.coerce.number().min(-180).max(180).optional(),
+    district: z.string().trim().min(2).max(120), area: z.string().trim().max(160).optional(), address: z.string().trim().min(2).max(500), google_maps_url:httpsUrl, payment_qr_image:httpsUrl, latitude:z.coerce.number().min(-90).max(90).optional(),longitude:z.coerce.number().min(-180).max(180).optional(),
     status: z.enum(["pending", "active", "inactive"]), is_visible: z.boolean(),
   }).parse({ ...Object.fromEntries(formData), is_visible: formData.get("is_visible") === "on" });
   const { id, ...dealer } = values;

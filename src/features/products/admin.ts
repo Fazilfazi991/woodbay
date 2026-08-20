@@ -7,7 +7,9 @@ import { z } from "zod";
 import { getActiveAdmin } from "@/lib/auth/admin";
 import { getStorageProvider } from "@/lib/storage";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { isSupportedProductImage, PRODUCT_STATUSES, productSlug } from "./admin-utils";
+import { PRODUCT_STATUSES, productSlug } from "./admin-utils";
+import { getExpectedMediaObjectKey } from "@/lib/security/media";
+import { isSafeImageUpload } from "@/lib/security/upload";
 
 const PAGE_SIZE = 20;
 const statuses = PRODUCT_STATUSES;
@@ -134,19 +136,12 @@ export async function updateProduct(form: FormData) {
   redirect(`/admin/products/${productId.data}?saved=1`);
 }
 
-function storageObjectKey(urlOrKey: string) {
-  const bucket = process.env.SUPABASE_STORAGE_BUCKET ?? "woodbay-media";
-  const marker = `/storage/v1/object/public/${bucket}/`;
-  const index = urlOrKey.indexOf(marker);
-  return index < 0 ? urlOrKey : decodeURIComponent(urlOrKey.slice(index + marker.length));
-}
-
 export async function uploadProductImages(form: FormData) {
   await requireAdmin();
   const productId = z.string().uuid().parse(form.get("id"));
   const files = form.getAll("images").filter((value): value is File => value instanceof File && value.size > 0);
   if (!files.length) redirect(errorPath(`/admin/products/${productId}`, "Choose at least one image."));
-  if (files.length > 8 || files.some((file) => !isSupportedProductImage(file.type, file.size))) {
+  if (files.length > 8 || !(await Promise.all(files.map(isSafeImageUpload))).every(Boolean)) {
     redirect(errorPath(`/admin/products/${productId}`, "Use up to 8 JPG, PNG, WebP or AVIF images, each no larger than 10 MB."));
   }
   const existing = await getAdminProduct(productId);
@@ -170,9 +165,12 @@ export async function removeProductImage(form: FormData) {
   const productId = z.string().uuid().parse(form.get("product_id"));
   const { data } = await createAdminClient().from("product_images").select("storage_key").eq("id", imageId).eq("product_id", productId).maybeSingle();
   if (!data) redirect(errorPath(`/admin/products/${productId}`, "Image not found."));
-  const { error } = await createAdminClient().from("product_images").delete().eq("id", imageId);
+  const { error } = await createAdminClient().from("product_images").delete().eq("id", imageId).eq("product_id", productId);
   if (error) redirect(errorPath(`/admin/products/${productId}`, "Unable to remove image."));
-  try { await getStorageProvider().delete(storageObjectKey(data.storage_key)); } catch { /* The catalogue record is already safely removed. */ }
+  const key = getExpectedMediaObjectKey(data.storage_key, "products", productId);
+  if (key) {
+    try { await getStorageProvider().delete(key); } catch { /* The catalogue record is already safely removed. */ }
+  }
   revalidatePath("/products");
   redirect(`/admin/products/${productId}?images=1`);
 }
@@ -182,6 +180,13 @@ export async function setPrimaryProductImage(form: FormData) {
   const imageId = z.string().uuid().parse(form.get("image_id"));
   const productId = z.string().uuid().parse(form.get("product_id"));
   const client = createAdminClient();
+  const { data: image } = await client
+    .from("product_images")
+    .select("id")
+    .eq("id", imageId)
+    .eq("product_id", productId)
+    .maybeSingle();
+  if (!image) redirect(errorPath(`/admin/products/${productId}`, "Image not found."));
   const { error: clearError } = await client.from("product_images").update({ is_primary: false }).eq("product_id", productId);
   const { error } = await client.from("product_images").update({ is_primary: true }).eq("id", imageId).eq("product_id", productId);
   if (clearError || error) redirect(errorPath(`/admin/products/${productId}`, "Unable to select the primary image."));

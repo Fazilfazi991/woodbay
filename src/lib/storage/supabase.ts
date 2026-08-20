@@ -1,3 +1,4 @@
+import "server-only";
 import type { StorageProvider } from "./types";
 import { createAdminClient } from "@/lib/supabase/admin";
 const bucket = process.env.SUPABASE_STORAGE_BUCKET ?? "woodbay-media";
