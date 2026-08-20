@@ -5,6 +5,11 @@ import { useEffect, useRef, useState } from "react";
 import { primaryNavigation } from "@/config/navigation";
 import { BrandMark } from "./brand-mark";
 
+const hiddenHeaderItems = new Set(["Products", "Services", "Downloads", "Blog"]);
+const headerNavigation = primaryNavigation.filter(
+  (item) => !hiddenHeaderItems.has(item.label),
+);
+
 export function Header() {
   const [open, setOpen] = useState<string | null>(null);
   const [drawer, setDrawer] = useState(false);
@@ -50,14 +55,14 @@ export function Header() {
   }, [drawer]);
   return (
     <header className="sticky top-0 z-50 border-b border-[color:var(--border-dark)] bg-[color:var(--background-dark)]">
-      <div className="mx-auto flex h-20 max-w-[1440px] items-center justify-between px-5 md:px-8 xl:px-14">
+      <div className="mx-auto flex h-20 max-w-[1440px] items-center px-5 md:px-8 xl:px-14">
         <BrandMark />
         <nav
           ref={navRef}
           aria-label="Primary navigation"
-          className="hidden items-center gap-1 xl:flex"
+          className="ml-auto mr-6 hidden items-center gap-1 xl:flex"
         >
-          {primaryNavigation.map((item) =>
+          {headerNavigation.map((item) =>
             item.children ? (
               <div key={item.label} className="relative">
                 <button
@@ -67,10 +72,14 @@ export function Header() {
                   onClick={() =>
                     setOpen(open === item.label ? null : item.label)
                   }
-                  className="desktop-nav-link inline-flex min-h-11 items-center gap-1 px-2.5 text-[11px] font-bold tracking-[.12em] uppercase hover:text-[color:var(--gold)] focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--gold)]"
+                  className="desktop-nav-link inline-flex min-h-11 items-center gap-1.5 px-3 text-[11px] leading-none font-bold tracking-[.12em] uppercase hover:text-[color:var(--gold)] focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--gold)]"
                 >
                   {item.label}
-                  <ChevronDown size={14} strokeWidth={1.5} />
+                  <ChevronDown
+                    className="translate-y-px"
+                    size={12}
+                    strokeWidth={1.5}
+                  />
                 </button>
                 {open === item.label && (
                   <div
@@ -94,7 +103,7 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="desktop-nav-link inline-flex min-h-11 items-center px-2.5 text-[11px] font-bold tracking-[.12em] uppercase hover:text-[color:var(--gold)] focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--gold)]"
+                className="desktop-nav-link inline-flex min-h-11 items-center px-3 text-[11px] leading-none font-bold tracking-[.12em] uppercase hover:text-[color:var(--gold)] focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--gold)]"
               >
                 {item.label}
               </Link>
@@ -142,7 +151,7 @@ export function Header() {
             className="mt-14 border-t border-[color:var(--border-dark)]"
             aria-label="Mobile navigation"
           >
-            {primaryNavigation.map((item) => (
+            {headerNavigation.map((item) => (
               <MobileItem
                 key={item.label}
                 item={item}
