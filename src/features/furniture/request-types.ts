@@ -1,0 +1,1 @@
+export type AdminRequestRow = { id:string; name?:string; person_name?:string; phone:string; email?:string|null; location?:string|null; preferred_date?:string|null; furniture_interest?:string|null; showroom_name?:string|null; showroom_size_sqft?:number|null; status:string; created_at:string };
