@@ -60,6 +60,10 @@ a {
   background: var(--background-dark);
   color: var(--gold);
 }
+.dealer-locator-select option {
+  background: var(--surface-light);
+  color: var(--foreground-dark);
+}
 .woodbay-button > svg,
 .factory-visit-link > svg {
   transition: transform 250ms ease-out;
