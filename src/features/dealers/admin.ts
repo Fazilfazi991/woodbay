@@ -1,10 +1,14 @@
 "use server";
 
+import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getActiveAdmin } from "@/lib/auth/admin";
 import { isSafeHttpUrl } from "@/lib/security/url";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getStorageProvider } from "@/lib/storage";
+import { getExpectedMediaObjectKey } from "@/lib/security/media";
+import { isSafeImageUpload } from "@/lib/security/upload";
 
 const statusSchema = z.enum(["all", "new", "approved", "rejected"]);
 const idSchema = z.string().uuid();
@@ -48,7 +52,7 @@ export async function getDealerApplication(id: string) {
   if (error || !data) throw new Error("Dealer application not found.");
   let dealer = null;
   if (data.dealer_id) {
-    const result = await createAdminClient().from("dealers").select("id,business_name,contact_person,phone,email,state,district,area,address,google_maps_url,latitude,longitude,payment_qr_image,status,is_visible,slug").eq("id", data.dealer_id).maybeSingle();
+    const result = await createAdminClient().from("dealers").select("id,business_name,contact_person,phone,email,state,district,area,address,google_maps_url,latitude,longitude,payment_qr_image,shop_image,status,is_visible,slug").eq("id", data.dealer_id).maybeSingle();
     dealer = result.data;
   }
   return { application: data, dealer };
@@ -59,8 +63,15 @@ export async function reviewDealerApplication(formData: FormData) {
   const id = idSchema.parse(formData.get("id"));
   const decision = z.enum(["approved", "rejected"]).parse(formData.get("decision"));
   const notes = z.string().trim().max(1000).optional().parse(formData.get("notes") || undefined) ?? null;
-  const { error } = await createAdminClient().rpc("review_dealer_application", { p_application_id: id, p_decision: decision, p_admin_notes: notes });
+  const client = createAdminClient();
+  const { data: dealerId, error } = await client.rpc("review_dealer_application", { p_application_id: id, p_decision: decision, p_admin_notes: notes });
   if (error) throw new Error("Unable to review this application.");
+  if (decision === "approved" && dealerId) {
+    const { error: publishError } = await client.from("dealers").update({ status: "active", is_visible: true }).eq("id", dealerId);
+    if (publishError) throw new Error("Application approved, but the public dealer profile could not be published.");
+  } else if (decision === "rejected" && dealerId) {
+    await client.from("dealers").update({ status: "inactive", is_visible: false }).eq("id", dealerId);
+  }
   revalidatePath("/admin/dealers");
   revalidatePath(`/admin/dealers/${id}`);
   revalidatePath("/dealers");
@@ -79,4 +90,82 @@ export async function updateDealer(formData: FormData) {
   const { error } = await createAdminClient().from("dealers").update({ ...dealer, email: dealer.email || null, contact_person: dealer.contact_person || null, area: dealer.area || null, google_maps_url:dealer.google_maps_url||null,payment_qr_image:dealer.payment_qr_image||null,latitude:Number.isFinite(dealer.latitude)?dealer.latitude:null,longitude:Number.isFinite(dealer.longitude)?dealer.longitude:null }).eq("id", id);
   if (error) throw new Error("Unable to update dealer.");
   revalidatePath("/admin/dealers"); revalidatePath("/dealers");
+}
+
+export type DealerActionState = { ok: boolean; message: string };
+
+export async function updateDealerAction(_previous: DealerActionState, formData: FormData): Promise<DealerActionState> {
+  try { await updateDealer(formData); return { ok: true, message: "Dealer updated successfully." }; }
+  catch (error) { return { ok: false, message: error instanceof Error ? error.message : "Unable to update dealer." }; }
+}
+
+export async function uploadDealerImage(formData: FormData) {
+  await requireAdmin();
+  const dealerId = idSchema.parse(formData.get("id"));
+  const kind = z.enum(["shop_image", "payment_qr_image"]).parse(formData.get("kind"));
+  const file = formData.get("image");
+  if (!(file instanceof File) || !(await isSafeImageUpload(file))) throw new Error("Use a valid JPG, PNG, WebP or AVIF image up to 10 MB.");
+  const client = createAdminClient();
+  const { data: current } = await client.from("dealers").select("shop_image,payment_qr_image").eq("id", dealerId).maybeSingle();
+  if (!current) throw new Error("Dealer not found.");
+  const extension = file.name.split(".").pop()?.replace(/[^a-z0-9]/gi, "").toLowerCase() || "jpg";
+  const key = `dealers/${dealerId}/${kind}-${randomUUID()}.${extension}`;
+  const storage = getStorageProvider();
+  await storage.upload({ key, file, contentType: file.type });
+  const url = await storage.getUrl(key);
+  const { error } = await client.from("dealers").update({ [kind]: url }).eq("id", dealerId);
+  if (error) { try { await storage.delete(key); } catch {} throw new Error("Image uploaded but could not be attached to the dealer."); }
+  const old = current[kind];
+  const oldKey = old ? getExpectedMediaObjectKey(old, "dealers", dealerId) : null;
+  if (oldKey) { try { await storage.delete(oldKey); } catch {} }
+  revalidatePath("/admin/dealers"); revalidatePath(`/admin/dealers/${dealerId}`); revalidatePath("/dealers");
+}
+
+export async function removeDealerImage(formData: FormData) {
+  await requireAdmin();
+  const dealerId = idSchema.parse(formData.get("id"));
+  const kind = z.enum(["shop_image", "payment_qr_image"]).parse(formData.get("kind"));
+  const client = createAdminClient();
+  const { data } = await client.from("dealers").select("shop_image,payment_qr_image").eq("id", dealerId).maybeSingle();
+  if (!data) throw new Error("Dealer not found.");
+  const value = data[kind];
+  const { error } = await client.from("dealers").update({ [kind]: null }).eq("id", dealerId);
+  if (error) throw new Error("Unable to remove dealer image.");
+  const key = value ? getExpectedMediaObjectKey(value, "dealers", dealerId) : null;
+  if (key) { try { await getStorageProvider().delete(key); } catch {} }
+  revalidatePath("/admin/dealers"); revalidatePath(`/admin/dealers/${dealerId}`); revalidatePath("/dealers");
+}
+
+export async function deleteDealerApplication(formData: FormData) {
+  await requireAdmin();
+  const id = idSchema.parse(formData.get("id"));
+  const client = createAdminClient();
+  const { data: application } = await client.from("dealer_applications").select("dealer_id").eq("id", id).maybeSingle();
+  if (!application) throw new Error("Dealer application not found.");
+  if (application.dealer_id) {
+    const { error } = await client.from("dealers").update({ status: "inactive", is_visible: false }).eq("id", application.dealer_id);
+    if (error) throw new Error("This approved dealer was archived instead of permanently deleted.");
+  } else {
+    const { error } = await client.from("dealer_applications").delete().eq("id", id);
+    if (error) throw new Error("Unable to delete dealer application.");
+  }
+  revalidatePath("/admin/dealers"); revalidatePath(`/admin/dealers/${id}`); revalidatePath("/dealers");
+}
+
+export async function updateDealerApplicationNote(formData: FormData) {
+  await requireAdmin();
+  const id = idSchema.parse(formData.get("id"));
+  const notes = z.string().trim().max(1000).parse(formData.get("admin_notes") ?? "");
+  const { error } = await createAdminClient().from("dealer_applications").update({ admin_notes: notes || null }).eq("id", id);
+  if (error) throw new Error("Unable to save internal note.");
+  revalidatePath(`/admin/dealers/${id}`);
+}
+
+export async function updateDealerApplication(formData: FormData) {
+  await requireAdmin();
+  const id = idSchema.parse(formData.get("id"));
+  const values = z.object({ business_name: z.string().trim().min(2).max(160), contact_person: z.string().trim().min(2).max(120), phone: z.string().trim().min(7).max(20), email: z.string().trim().email().or(z.literal("")), state: z.string().trim().min(2).max(120), district: z.string().trim().min(2).max(120), location: z.string().trim().min(2).max(160), address: z.string().trim().max(500), message: z.string().trim().max(2000) }).parse(Object.fromEntries(formData));
+  const { error } = await createAdminClient().from("dealer_applications").update({ ...values, email: values.email || null, address: values.address || null, message: values.message || null }).eq("id", id).is("dealer_id", null);
+  if (error) throw new Error("Unable to update dealer application.");
+  revalidatePath(`/admin/dealers/${id}`); revalidatePath("/admin/dealers");
 }

@@ -7,7 +7,7 @@ import "server-only";
  */
 export function getExpectedMediaObjectKey(
   value: string,
-  namespace: "products" | "projects",
+  namespace: "products" | "projects" | "dealers",
   resourceId: string,
 ) {
   const bucket = process.env.SUPABASE_STORAGE_BUCKET ?? "woodbay-media";
