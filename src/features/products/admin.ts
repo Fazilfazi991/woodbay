@@ -14,7 +14,6 @@ import { isSafeImageUpload } from "@/lib/security/upload";
 const PAGE_SIZE = 20;
 const statuses = PRODUCT_STATUSES;
 const productSchema = z.object({
-  id: z.string().uuid().optional(),
   name: z.string().trim().min(2).max(160),
   slug: z.string().trim().max(160).optional(),
   category_id: z.string().uuid(),
