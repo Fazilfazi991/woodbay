@@ -22,7 +22,7 @@ import {
   SectionHeader,
 } from "@/components/layout/primitives";
 import { Button } from "@/components/ui/button";
-import { getPublishedProjects } from "@/features/projects/data";
+import { getPublishedProjectPreviews } from "@/features/projects/data";
 
 export function HeroSection() {
   return (
@@ -288,7 +288,6 @@ export function DecorAndFurnitureSection() {
                 alt="Woodbay decor interior with material-led finishes"
                 fill
                 sizes="(max-width: 1024px) 100vw, 600px"
-                unoptimized
                 className="object-cover"
               />
             </div>
@@ -323,7 +322,6 @@ export function DecorAndFurnitureSection() {
               alt="Custom furniture interior"
               fill
               sizes="100vw"
-              unoptimized
               className="object-cover opacity-30"
             />
             <div className="relative z-10 max-w-2xl">
@@ -366,11 +364,11 @@ export function DecorAndFurnitureSection() {
   );
 }
 export async function ProjectsSection() {
-  let projects: Awaited<ReturnType<typeof getPublishedProjects>> = [];
+  let projects: Awaited<ReturnType<typeof getPublishedProjectPreviews>> = [];
   let unavailable = false;
 
   try {
-    projects = (await getPublishedProjects()).slice(0, 5);
+    projects = await getPublishedProjectPreviews();
   } catch {
     // Projects are supplementary homepage content. A failed public query must
     // not take down the whole site while the data service recovers.
@@ -405,10 +403,7 @@ export async function ProjectsSection() {
         ) : (
           <div className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-5">
             {projects.map((project) => {
-            const gallery = [...(project.project_images ?? [])].sort(
-              (a, b) => a.sort_order - b.sort_order,
-            );
-            const image = project.featured_image || gallery[0]?.storage_key;
+            const image = project.featured_image;
             const canPreview =
               image && (image.startsWith("http") || image.startsWith("/"));
 
