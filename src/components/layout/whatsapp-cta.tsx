@@ -15,7 +15,7 @@ function WhatsAppIcon() {
 
 export function WhatsAppCta() {
   const common =
-    "fixed bottom-5 right-5 z-40 inline-flex min-h-11 items-center gap-2 border border-[color:var(--gold)] bg-[color:var(--background-dark)] px-3.5 text-xs font-bold uppercase tracking-[.1em] text-[color:var(--gold)] shadow-xl transition hover:bg-[color:var(--gold)] hover:text-[color:var(--background-dark)]";
+    "fixed bottom-5 right-5 z-40 inline-flex min-h-11 items-center gap-2 border border-[#25D366] bg-[color:var(--background-dark)] px-3.5 text-xs font-bold uppercase tracking-[.1em] text-[#25D366] shadow-xl transition hover:bg-[#25D366] hover:text-[color:var(--background-dark)]";
 
   if (!siteConfig.whatsappUrl) {
     return (
