@@ -26,7 +26,6 @@
 }
 html {
   background: var(--background-dark);
-  scroll-behavior: smooth;
 }
 body {
   margin: 0;
