@@ -8,6 +8,7 @@ import { BrandMark } from "./brand-mark";
 const headerNavigation = primaryNavigation.filter(
   (item) => item.label !== "Projects",
 );
+const desktopNavLabelClass = "desktop-nav-link";
 
 export function Header() {
   const [open, setOpen] = useState<string | null>(null);
@@ -71,7 +72,7 @@ export function Header() {
                   onClick={() =>
                     setOpen(open === item.label ? null : item.label)
                   }
-                  className="desktop-nav-link inline-flex min-h-11 items-center gap-1.5 px-3 text-[11px] leading-none font-bold tracking-[.12em] uppercase hover:text-[color:var(--gold)] focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--gold)]"
+                  className={`${desktopNavLabelClass} inline-flex min-h-11 items-center gap-1.5 px-3 hover:text-[color:var(--gold)] focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--gold)]`}
                 >
                   {item.label}
                   <ChevronDown
@@ -102,7 +103,7 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="desktop-nav-link inline-flex min-h-11 items-center px-3 text-[11px] leading-none font-bold tracking-[.12em] uppercase hover:text-[color:var(--gold)] focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--gold)]"
+                className={`${desktopNavLabelClass} inline-flex min-h-11 items-center px-3 hover:text-[color:var(--gold)] focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--gold)]`}
               >
                 {item.label}
               </Link>
