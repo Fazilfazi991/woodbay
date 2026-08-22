@@ -25,6 +25,12 @@ export const metadata: Metadata = {
     "Explore Woodbay kitchen accessories, wardrobe solutions, decor products and smart products.",
 };
 const image = "/images/preview/woodbay-kitchen-preview.png";
+const categoryImages: Record<string, string> = {
+  "kitchen-accessories": "/images/categories/kitchen-accessories.png",
+  "wardrobe-accessories": "/images/categories/wardrobe-accessories.png",
+  decor: "/images/categories/decor-products.png",
+  "smart-products": "/images/categories/smart-products.png",
+};
 export default async function ProductsPage() {
   let categories: CatalogueCategory[] = [];
   let featured: CatalogueProduct[] = [];
@@ -66,7 +72,7 @@ export default async function ProductsPage() {
                 key={category.id}
                 title={category.name}
                 href={`/products/${category.slug}`}
-                image={image}
+                image={categoryImages[category.slug] ?? image}
                 description={
                   category.description ?? "Explore the Woodbay collection."
                 }

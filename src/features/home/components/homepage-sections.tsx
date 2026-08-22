@@ -108,15 +108,10 @@ export function CategoriesSection() {
           </Link>
         </div>
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {homepage.categories.map((category, index) => (
+          {homepage.categories.map((category) => (
             <ProductCategoryCard
               key={category.title}
               {...category}
-              image={
-                index % 3 === 0
-                  ? homepage.assets.interiors
-                  : homepage.assets.hero
-              }
               tone="light"
             />
           ))}
@@ -138,8 +133,8 @@ export function FeaturedProductsSection() {
           <div className="grid grid-cols-2 border-t border-l border-[color:var(--border-gold)] sm:grid-cols-4">
             {homepage.featured.map((item) => (
               <Link
-                href="/products"
-                key={item}
+                href={item.href}
+                key={item.href}
                 className="group min-h-36 border-r border-b border-[color:var(--border-gold)] p-5 hover:bg-white/[.04]"
               >
                 <Layers3
@@ -148,7 +143,7 @@ export function FeaturedProductsSection() {
                   className="text-[color:var(--gold)]"
                 />
                 <h3 className="mt-8 flex items-end justify-between gap-2 text-sm leading-5 font-medium">
-                  <span>{item}</span>
+                  <span>{item.title}</span>
                   <ChevronRight
                     size={15}
                     className="shrink-0 text-[color:var(--gold)] transition-transform group-hover:translate-x-1"

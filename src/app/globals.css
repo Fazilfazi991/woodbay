@@ -64,6 +64,13 @@ a {
   background: var(--surface-light);
   color: var(--foreground-dark);
 }
+.category-chips-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.category-chips-scroll::-webkit-scrollbar {
+  display: none;
+}
 .woodbay-button > svg,
 .factory-visit-link > svg {
   transition: transform 250ms ease-out;

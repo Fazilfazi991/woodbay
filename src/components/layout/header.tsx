@@ -71,11 +71,7 @@ export function Header() {
                   onClick={() =>
                     setOpen(open === item.label ? null : item.label)
                   }
-                  className={`desktop-nav-link inline-flex min-h-11 items-center gap-1.5 px-3 leading-none uppercase hover:text-[color:var(--gold)] focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--gold)] ${
-                    item.label === "Dealers"
-                      ? "text-base font-medium tracking-[.14em]"
-                      : "text-[11px] font-bold tracking-[.12em]"
-                  }`}
+                  className="desktop-nav-link inline-flex min-h-11 items-center gap-1.5 px-3 text-[11px] leading-none font-bold tracking-[.12em] uppercase hover:text-[color:var(--gold)] focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--gold)]"
                 >
                   {item.label}
                   <ChevronDown
@@ -201,11 +197,7 @@ function MobileItem({
         onClick={() => setExpanded(!expanded)}
         aria-expanded={expanded}
         aria-controls={`mobile-${item.label.toLowerCase()}`}
-        className={`flex min-h-14 w-full items-center justify-between text-left text-[color:var(--foreground-light)] uppercase ${
-          item.label === "Dealers"
-            ? "text-base font-medium tracking-[.14em]"
-            : "text-sm font-bold tracking-[.12em]"
-        }`}
+        className="flex min-h-14 w-full items-center justify-between text-left text-sm font-bold tracking-[.12em] text-[color:var(--foreground-light)] uppercase"
       >
         {item.label}
         <ChevronDown
