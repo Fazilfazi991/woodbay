@@ -5,11 +5,11 @@ import {
   DecorAndFurnitureSection,
   FeaturedProductsSection,
   FinalHomeCta,
-  HeroSection,
   ManufacturingSection,
   ProjectsSection,
   SmartSection,
 } from "@/features/home/components/homepage-sections";
+import { HomeTwoHero } from "@/features/home/components/home-two-hero";
 
 export const metadata: Metadata = {
   title: "Home 2 | Light Theme | Woodbay",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 export default function HomeTwoPage() {
   return (
     <div className="home-two">
-      <HeroSection variant="light" />
+      <HomeTwoHero />
       <CategoriesSection />
       <FeaturedProductsSection />
       <ManufacturingSection />
@@ -28,7 +28,9 @@ export default function HomeTwoPage() {
       <DecorAndFurnitureSection />
       <ProjectsSection />
       <DealerAndCatalogueSection />
-      <FinalHomeCta />
+      <div className="home-two-dark-cta">
+        <FinalHomeCta />
+      </div>
     </div>
   );
 }
