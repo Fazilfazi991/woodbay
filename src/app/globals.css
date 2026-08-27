@@ -103,10 +103,13 @@ a {
   color: #fff;
 }
 .home-two-header .desktop-nav-link {
-  color: #303630;
+  color: #f8f8f4;
 }
 .home-two-header .desktop-nav-link:hover {
-  color: #b78b00;
+  color: #ffc60b;
+}
+.home-two-header {
+  border-color: rgba(255, 198, 11, 0.28);
 }
 .home-two .home-two-dark-cta {
   --background-dark: #111111;

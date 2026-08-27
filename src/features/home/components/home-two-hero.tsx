@@ -5,7 +5,6 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { homepage } from "@/config/homepage";
 
 const slides = [
   {
@@ -13,7 +12,7 @@ const slides = [
     title: "Elevate Every Detail of Your Home.",
     description:
       "Thoughtful accessories, refined finishes and interiors made for contemporary spaces.",
-    image: homepage.assets.hero,
+    image: "/images/home-2/hero-interiors.png",
     alt: "Contemporary Woodbay kitchen interior",
     primary: { label: "Explore Products", href: "/products" },
     secondary: {
@@ -26,7 +25,7 @@ const slides = [
     title: "Crafted With Care. Built to Last.",
     description:
       "Woodbay combines careful production, quality control and dependable distribution in every detail.",
-    image: homepage.assets.factory,
+    image: "/images/home-2/hero-manufacturing.png",
     alt: "Woodbay precision manufacturing facility",
     primary: { label: "Discover Woodbay", href: "/about" },
     secondary: { label: "Our Projects", href: "/projects" },
@@ -36,7 +35,7 @@ const slides = [
     title: "Designed Around the Way You Live.",
     description:
       "Furniture, decor and intelligent systems that bring clarity, comfort and character to your home.",
-    image: homepage.assets.interiors,
+    image: "/images/home-2/hero-smart-living.png",
     alt: "Woodbay furniture and decor interior",
     primary: { label: "Explore Furniture", href: "/furniture" },
     secondary: {
@@ -80,9 +79,9 @@ export function HomeTwoHero() {
             fill
             priority={index === 0}
             sizes="100vw"
-            className="object-cover object-[63%_center] opacity-30"
+            className="object-cover object-[63%_center]"
           />
-          <div className="absolute inset-0 bg-[linear-gradient(105deg,rgba(248,248,244,.98)_0%,rgba(248,248,244,.9)_52%,rgba(242,243,237,.55)_100%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(105deg,rgba(248,248,244,.98)_0%,rgba(248,248,244,.9)_42%,rgba(248,248,244,.2)_68%,rgba(248,248,244,.03)_100%)]" />
         </div>
       ))}
       <div

@@ -57,9 +57,9 @@ export function Header() {
     };
   }, [drawer]);
   return (
-    <header className={`sticky top-0 z-50 border-b border-[color:var(--border-dark)] ${isHomeTwo ? "home-two-header bg-[#fafaf7]" : "bg-[color:var(--background-dark)]"}`}>
+    <header className={`sticky top-0 z-50 border-b border-[color:var(--border-dark)] ${isHomeTwo ? "home-two-header bg-[#0e0e0e]" : "bg-[color:var(--background-dark)]"}`}>
       <div className="mx-auto flex h-20 max-w-[1440px] items-center px-5 md:px-8 xl:px-14">
-        <BrandMark tone={isHomeTwo ? "light" : "dark"} />
+        <BrandMark tone="dark" />
         <nav
           ref={navRef}
           aria-label="Primary navigation"
