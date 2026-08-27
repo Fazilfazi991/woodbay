@@ -138,7 +138,7 @@ export function Header() {
           role="dialog"
           aria-modal="true"
           aria-label="Main menu"
-          className="fixed inset-0 z-[60] overflow-y-auto bg-[color:var(--background-dark)] px-6 py-6 xl:hidden"
+          className="fixed inset-0 z-[60] overflow-y-auto bg-[#0e0e0e] px-6 py-6 xl:hidden"
         >
           <div className="flex items-start justify-between">
             <BrandMark />
@@ -189,7 +189,7 @@ function MobileItem({
       <Link
         href={item.href}
         onClick={onNavigate}
-        className="flex min-h-14 items-center border-b border-[color:var(--border-dark)] text-sm font-bold tracking-[.12em] text-[color:var(--foreground-light)] uppercase"
+        className="flex min-h-14 items-center border-b border-[color:var(--border-dark)] text-sm font-bold tracking-[.12em] !text-[#f7f3eb] uppercase"
       >
         {item.label}
       </Link>
@@ -201,7 +201,7 @@ function MobileItem({
         onClick={() => setExpanded(!expanded)}
         aria-expanded={expanded}
         aria-controls={`mobile-${item.label.toLowerCase()}`}
-        className="flex min-h-14 w-full items-center justify-between text-left text-sm font-bold tracking-[.12em] text-[color:var(--foreground-light)] uppercase"
+        className="flex min-h-14 w-full items-center justify-between text-left text-sm font-bold tracking-[.12em] !text-[#f7f3eb] uppercase"
       >
         {item.label}
         <ChevronDown

@@ -65,7 +65,7 @@ export function HomeTwoHero() {
 
   return (
     <section
-      className="relative min-h-[calc(100svh-5rem)] overflow-hidden bg-[#f8f8f4] text-[#171717] lg:min-h-[calc(92vh-5rem)]"
+      className="relative min-h-[clamp(620px,78svh,680px)] overflow-hidden bg-[#f8f8f4] text-[#171717] md:min-h-[calc(100svh-5rem)] lg:min-h-[calc(92vh-5rem)]"
       aria-roledescription="carousel"
       aria-label="Woodbay highlights"
       onMouseEnter={() => setPaused(true)}
@@ -94,7 +94,7 @@ export function HomeTwoHero() {
         className="absolute inset-y-0 left-0 w-1 bg-[#ffc60b]"
         aria-hidden="true"
       />
-      <div className="relative mx-auto flex min-h-[calc(100svh-5rem)] max-w-[1440px] flex-col justify-center px-5 py-24 md:px-8 lg:min-h-[calc(92vh-5rem)] xl:px-14">
+      <div className="relative mx-auto flex min-h-[clamp(620px,78svh,680px)] max-w-[1440px] flex-col justify-center px-5 py-16 sm:py-20 md:min-h-[calc(100svh-5rem)] md:px-8 md:py-24 lg:min-h-[calc(92vh-5rem)] xl:px-14">
         {slides.map((slide, index) => (
           <div
             key={slide.title}
