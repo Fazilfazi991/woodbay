@@ -117,6 +117,26 @@ a {
   --muted: #b6b6b1;
   --border-gold: rgba(255, 198, 11, 0.55);
 }
+.home-two .home-two-manufacturing {
+  --background-dark: #111111;
+  --foreground-light: #f8f8f4;
+  --muted: #bdbdb7;
+  --border-dark: #30302d;
+  --border-gold: rgba(255, 198, 11, 0.5);
+}
+.home-two .home-two-manufacturing .text-\[\#d0cac0\] {
+  color: #d3d3cc;
+}
+.home-two .home-two-factory-promise::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(17, 17, 17, 0.82) 0%, rgba(17, 17, 17, 0.58) 43%, rgba(17, 17, 17, 0.16) 100%);
+}
+.home-two .home-two-factory-promise > *:not(img) {
+  position: relative;
+  z-index: 1;
+}
 .dealer-locator-select option {
   background: var(--surface-light);
   color: var(--foreground-dark);

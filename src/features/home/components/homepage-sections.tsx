@@ -24,10 +24,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { getPublishedProjectPreviews } from "@/features/projects/data";
 
-export function HeroSection({ variant = "default" }: { variant?: "default" | "light" }) {
+export function HeroSection({
+  variant = "default",
+}: {
+  variant?: "default" | "light";
+}) {
   const light = variant === "light";
   return (
-    <section className={`relative isolate min-h-[calc(100svh-5rem)] overflow-hidden ${light ? "bg-[#f2faf3] text-[#171717]" : "bg-[color:var(--background-dark)] text-[color:var(--foreground-light)]"} lg:min-h-[calc(92vh-5rem)]`}>
+    <section
+      className={`relative isolate min-h-[calc(100svh-5rem)] overflow-hidden ${light ? "bg-[#f2faf3] text-[#171717]" : "bg-[color:var(--background-dark)] text-[color:var(--foreground-light)]"} lg:min-h-[calc(92vh-5rem)]`}
+    >
       <Image
         src={homepage.assets.hero}
         alt="Contemporary dark Woodbay kitchen interior"
@@ -36,14 +42,18 @@ export function HeroSection({ variant = "default" }: { variant?: "default" | "li
         sizes="100vw"
         className={`-z-20 object-cover object-[63%_center] ${light ? "opacity-25" : ""}`}
       />
-      <div className={`absolute inset-0 -z-10 ${light ? "bg-[linear-gradient(105deg,rgba(250,250,247,.98)_0%,rgba(250,250,247,.91)_49%,rgba(242,250,243,.58)_100%)]" : "bg-[linear-gradient(90deg,rgba(9,10,8,.94)_0%,rgba(9,10,8,.74)_45%,rgba(9,10,8,.18)_100%)]"}`} />
+      <div
+        className={`absolute inset-0 -z-10 ${light ? "bg-[linear-gradient(105deg,rgba(250,250,247,.98)_0%,rgba(250,250,247,.91)_49%,rgba(242,250,243,.58)_100%)]" : "bg-[linear-gradient(90deg,rgba(9,10,8,.94)_0%,rgba(9,10,8,.74)_45%,rgba(9,10,8,.18)_100%)]"}`}
+      />
       <Container className="flex min-h-[calc(100svh-5rem)] flex-col justify-center py-16 lg:min-h-[calc(92vh-5rem)] lg:py-24">
         <div className="max-w-2xl">
           <Eyebrow>{homepage.hero.eyebrow}</Eyebrow>
           <h1 className="font-display mt-5 text-5xl leading-[.92] whitespace-pre-line sm:text-6xl lg:text-8xl">
             {homepage.hero.title}
           </h1>
-          <p className={`mt-7 max-w-xl text-base leading-7 ${light ? "text-[#626262]" : "text-[#d7d1c6]"}`}>
+          <p
+            className={`mt-7 max-w-xl text-base leading-7 ${light ? "text-[#626262]" : "text-[#d7d1c6]"}`}
+          >
             {homepage.hero.description}
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -53,7 +63,9 @@ export function HeroSection({ variant = "default" }: { variant?: "default" | "li
               </Button>
             </Link>
             <Link href="/furniture/factory-visit">
-              <Button variant={light ? "light" : "secondary"}>Book Factory Visit</Button>
+              <Button variant={light ? "light" : "secondary"}>
+                Book Factory Visit
+              </Button>
             </Link>
           </div>
         </div>
@@ -65,7 +77,9 @@ export function HeroSection({ variant = "default" }: { variant?: "default" | "li
 function TrustStrip({ light = false }: { light?: boolean }) {
   const icons = [Award, Sparkles, Check, Handshake];
   return (
-    <div className={`relative border-t border-[color:var(--border-gold)] backdrop-blur-sm ${light ? "bg-white/75" : "bg-black/35"}`}>
+    <div
+      className={`relative border-t border-[color:var(--border-gold)] backdrop-blur-sm ${light ? "bg-white/75" : "bg-black/35"}`}
+    >
       <Container>
         <div className="grid grid-cols-2 divide-x divide-y divide-[color:var(--border-gold)] lg:grid-cols-4 lg:divide-y-0">
           {homepage.trust.map((item, index) => {
@@ -80,7 +94,9 @@ function TrustStrip({ light = false }: { light?: boolean }) {
                 <h2 className="mt-3 text-xs font-bold tracking-[.12em] uppercase">
                   {item.title}
                 </h2>
-                <p className={`mt-2 text-xs leading-5 ${light ? "text-[#626262]" : "text-[#bcb6ac]"}`}>
+                <p
+                  className={`mt-2 text-xs leading-5 ${light ? "text-[#626262]" : "text-[#bcb6ac]"}`}
+                >
                   {item.text}
                 </p>
               </div>
@@ -158,9 +174,9 @@ export function FeaturedProductsSection() {
     </Section>
   );
 }
-export function ManufacturingSection() {
+export function ManufacturingSection({ variant }: { variant?: "home-two" }) {
   return (
-    <Section tone="dark" className="border-t border-[color:var(--border-dark)]">
+    <Section tone="dark" className={`border-t border-[color:var(--border-dark)] ${variant === "home-two" ? "home-two-manufacturing" : ""}`}>
       <Container>
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div>
@@ -170,7 +186,7 @@ export function ManufacturingSection() {
               <br />
               Trusted Worldwide.
             </h2>
-              <p className="mt-6 max-w-xl text-sm leading-7 text-[color:var(--muted)]">
+            <p className="mt-6 max-w-xl text-sm leading-7 text-[color:var(--muted)]">
               Woodbay is built around careful production, consistent quality
               control, precision engineering and dependable distribution—so
               every detail arrives ready for the space it is made for.
@@ -277,7 +293,7 @@ export function SmartSection() {
     </Section>
   );
 }
-export function DecorAndFurnitureSection() {
+export function DecorAndFurnitureSection({ variant }: { variant?: "home-two" }) {
   return (
     <>
       <Section tone="dark">
@@ -317,13 +333,13 @@ export function DecorAndFurnitureSection() {
       </Section>
       <Section tone="light">
         <Container>
-          <div className="relative overflow-hidden bg-[color:var(--background-deep)] px-6 py-14 text-[color:var(--foreground-light)] sm:px-10 lg:px-16 lg:py-20">
+          <div className={`relative overflow-hidden bg-[color:var(--background-deep)] px-6 py-14 text-[color:var(--foreground-light)] sm:px-10 lg:px-16 lg:py-20 ${variant === "home-two" ? "home-two-factory-promise" : ""}`}>
             <Image
               src={homepage.assets.interiors}
               alt="Custom furniture interior"
               fill
               sizes="100vw"
-              className="object-cover opacity-30"
+              className={variant === "home-two" ? "object-cover opacity-55" : "object-cover opacity-30"}
             />
             <div className="relative z-10 max-w-2xl">
               <Eyebrow>Factory Direct Furniture</Eyebrow>
@@ -404,39 +420,39 @@ export async function ProjectsSection() {
         ) : (
           <div className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-5">
             {projects.map((project) => {
-            const image = project.featured_image;
-            const canPreview =
-              image && (image.startsWith("http") || image.startsWith("/"));
+              const image = project.featured_image;
+              const canPreview =
+                image && (image.startsWith("http") || image.startsWith("/"));
 
-            return (
-              <Link
-                href={`/projects/${project.slug}`}
-                key={project.id}
-                className="group relative aspect-[3/4] overflow-hidden border border-[color:var(--border-dark)] bg-[color:var(--surface-dark)]"
-              >
-                {canPreview ? (
-                  <Image
-                    src={image}
-                    alt={project.title}
-                    fill
-                    sizes="(max-width: 768px) 50vw, 20vw"
-                    className="object-cover transition duration-500 group-hover:scale-[1.03]"
-                  />
-                ) : (
-                  <div className="grid h-full place-items-center">
-                    <span className="font-display text-3xl tracking-[.12em] text-[color:var(--gold)]">
-                      WOODBAY
-                    </span>
+              return (
+                <Link
+                  href={`/projects/${project.slug}`}
+                  key={project.id}
+                  className="group relative aspect-[3/4] overflow-hidden border border-[color:var(--border-dark)] bg-[color:var(--surface-dark)]"
+                >
+                  {canPreview ? (
+                    <Image
+                      src={image}
+                      alt={project.title}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 20vw"
+                      className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                    />
+                  ) : (
+                    <div className="grid h-full place-items-center">
+                      <span className="font-display text-3xl tracking-[.12em] text-[color:var(--gold)]">
+                        WOODBAY
+                      </span>
+                    </div>
+                  )}
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 p-5">
+                    <p className="mb-2 text-[10px] font-bold tracking-[.14em] text-[color:var(--gold)] uppercase">
+                      {project.category}
+                    </p>
+                    <h3 className="font-display text-3xl">{project.title}</h3>
                   </div>
-                )}
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 p-5">
-                  <p className="mb-2 text-[10px] font-bold tracking-[.14em] text-[color:var(--gold)] uppercase">
-                    {project.category}
-                  </p>
-                  <h3 className="font-display text-3xl">{project.title}</h3>
-                </div>
-              </Link>
-            );
+                </Link>
+              );
             })}
           </div>
         )}

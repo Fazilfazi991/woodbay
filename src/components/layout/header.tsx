@@ -59,7 +59,7 @@ export function Header() {
   return (
     <header className={`sticky top-0 z-50 border-b border-[color:var(--border-dark)] ${isHomeTwo ? "home-two-header bg-[#0e0e0e]" : "bg-[color:var(--background-dark)]"}`}>
       <div className="mx-auto flex h-20 max-w-[1440px] items-center px-5 md:px-8 xl:px-14">
-        <BrandMark tone="dark" />
+        <BrandMark />
         <nav
           ref={navRef}
           aria-label="Primary navigation"
@@ -126,7 +126,7 @@ export function Header() {
           aria-expanded={drawer}
           aria-controls="mobile-menu"
           onClick={() => setDrawer(true)}
-          className="grid min-h-11 min-w-11 place-items-center text-[color:var(--gold)] xl:hidden"
+          className="ml-auto grid min-h-11 min-w-11 place-items-center text-[color:var(--gold)] xl:hidden"
         >
           <Menu size={24} strokeWidth={1.5} />
         </button>

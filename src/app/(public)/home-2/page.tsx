@@ -23,9 +23,9 @@ export default function HomeTwoPage() {
       <HomeTwoHero />
       <CategoriesSection />
       <FeaturedProductsSection />
-      <ManufacturingSection />
+      <ManufacturingSection variant="home-two" />
       <SmartSection />
-      <DecorAndFurnitureSection />
+      <DecorAndFurnitureSection variant="home-two" />
       <ProjectsSection />
       <DealerAndCatalogueSection />
       <div className="home-two-dark-cta">

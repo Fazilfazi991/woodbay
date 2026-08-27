@@ -8,53 +8,55 @@ import { Button } from "@/components/ui/button";
 
 const slides = [
   {
-    eyebrow: "Premium decor & interiors",
-    title: "Elevate Every Detail of Your Home.",
+    eyebrow: "Smart modern living",
+    title: "Designed Around\nthe Way You Live.",
     description:
-      "Thoughtful accessories, refined finishes and interiors made for contemporary spaces.",
+      "Premium furniture, decor and considered interior solutions for a more effortless everyday life.",
     image: "/images/home-2/hero-interiors.png",
     alt: "Contemporary Woodbay kitchen interior",
-    primary: { label: "Explore Products", href: "/products" },
-    secondary: {
-      label: "Book Factory Visit",
-      href: "/furniture/factory-visit",
-    },
-  },
-  {
-    eyebrow: "Precision, made tangible",
-    title: "Crafted With Care. Built to Last.",
-    description:
-      "Woodbay combines careful production, quality control and dependable distribution in every detail.",
-    image: "/images/home-2/hero-manufacturing.png",
-    alt: "Woodbay precision manufacturing facility",
-    primary: { label: "Discover Woodbay", href: "/about" },
-    secondary: { label: "Our Projects", href: "/projects" },
-  },
-  {
-    eyebrow: "Smart modern living",
-    title: "Designed Around the Way You Live.",
-    description:
-      "Furniture, decor and intelligent systems that bring clarity, comfort and character to your home.",
-    image: "/images/home-2/hero-smart-living.png",
-    alt: "Woodbay furniture and decor interior",
     primary: { label: "Explore Furniture", href: "/furniture" },
     secondary: {
       label: "View Smart Products",
       href: "/products/smart-products",
     },
   },
+  {
+    eyebrow: "Manufacturing excellence",
+    title: "Crafted With Precision.\nBuilt to Last.",
+    description:
+      "Woodbay combines careful production, quality control and dependable distribution in every detail.",
+    image: "/images/home-2/hero-manufacturing.png",
+    alt: "Woodbay precision manufacturing facility",
+    primary: { label: "Explore Manufacturing", href: "/about" },
+    secondary: { label: "Book Factory Visit", href: "/furniture/factory-visit" },
+  },
+  {
+    eyebrow: "Smart modern living",
+    title: "Smarter Spaces.\nBeautifully Integrated.",
+    description:
+      "Smart furniture, sinks and integrated systems that make modern interiors feel beautifully effortless.",
+    image: "/images/home-2/hero-smart-living.png",
+    alt: "Woodbay furniture and decor interior",
+    primary: { label: "Explore Smart Products", href: "/products/smart-products" },
+    secondary: {
+      label: "Discover Solutions",
+      href: "/products",
+    },
+  },
 ] as const;
 
 export function HomeTwoHero() {
   const [activeSlide, setActiveSlide] = useState(0);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
+    if (paused) return;
     const timer = window.setInterval(
       () => setActiveSlide((slide) => (slide + 1) % slides.length),
       6500,
     );
     return () => window.clearInterval(timer);
-  }, []);
+  }, [paused]);
 
   const selectSlide = (slide: number) => setActiveSlide(slide);
   const previous = () =>
@@ -66,6 +68,10 @@ export function HomeTwoHero() {
       className="relative min-h-[calc(100svh-5rem)] overflow-hidden bg-[#f8f8f4] text-[#171717] lg:min-h-[calc(92vh-5rem)]"
       aria-roledescription="carousel"
       aria-label="Woodbay highlights"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={() => setPaused(false)}
     >
       {slides.map((slide, index) => (
         <div
@@ -97,7 +103,7 @@ export function HomeTwoHero() {
             <p className="text-[10px] font-bold tracking-[.2em] text-[#a87e00] uppercase">
               {slide.eyebrow}
             </p>
-            <h1 className="font-display mt-5 text-5xl leading-[.92] sm:text-6xl lg:text-8xl">
+            <h1 className="font-display mt-5 text-5xl leading-[.92] whitespace-pre-line sm:text-6xl lg:text-8xl">
               {slide.title}
             </h1>
             <p className="mt-7 max-w-xl text-base leading-7 text-[#626262]">
@@ -122,7 +128,7 @@ export function HomeTwoHero() {
           </div>
         ))}
         <div className="absolute inset-x-5 bottom-7 flex items-center justify-between border-t border-[#171717]/15 pt-5 md:inset-x-8 lg:bottom-10 xl:inset-x-14">
-          <div className="flex gap-2" role="tablist" aria-label="Hero slides">
+          <div className="flex items-center gap-3" role="tablist" aria-label="Hero slides">
             {slides.map((slide, index) => (
               <button
                 key={slide.title}
@@ -131,8 +137,11 @@ export function HomeTwoHero() {
                 aria-selected={index === activeSlide}
                 aria-label={`Show slide ${index + 1}: ${slide.eyebrow}`}
                 onClick={() => selectSlide(index)}
-                className={`h-1.5 transition-all ${index === activeSlide ? "w-10 bg-[#ffc60b]" : "w-5 bg-[#171717]/25 hover:bg-[#171717]/50"}`}
-              />
+                className={`flex items-center gap-2 text-[10px] font-bold tracking-[.14em] transition-colors ${index === activeSlide ? "text-[#a87e00]" : "text-[#171717]/45 hover:text-[#171717]"}`}
+              >
+                <span>0{index + 1}</span>
+                <span className={`h-px transition-all ${index === activeSlide ? "w-9 bg-[#ffc60b]" : "w-5 bg-[#171717]/25"}`} />
+              </button>
             ))}
           </div>
           <div className="flex gap-2">
