@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { ArrowRight, ChevronDown, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { primaryNavigation } from "@/config/navigation";
 import { BrandMark } from "./brand-mark";
 
@@ -11,6 +12,8 @@ const headerNavigation = primaryNavigation.filter(
 const desktopNavLabelClass = "desktop-nav-link";
 
 export function Header() {
+  const pathname = usePathname();
+  const isHomeTwo = pathname === "/home-2";
   const [open, setOpen] = useState<string | null>(null);
   const [drawer, setDrawer] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -54,9 +57,9 @@ export function Header() {
     };
   }, [drawer]);
   return (
-    <header className="sticky top-0 z-50 border-b border-[color:var(--border-dark)] bg-[color:var(--background-dark)]">
+    <header className={`sticky top-0 z-50 border-b border-[color:var(--border-dark)] ${isHomeTwo ? "home-two-header bg-[#fafaf7]" : "bg-[color:var(--background-dark)]"}`}>
       <div className="mx-auto flex h-20 max-w-[1440px] items-center px-5 md:px-8 xl:px-14">
-        <BrandMark />
+        <BrandMark tone={isHomeTwo ? "light" : "dark"} />
         <nav
           ref={navRef}
           aria-label="Primary navigation"
@@ -112,7 +115,7 @@ export function Header() {
         </nav>
         <Link
           href="/furniture/factory-visit"
-          className="factory-visit-link hidden min-h-11 items-center gap-2 rounded-[3px] border border-[color:var(--gold)] px-5 text-[10px] leading-none font-medium tracking-[.13em] uppercase transition-[background-color,border-color,color] duration-250 ease-out xl:inline-flex"
+          className={`factory-visit-link hidden min-h-11 items-center gap-2 rounded-[3px] border border-[color:var(--gold)] px-5 text-[10px] leading-none font-medium tracking-[.13em] uppercase transition-[background-color,border-color,color] duration-250 ease-out xl:inline-flex ${isHomeTwo ? "home-two-factory-link" : ""}`}
         >
           Book Factory Visit
           <ArrowRight size={13} strokeWidth={1.5} />

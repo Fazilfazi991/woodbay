@@ -20,6 +20,8 @@
   --surface: #fff;
   --border: #d8d2c6;
   --primary: #24553a;
+  --decor-list-text: #d8d2c7;
+  --furniture-copy: #d6d0c4;
 }
 * {
   box-sizing: border-box;
@@ -64,6 +66,45 @@ a {
 .factory-visit-link:hover {
   background: var(--background-dark);
   color: var(--gold);
+}
+.home-two {
+  --background-dark: #fafaf7;
+  --background-deep: #f2faf3;
+  --surface-dark: #ffffff;
+  --surface-light: #fafaf7;
+  --foreground-light: #171717;
+  --foreground-dark: #171717;
+  --muted: #626262;
+  --muted-dark: #626262;
+  --gold: #04bb21;
+  --gold-hover: #038d1a;
+  --border-dark: #dce7de;
+  --border-gold: rgba(4, 187, 33, 0.24);
+  --background: #fafaf7;
+  --foreground: #171717;
+  --surface: #ffffff;
+  --border: #dce7de;
+  --primary: #04bb21;
+  --decor-list-text: #454b45;
+  --furniture-copy: #525b52;
+}
+.home-two .woodbay-button.home-two-button,
+.home-two-header .factory-visit-link.home-two-factory-link {
+  background: #04bb21;
+  border-color: #04bb21;
+  color: #fff;
+}
+.home-two .woodbay-button.home-two-button:hover,
+.home-two-header .factory-visit-link.home-two-factory-link:hover {
+  background: #028d1a;
+  border-color: #028d1a;
+  color: #fff;
+}
+.home-two-header .desktop-nav-link {
+  color: #303630;
+}
+.home-two-header .desktop-nav-link:hover {
+  color: #04bb21;
 }
 .dealer-locator-select option {
   background: var(--surface-light);
