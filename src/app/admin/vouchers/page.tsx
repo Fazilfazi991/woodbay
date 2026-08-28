@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { getActiveAdmin } from "@/lib/auth/admin";
 import { listVouchers } from "@/features/vouchers/admin";
 import { VoucherDashboard } from "@/features/vouchers/components/voucher-dashboard";

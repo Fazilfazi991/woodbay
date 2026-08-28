@@ -20,6 +20,11 @@ const productSchema = z.object({
   short_description: z.string().trim().max(500).optional(),
   description: z.string().trim().max(5000).optional(),
   product_code: z.string().trim().max(100).optional(),
+  catalogue_page_number: z.string().trim().max(50).optional(),
+  catalogue_source_reference: z.string().trim().max(200).optional(),
+  raw_catalogue_name: z.string().trim().max(200).optional(),
+  raw_catalogue_description: z.string().trim().max(5000).optional(),
+  raw_product_code: z.string().trim().max(200).optional(),
   status: z.enum(statuses),
   sort_order: z.coerce.number().int().min(0).max(100000).default(0),
 });
@@ -52,40 +57,84 @@ function parseProduct(form: FormData) {
   const value = productSchema.parse(Object.fromEntries(form));
   const slug = productSlug(value.slug || value.name);
   if (!slug) throw new Error("Please provide a valid product name or slug.");
+  const {
+    raw_catalogue_name,
+    raw_catalogue_description,
+    raw_product_code,
+    ...displayValue
+  } = value;
   return {
-    ...value,
+    ...displayValue,
     slug,
     short_description: value.short_description || null,
     description: value.description || null,
     product_code: value.product_code || null,
+    catalogue_page_number: value.catalogue_page_number || null,
+    catalogue_source_reference: value.catalogue_source_reference || null,
+    raw_catalogue_data: {
+      product_name: raw_catalogue_name || value.name,
+      catalogue_description: raw_catalogue_description || null,
+      primary_product_code: raw_product_code || value.product_code || null,
+    },
     is_featured: isChecked(form.get("is_featured")),
   };
 }
 
-export async function listAdminProducts(input: Record<string, string | undefined>) {
+export async function listAdminProducts(
+  input: Record<string, string | undefined>,
+) {
   await requireAdmin();
   const q = (input.q ?? "").trim().slice(0, 100);
-  const status = z.enum(["all", ...statuses]).catch("all").parse(input.status ?? "all");
-  const featured = z.enum(["all", "yes", "no"]).catch("all").parse(input.featured ?? "all");
-  const category = z.string().uuid().catch("").parse(input.category ?? "");
+  const status = z
+    .enum(["all", ...statuses])
+    .catch("all")
+    .parse(input.status ?? "all");
+  const featured = z
+    .enum(["all", "yes", "no"])
+    .catch("all")
+    .parse(input.featured ?? "all");
+  const category = z
+    .string()
+    .uuid()
+    .catch("")
+    .parse(input.category ?? "");
   const page = Math.max(1, Number(input.page) || 1);
   let query = createAdminClient()
     .from("products")
-    .select("id,name,slug,status,is_featured,updated_at,category_id,product_categories(name),product_images(storage_key,alt_text,sort_order,is_primary)", { count: "exact" })
+    .select(
+      "id,name,slug,status,is_featured,updated_at,category_id,product_categories(name),product_images(storage_key,alt_text,sort_order,is_primary)",
+      { count: "exact" },
+    )
     .order("updated_at", { ascending: false });
   if (q) query = query.or(`name.ilike.%${q}%,slug.ilike.%${q}%`);
   if (status !== "all") query = query.eq("status", status);
   if (featured === "yes") query = query.eq("is_featured", true);
   if (featured === "no") query = query.eq("is_featured", false);
   if (category) query = query.eq("category_id", category);
-  const { data, error, count } = await query.range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
+  const { data, error, count } = await query.range(
+    (page - 1) * PAGE_SIZE,
+    page * PAGE_SIZE - 1,
+  );
   if (error) throw new Error("Unable to load products.");
-  return { rows: data ?? [], count: count ?? 0, q, status, featured, category, page, pageSize: PAGE_SIZE };
+  return {
+    rows: data ?? [],
+    count: count ?? 0,
+    q,
+    status,
+    featured,
+    category,
+    page,
+    pageSize: PAGE_SIZE,
+  };
 }
 
 export async function listAdminCategories() {
   await requireAdmin();
-  const { data, error } = await createAdminClient().from("product_categories").select("id,name,slug,parent_id,sort_order").eq("is_active", true).order("sort_order");
+  const { data, error } = await createAdminClient()
+    .from("product_categories")
+    .select("id,name,slug,parent_id,sort_order")
+    .eq("is_active", true)
+    .order("sort_order");
   if (error) throw new Error("Unable to load categories.");
   return data ?? [];
 }
@@ -94,7 +143,9 @@ export async function getAdminProduct(productId: string) {
   await requireAdmin();
   const { data, error } = await createAdminClient()
     .from("products")
-    .select("id,name,slug,category_id,short_description,description,product_code,status,is_featured,sort_order,updated_at,product_images(id,storage_key,alt_text,sort_order,is_primary)")
+    .select(
+      "id,name,slug,category_id,short_description,description,product_code,catalogue_page_number,catalogue_source_reference,raw_catalogue_data,status,is_featured,sort_order,updated_at,product_images(id,storage_key,alt_text,sort_order,is_primary)",
+    )
     .eq("id", z.string().uuid().parse(productId))
     .maybeSingle();
   if (error || !data) throw new Error("Product not found.");
@@ -108,10 +159,27 @@ export async function createProduct(form: FormData) {
     value = parseProduct(form);
     await assertCategory(value.category_id);
   } catch (error) {
-    redirect(errorPath("/admin/products/new", error instanceof Error ? error.message : "Please check the form."));
+    redirect(
+      errorPath(
+        "/admin/products/new",
+        error instanceof Error ? error.message : "Please check the form.",
+      ),
+    );
   }
-  const { data, error } = await createAdminClient().from("products").insert(value).select("id").single();
-  if (error || !data) redirect(errorPath("/admin/products/new", error?.code === "23505" ? "That slug is already in use." : "Unable to create the product."));
+  const { data, error } = await createAdminClient()
+    .from("products")
+    .insert(value)
+    .select("id")
+    .single();
+  if (error || !data)
+    redirect(
+      errorPath(
+        "/admin/products/new",
+        error?.code === "23505"
+          ? "That slug is already in use."
+          : "Unable to create the product.",
+      ),
+    );
   revalidatePath("/products");
   redirect(`/admin/products/${data.id}?created=1`);
 }
@@ -119,16 +187,43 @@ export async function createProduct(form: FormData) {
 export async function updateProduct(form: FormData) {
   await requireAdmin();
   const productId = z.string().uuid().safeParse(form.get("id"));
-  if (!productId.success) redirect(errorPath("/admin/products", "Product not found."));
+  if (!productId.success)
+    redirect(errorPath("/admin/products", "Product not found."));
   let value;
   try {
     value = parseProduct(form);
     await assertCategory(value.category_id);
   } catch (error) {
-    redirect(errorPath(`/admin/products/${productId.data}`, error instanceof Error ? error.message : "Please check the form."));
+    redirect(
+      errorPath(
+        `/admin/products/${productId.data}`,
+        error instanceof Error ? error.message : "Please check the form.",
+      ),
+    );
   }
-  const { error } = await createAdminClient().from("products").update(value).eq("id", productId.data);
-  if (error) redirect(errorPath(`/admin/products/${productId.data}`, error.code === "23505" ? "That slug is already in use." : "Unable to save the product."));
+  const client = createAdminClient();
+  const { data: existing } = await client
+    .from("products")
+    .select("raw_catalogue_data")
+    .eq("id", productId.data)
+    .maybeSingle();
+  value.raw_catalogue_data = {
+    ...((existing?.raw_catalogue_data as Record<string, unknown> | null) ?? {}),
+    ...value.raw_catalogue_data,
+  };
+  const { error } = await client
+    .from("products")
+    .update(value)
+    .eq("id", productId.data);
+  if (error)
+    redirect(
+      errorPath(
+        `/admin/products/${productId.data}`,
+        error.code === "23505"
+          ? "That slug is already in use."
+          : "Unable to save the product.",
+      ),
+    );
   revalidatePath("/products");
   revalidatePath(`/admin/products/${productId.data}`);
   revalidatePath("/admin/products");
@@ -138,22 +233,54 @@ export async function updateProduct(form: FormData) {
 export async function uploadProductImages(form: FormData) {
   await requireAdmin();
   const productId = z.string().uuid().parse(form.get("id"));
-  const files = form.getAll("images").filter((value): value is File => value instanceof File && value.size > 0);
-  if (!files.length) redirect(errorPath(`/admin/products/${productId}`, "Choose at least one image."));
-  if (files.length > 8 || !(await Promise.all(files.map(isSafeImageUpload))).every(Boolean)) {
-    redirect(errorPath(`/admin/products/${productId}`, "Use up to 8 JPG, PNG, WebP or AVIF images, each no larger than 10 MB."));
+  const files = form
+    .getAll("images")
+    .filter((value): value is File => value instanceof File && value.size > 0);
+  if (!files.length)
+    redirect(
+      errorPath(`/admin/products/${productId}`, "Choose at least one image."),
+    );
+  if (
+    files.length > 8 ||
+    !(await Promise.all(files.map(isSafeImageUpload))).every(Boolean)
+  ) {
+    redirect(
+      errorPath(
+        `/admin/products/${productId}`,
+        "Use up to 8 JPG, PNG, WebP or AVIF images, each no larger than 10 MB.",
+      ),
+    );
   }
   const existing = await getAdminProduct(productId);
   const storage = getStorageProvider();
   const rows = [];
   for (const [index, file] of files.entries()) {
-    const extension = file.name.split(".").pop()?.replace(/[^a-z0-9]/gi, "").toLowerCase() || "jpg";
+    const extension =
+      file.name
+        .split(".")
+        .pop()
+        ?.replace(/[^a-z0-9]/gi, "")
+        .toLowerCase() || "jpg";
     const key = `products/${productId}/${randomUUID()}.${extension}`;
     await storage.upload({ key, file, contentType: file.type });
-    rows.push({ product_id: productId, storage_key: await storage.getUrl(key), alt_text: existing.name, sort_order: existing.product_images.length + index, is_primary: existing.product_images.length === 0 && index === 0 });
+    rows.push({
+      product_id: productId,
+      storage_key: await storage.getUrl(key),
+      alt_text: existing.name,
+      sort_order: existing.product_images.length + index,
+      is_primary: existing.product_images.length === 0 && index === 0,
+    });
   }
-  const { error } = await createAdminClient().from("product_images").insert(rows);
-  if (error) redirect(errorPath(`/admin/products/${productId}`, "Images uploaded but could not be attached to this product."));
+  const { error } = await createAdminClient()
+    .from("product_images")
+    .insert(rows);
+  if (error)
+    redirect(
+      errorPath(
+        `/admin/products/${productId}`,
+        "Images uploaded but could not be attached to this product.",
+      ),
+    );
   revalidatePath("/products");
   redirect(`/admin/products/${productId}?images=1`);
 }
@@ -162,13 +289,34 @@ export async function removeProductImage(form: FormData) {
   await requireAdmin();
   const imageId = z.string().uuid().parse(form.get("image_id"));
   const productId = z.string().uuid().parse(form.get("product_id"));
-  const { data } = await createAdminClient().from("product_images").select("storage_key").eq("id", imageId).eq("product_id", productId).maybeSingle();
-  if (!data) redirect(errorPath(`/admin/products/${productId}`, "Image not found."));
-  const { error } = await createAdminClient().from("product_images").delete().eq("id", imageId).eq("product_id", productId);
-  if (error) redirect(errorPath(`/admin/products/${productId}`, "Unable to remove image."));
-  const key = getExpectedMediaObjectKey(data.storage_key, "products", productId);
+  const { data } = await createAdminClient()
+    .from("product_images")
+    .select("storage_key")
+    .eq("id", imageId)
+    .eq("product_id", productId)
+    .maybeSingle();
+  if (!data)
+    redirect(errorPath(`/admin/products/${productId}`, "Image not found."));
+  const { error } = await createAdminClient()
+    .from("product_images")
+    .delete()
+    .eq("id", imageId)
+    .eq("product_id", productId);
+  if (error)
+    redirect(
+      errorPath(`/admin/products/${productId}`, "Unable to remove image."),
+    );
+  const key = getExpectedMediaObjectKey(
+    data.storage_key,
+    "products",
+    productId,
+  );
   if (key) {
-    try { await getStorageProvider().delete(key); } catch { /* The catalogue record is already safely removed. */ }
+    try {
+      await getStorageProvider().delete(key);
+    } catch {
+      /* The catalogue record is already safely removed. */
+    }
   }
   revalidatePath("/products");
   redirect(`/admin/products/${productId}?images=1`);
@@ -185,10 +333,24 @@ export async function setPrimaryProductImage(form: FormData) {
     .eq("id", imageId)
     .eq("product_id", productId)
     .maybeSingle();
-  if (!image) redirect(errorPath(`/admin/products/${productId}`, "Image not found."));
-  const { error: clearError } = await client.from("product_images").update({ is_primary: false }).eq("product_id", productId);
-  const { error } = await client.from("product_images").update({ is_primary: true }).eq("id", imageId).eq("product_id", productId);
-  if (clearError || error) redirect(errorPath(`/admin/products/${productId}`, "Unable to select the primary image."));
+  if (!image)
+    redirect(errorPath(`/admin/products/${productId}`, "Image not found."));
+  const { error: clearError } = await client
+    .from("product_images")
+    .update({ is_primary: false })
+    .eq("product_id", productId);
+  const { error } = await client
+    .from("product_images")
+    .update({ is_primary: true })
+    .eq("id", imageId)
+    .eq("product_id", productId);
+  if (clearError || error)
+    redirect(
+      errorPath(
+        `/admin/products/${productId}`,
+        "Unable to select the primary image.",
+      ),
+    );
   revalidatePath("/products");
   redirect(`/admin/products/${productId}?images=1`);
 }

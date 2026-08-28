@@ -3,6 +3,7 @@ export type NavigationItem = {
   href: string;
   children?: readonly { label: string; href: string }[];
 };
+
 export const primaryNavigation: readonly NavigationItem[] = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
@@ -10,10 +11,17 @@ export const primaryNavigation: readonly NavigationItem[] = [
     label: "Products",
     href: "/products",
     children: [
-      { label: "Kitchen Accessories", href: "/products/kitchen-accessories" },
-      { label: "Wardrobe Accessories", href: "/products/wardrobe-accessories" },
-      { label: "Decor Products", href: "/products/decor" },
-      { label: "Smart Products", href: "/products/smart-products" },
+      { label: "All Products", href: "/products" },
+      {
+        label: "Kitchen & Wardrobe Accessories",
+        href: "/products/kitchen-wardrobe-accessories",
+      },
+      {
+        label: "Hardware Fittings & Profiles",
+        href: "/products/hardware-fittings",
+      },
+      { label: "Smart Furniture", href: "/products/smart-furniture" },
+      { label: "Home Decor", href: "/products/home-decor" },
     ],
   },
   { label: "Furniture", href: "/furniture" },
@@ -28,6 +36,7 @@ export const primaryNavigation: readonly NavigationItem[] = [
   },
   { label: "Contact", href: "/contact" },
 ] as const;
+
 export const footerNavigation = {
   products: primaryNavigation[2].children ?? [],
   company: [

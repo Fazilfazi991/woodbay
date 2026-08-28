@@ -17,6 +17,7 @@ export const siteConfig = {
     instagram: null as string | null,
     youtube: null as string | null,
   },
-  // Replace after the official business WhatsApp number is approved.
-  whatsappUrl: null as string | null,
+  // The official number remains centrally configurable and is never duplicated
+  // in product components. Example: https://wa.me/971500000000
+  whatsappUrl: process.env.NEXT_PUBLIC_WHATSAPP_URL ?? null,
 } as const;

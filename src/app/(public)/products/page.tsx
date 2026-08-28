@@ -11,13 +11,10 @@ import {
 } from "@/components/layout/primitives";
 import {
   getFeaturedProducts,
-  getTopLevelCategories,
 } from "@/features/products/data/catalogue";
 import { ProductCard } from "@/features/products/components/catalogue-ui";
-import type {
-  CatalogueCategory,
-  CatalogueProduct,
-} from "@/features/products/types";
+import type { CatalogueProduct } from "@/features/products/types";
+import { productDivisions } from "@/features/products/data/taxonomy";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Products | Woodbay",
@@ -25,20 +22,10 @@ export const metadata: Metadata = {
     "Explore Woodbay kitchen accessories, wardrobe solutions, decor products and smart products.",
 };
 const image = "/images/preview/woodbay-kitchen-preview.png";
-const categoryImages: Record<string, string> = {
-  "kitchen-accessories": "/images/categories/kitchen-accessories.png",
-  "wardrobe-accessories": "/images/categories/wardrobe-accessories.png",
-  decor: "/images/categories/decor-products.png",
-  "smart-products": "/images/categories/smart-products.png",
-};
 export default async function ProductsPage() {
-  let categories: CatalogueCategory[] = [];
   let featured: CatalogueProduct[] = [];
   try {
-    [categories, featured] = await Promise.all([
-      getTopLevelCategories(),
-      getFeaturedProducts(),
-    ]);
+    featured = await getFeaturedProducts(8);
   } catch {
     /* Product pages render a safe catalogue-unavailable state below. */
   }
@@ -67,25 +54,17 @@ export default async function ProductsPage() {
             </Link>
           </div>
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {categories.map((category) => (
+            {productDivisions.map((category) => (
               <ProductCategoryCard
-                key={category.id}
+                key={category.slug}
                 title={category.name}
                 href={`/products/${category.slug}`}
-                image={categoryImages[category.slug] ?? image}
-                description={
-                  category.description ?? "Explore the Woodbay collection."
-                }
+                image={category.image}
+                description={category.description}
                 tone="light"
               />
             ))}
           </div>
-          {categories.length === 0 && (
-            <p className="mt-10 border border-[#d4c9b8] p-6 text-sm text-[color:var(--muted-dark)]">
-              The public catalogue is temporarily unavailable. Please try again
-              shortly.
-            </p>
-          )}
         </Container>
       </Section>
       <Section tone="dark">

@@ -14,3 +14,7 @@ chrome-*/
 cta-*-profile/
 cta-*.png
 navbar-*.png
+qa-*.png
+*-390.png
+.codex-dev.*.log
+supabase/.temp/

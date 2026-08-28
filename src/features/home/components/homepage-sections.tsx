@@ -4,11 +4,9 @@ import {
   ArrowRight,
   Award,
   Check,
-  ChevronRight,
   CirclePlay,
   Cog,
   Handshake,
-  Layers3,
   MapPin,
   Sparkles,
 } from "lucide-react";
@@ -23,6 +21,43 @@ import {
 } from "@/components/layout/primitives";
 import { Button } from "@/components/ui/button";
 import { getPublishedProjectPreviews } from "@/features/projects/data";
+import { productDivisions } from "@/features/products/data/taxonomy";
+import { getFeaturedProducts } from "@/features/products/data/catalogue";
+import { ProductCard } from "@/features/products/components/catalogue-ui";
+import type { CatalogueProduct } from "@/features/products/types";
+
+const featuredDiscovery = [
+  {
+    title: "Smart Kitchen Solutions",
+    href: "/products/kitchen-wardrobe-accessories",
+    description: "Pantry, pullout, corner and sink solutions.",
+    image: "/images/categories/kitchen-accessories.png",
+  },
+  {
+    title: "Wallpapers & Wall Decor",
+    href: "/products/home-decor/wallpaper",
+    description: "Explore Woodbay wallpaper and wall decor collections.",
+    image: "/images/categories/decor-products.png",
+  },
+  {
+    title: "Wardrobe Solutions",
+    href: "/products/kitchen-wardrobe-accessories?subcategory=wardrobe-series",
+    description: "Organisers, racks, hangers and wardrobe lift systems.",
+    image: "/images/categories/wardrobe-accessories.png",
+  },
+  {
+    title: "Hardware & Profiles",
+    href: "/products/hardware-fittings-aluminium-profiles",
+    description: "Hardware fittings and aluminium profile systems.",
+    image: "/images/categories/hardware-fittings.png",
+  },
+  {
+    title: "Smart Furniture",
+    href: "/products/smart-furniture",
+    description: "Genuine connected and adaptable furniture products.",
+    image: "/images/categories/smart-products.png",
+  },
+] as const;
 
 export function HeroSection({
   variant = "default",
@@ -32,7 +67,7 @@ export function HeroSection({
   const light = variant === "light";
   return (
     <section
-      className={`relative isolate min-h-[calc(100svh-5rem)] overflow-hidden ${light ? "bg-[#f2faf3] text-[#171717]" : "bg-[color:var(--background-dark)] text-[color:var(--foreground-light)]"} lg:min-h-[calc(92vh-5rem)]`}
+      className={`relative isolate min-h-[72svh] overflow-hidden ${light ? "bg-[#f2faf3] text-[#171717]" : "bg-[color:var(--background-dark)] text-[color:var(--foreground-light)]"} sm:min-h-[calc(88svh-5rem)] lg:min-h-[calc(92vh-5rem)]`}
     >
       <Image
         src={homepage.assets.hero}
@@ -45,7 +80,7 @@ export function HeroSection({
       <div
         className={`absolute inset-0 -z-10 ${light ? "bg-[linear-gradient(105deg,rgba(250,250,247,.98)_0%,rgba(250,250,247,.91)_49%,rgba(242,250,243,.58)_100%)]" : "bg-[linear-gradient(90deg,rgba(9,10,8,.94)_0%,rgba(9,10,8,.74)_45%,rgba(9,10,8,.18)_100%)]"}`}
       />
-      <Container className="flex min-h-[calc(100svh-5rem)] flex-col justify-center py-16 lg:min-h-[calc(92vh-5rem)] lg:py-24">
+      <Container className="flex min-h-[72svh] flex-col justify-center py-12 sm:min-h-[calc(88svh-5rem)] sm:py-16 lg:min-h-[calc(92vh-5rem)] lg:py-24">
         <div className="max-w-2xl">
           <Eyebrow>{homepage.hero.eyebrow}</Eyebrow>
           <h1 className="font-display mt-5 text-5xl leading-[.92] whitespace-pre-line sm:text-6xl lg:text-8xl">
@@ -124,49 +159,25 @@ export function CategoriesSection() {
             View All Products <ArrowRight size={15} />
           </Link>
         </div>
-        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {homepage.categories.map((category) => (
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:mt-12 sm:gap-4 lg:grid-cols-4">
+          {productDivisions.map((category) => (
             <ProductCategoryCard
-              key={category.title}
-              {...category}
+              key={category.slug}
+              title={category.name}
+              href={`/products/${category.slug}`}
+              description={category.description}
+              image={category.image}
               tone="light"
             />
           ))}
         </div>
-      </Container>
-    </Section>
-  );
-}
-export function FeaturedProductsSection() {
-  return (
-    <Section tone="dark">
-      <Container>
-        <div className="grid gap-12 lg:grid-cols-[.75fr_1.25fr]">
-          <SectionHeader
-            eyebrow="Explore the range"
-            title="Details that work beautifully."
-            description="Every collection is designed to bring clarity, flow and long-term performance to interior spaces."
-          />
-          <div className="grid grid-cols-2 border-t border-l border-[color:var(--border-gold)] sm:grid-cols-4">
-            {homepage.featured.map((item) => (
-              <Link
-                href={item.href}
-                key={item.href}
-                className="group min-h-36 border-r border-b border-[color:var(--border-gold)] p-5 hover:bg-white/[.04]"
-              >
-                <Layers3
-                  size={20}
-                  strokeWidth={1.2}
-                  className="text-[color:var(--gold)]"
-                />
-                <h3 className="mt-8 flex items-end justify-between gap-2 text-sm leading-5 font-medium">
-                  <span>{item.title}</span>
-                  <ChevronRight
-                    size={15}
-                    className="shrink-0 text-[color:var(--gold)] transition-transform group-hover:translate-x-1"
-                  />
-                </h3>
-              </Link>
+        <div className="mt-12 border-t border-[#d7cebf] pt-10">
+          <p className="text-[10px] font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
+            Popular product areas
+          </p>
+          <div className="mt-5 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-5">
+            {featuredDiscovery.map((area) => (
+              <ProductCategoryCard key={area.href} {...area} tone="light" />
             ))}
           </div>
         </div>
@@ -174,9 +185,50 @@ export function FeaturedProductsSection() {
     </Section>
   );
 }
+export async function FeaturedProductsSection() {
+  let products: CatalogueProduct[] = [];
+  try {
+    products = await getFeaturedProducts(8);
+  } catch {
+    /* safe empty state below */
+  }
+  return (
+    <Section tone="dark">
+      <Container>
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <SectionHeader
+            eyebrow="Featured products"
+            title="Browse the Woodbay catalogue."
+            description="A focused selection of catalogue products, ready to explore or enquire about."
+          />
+          <Link
+            href="/products"
+            className="inline-flex items-center gap-2 text-xs font-bold tracking-[.14em] text-[color:var(--gold)] uppercase"
+          >
+            View all products <ArrowRight size={15} />
+          </Link>
+        </div>
+        {products.length > 0 ? (
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:mt-12 sm:gap-4 lg:grid-cols-4">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <p className="mt-8 border border-[color:var(--border-gold)] p-6 text-sm text-[color:var(--muted)]">
+            Featured catalogue products will appear here as they are published.
+          </p>
+        )}
+      </Container>
+    </Section>
+  );
+}
 export function ManufacturingSection({ variant }: { variant?: "home-two" }) {
   return (
-    <Section tone="dark" className={`border-t border-[color:var(--border-dark)] ${variant === "home-two" ? "home-two-manufacturing" : ""}`}>
+    <Section
+      tone="dark"
+      className={`border-t border-[color:var(--border-dark)] ${variant === "home-two" ? "home-two-manufacturing" : ""}`}
+    >
       <Container>
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div>
@@ -262,7 +314,10 @@ export function SmartSection() {
               title="Innovation, quietly integrated."
               description="Thoughtful systems that bring more ease and possibility to modern living."
             />
-            <Link href="/products/smart-products" className="mt-8 inline-block">
+            <Link
+              href="/products/smart-furniture"
+              className="mt-8 inline-block"
+            >
               <Button variant="light">
                 Explore Smart Products <ArrowRight size={15} />
               </Button>
@@ -293,7 +348,11 @@ export function SmartSection() {
     </Section>
   );
 }
-export function DecorAndFurnitureSection({ variant }: { variant?: "home-two" }) {
+export function DecorAndFurnitureSection({
+  variant,
+}: {
+  variant?: "home-two";
+}) {
   return (
     <>
       <Section tone="dark">
@@ -322,7 +381,7 @@ export function DecorAndFurnitureSection({ variant }: { variant?: "home-two" }) 
                   </span>
                 ))}
               </div>
-              <Link href="/products/decor" className="mt-9 inline-block">
+              <Link href="/products/home-decor" className="mt-9 inline-block">
                 <Button variant="secondary">
                   Explore Decor <ArrowRight size={15} />
                 </Button>
@@ -333,13 +392,19 @@ export function DecorAndFurnitureSection({ variant }: { variant?: "home-two" }) 
       </Section>
       <Section tone="light">
         <Container>
-          <div className={`relative overflow-hidden bg-[color:var(--background-deep)] px-6 py-14 text-[color:var(--foreground-light)] sm:px-10 lg:px-16 lg:py-20 ${variant === "home-two" ? "home-two-factory-promise" : ""}`}>
+          <div
+            className={`relative overflow-hidden bg-[color:var(--background-deep)] px-6 py-14 text-[color:var(--foreground-light)] sm:px-10 lg:px-16 lg:py-20 ${variant === "home-two" ? "home-two-factory-promise" : ""}`}
+          >
             <Image
               src={homepage.assets.interiors}
               alt="Custom furniture interior"
               fill
               sizes="100vw"
-              className={variant === "home-two" ? "object-cover opacity-55" : "object-cover opacity-30"}
+              className={
+                variant === "home-two"
+                  ? "object-cover opacity-55"
+                  : "object-cover opacity-30"
+              }
             />
             <div className="relative z-10 max-w-2xl">
               <Eyebrow>Factory Direct Furniture</Eyebrow>

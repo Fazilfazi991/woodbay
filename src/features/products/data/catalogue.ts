@@ -1,17 +1,359 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
-import type { CatalogueCategory, CatalogueParams, CatalogueProduct, ProductDetail } from "../types";
+import type {
+  CatalogueCategory,
+  CatalogueParams,
+  CatalogueProduct,
+  ProductDetail,
+} from "../types";
+import type { ProductDivision } from "./taxonomy";
+import { divisionSlugForCategory, divisionSubcategorySlugs } from "./taxonomy";
 export const PAGE_SIZE = 12;
-export function parseCatalogueParams(input: Record<string, string | string[] | undefined>): CatalogueParams { const rawPage = Array.isArray(input.page) ? input.page[0] : input.page; const sort = Array.isArray(input.sort) ? input.sort[0] : input.sort; return { q: (Array.isArray(input.q) ? input.q[0] : input.q ?? "").trim().slice(0, 100), subcategory: (Array.isArray(input.subcategory) ? input.subcategory[0] : input.subcategory) ?? null, page: Math.max(1, Number.parseInt(rawPage ?? "1", 10) || 1), sort: sort === "name-asc" || sort === "name-desc" ? sort : "default" }; }
-export function primaryImage(product: CatalogueProduct) { return [...product.images].sort((a, b) => Number(b.is_primary) - Number(a.is_primary) || a.sort_order - b.sort_order)[0] ?? null; }
-export function productDetailPath(product: Pick<CatalogueProduct, "slug" | "category">) { return `/products/${product.category?.slug ?? "collection"}/product/${product.slug}`; }
-export function productSpecifications(product: ProductDetail) { const primary = product.variants[0]; const entries = [{ label: "Product Code", value: product.product_code }, { label: "Dimension", value: primary?.dimension }, { label: "Finish", value: primary?.finish }, ...Object.entries(primary?.metadata ?? {}).map(([label, value]) => ({ label: label.replace(/_/g, " ").replace(/\b\w/g, (character) => character.toUpperCase()), value }))]; return entries.filter((entry): entry is { label: string; value: string } => Boolean(entry.value)); }
-export async function getTopLevelCategories() { const supabase = await createClient(); const { data, error } = await supabase.from("product_categories").select("id,name,slug,description,parent_id,sort_order,is_active").is("parent_id", null).eq("is_active", true).order("sort_order"); if (error) throw error; return data as CatalogueCategory[]; }
-export const getCategoryBySlug = cache(async (slug: string) => { const supabase = await createClient(); const { data, error } = await supabase.from("product_categories").select("id,name,slug,description,parent_id,sort_order,is_active").eq("slug", slug).eq("is_active", true).maybeSingle(); if (error) throw error; return data as CatalogueCategory | null; });
-export async function getChildCategories(parentId: string) { const supabase = await createClient(); const { data, error } = await supabase.from("product_categories").select("id,name,slug,description,parent_id,sort_order,is_active").eq("parent_id", parentId).eq("is_active", true).order("sort_order"); if (error) throw error; return data as CatalogueCategory[]; }
-export async function getProducts(category: CatalogueCategory, children: CatalogueCategory[], params: CatalogueParams) { const categoryIds = [category.id, ...children.map((child) => child.id)]; if (params.subcategory) { const match = children.find((child) => child.slug === params.subcategory); if (match) categoryIds.splice(0, categoryIds.length, match.id); }
- const supabase = await createClient(); let query = supabase.from("products").select("id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary)", { count: "exact" }).in("category_id", categoryIds).eq("status", "published"); if (params.q) query = query.or(`name.ilike.%${params.q}%,product_code.ilike.%${params.q}%,short_description.ilike.%${params.q}%`); query = params.sort === "name-desc" ? query.order("name", { ascending: false }) : query.order("name", { ascending: true }); const from = (params.page - 1) * PAGE_SIZE; const { data, error, count } = await query.range(from, from + PAGE_SIZE - 1); if (error) throw error; const products = (data ?? []).map((product) => ({ ...product, category: Array.isArray(product.product_categories) ? product.product_categories[0] ?? null : product.product_categories, images: product.product_images ?? [] })) as CatalogueProduct[]; return { products, count: count ?? 0, pageCount: Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE)) }; }
-export async function getFeaturedProducts(limit = 4) { const supabase = await createClient(); const { data, error } = await supabase.from("products").select("id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary)").eq("status", "published").eq("is_featured", true).order("sort_order").limit(limit); if (error) throw error; return (data ?? []).map((product) => ({ ...product, category: Array.isArray(product.product_categories) ? product.product_categories[0] ?? null : product.product_categories, images: product.product_images ?? [] })) as CatalogueProduct[]; }
-export const getProductBySlug = cache(async (productSlug: string) => { const supabase = await createClient(); const { data, error } = await supabase.from("products").select("id,name,slug,short_description,description,product_code,category_id,created_at,seo_title,seo_description,product_categories(id,name,slug,parent_id,description,sort_order,is_active),product_images(storage_key,alt_text,sort_order,is_primary),product_variants(id,name,sku,dimension,finish,metadata,sort_order)").eq("slug", productSlug).eq("status", "published").maybeSingle(); if (error) throw error; if (!data) return null; const category = Array.isArray(data.product_categories) ? data.product_categories[0] : data.product_categories; const parentCategory = category?.parent_id ? await getCategoryById(category.parent_id) : category; return { ...data, category, parentCategory, images: data.product_images ?? [], variants: (data.product_variants ?? []).sort((a, b) => a.sort_order - b.sort_order), features: Array.isArray((data.product_variants?.[0]?.metadata as Record<string, unknown> | undefined)?.features) ? ((data.product_variants?.[0]?.metadata as { features: string[] }).features) : [] } as ProductDetail; });
-async function getCategoryById(id: string) { const supabase = await createClient(); const { data, error } = await supabase.from("product_categories").select("id,name,slug,description,parent_id,sort_order,is_active").eq("id", id).maybeSingle(); if (error) throw error; return data as CatalogueCategory | null; }
-export async function getRelatedProducts(product: ProductDetail, limit = 4) { const supabase = await createClient(); const select = "id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary)"; const map = (items: unknown[]) => items.map((item) => { const row = item as { product_categories: CatalogueProduct["category"]; product_images: CatalogueProduct["images"] } & CatalogueProduct; return { ...row, category: Array.isArray(row.product_categories) ? row.product_categories[0] ?? null : row.product_categories, images: row.product_images ?? [] }; }) as CatalogueProduct[]; const { data: direct, error } = await supabase.from("products").select(select).eq("category_id", product.category_id).neq("id", product.id).eq("status", "published").order("sort_order").limit(limit); if (error) throw error; if ((direct ?? []).length >= limit || !product.parentCategory || product.parentCategory.id === product.category_id) return map(direct ?? []); const children = await getChildCategories(product.parentCategory.id); const { data: fallback, error: fallbackError } = await supabase.from("products").select(select).in("category_id", [product.parentCategory.id, ...children.map((child) => child.id)]).neq("id", product.id).eq("status", "published").order("sort_order").limit(limit); if (fallbackError) throw fallbackError; return map(fallback ?? []); }
+export function parseCatalogueParams(
+  input: Record<string, string | string[] | undefined>,
+): CatalogueParams {
+  const rawPage = Array.isArray(input.page) ? input.page[0] : input.page;
+  const sort = Array.isArray(input.sort) ? input.sort[0] : input.sort;
+  return {
+    q: (Array.isArray(input.q) ? input.q[0] : (input.q ?? ""))
+      .trim()
+      .slice(0, 100),
+    subcategory:
+      (Array.isArray(input.subcategory)
+        ? input.subcategory[0]
+        : input.subcategory) ?? null,
+    page: Math.max(1, Number.parseInt(rawPage ?? "1", 10) || 1),
+    sort: sort === "name-asc" || sort === "name-desc" ? sort : "default",
+  };
+}
+export function primaryImage(product: CatalogueProduct) {
+  return (
+    [...product.images].sort(
+      (a, b) =>
+        Number(b.is_primary) - Number(a.is_primary) ||
+        a.sort_order - b.sort_order,
+    )[0] ?? null
+  );
+}
+export function productDetailPath(
+  product: Pick<CatalogueProduct, "slug" | "category">,
+) {
+  const subcategory = product.category?.slug ?? "collection";
+  return `/products/${divisionSlugForCategory(subcategory)}/${subcategory}/${product.slug}`;
+}
+export function productSpecifications(product: ProductDetail) {
+  const primary = product.variants[0];
+  const entries = [
+    { label: "Product Code", value: product.product_code },
+    { label: "Dimension", value: primary?.dimension },
+    { label: "Size", value: primary?.size },
+    { label: "Finish", value: primary?.finish },
+    { label: "Colour", value: primary?.colour },
+    { label: "Material", value: primary?.material },
+    { label: "Packing", value: primary?.packing_information },
+    { label: "Catalogue Page", value: product.catalogue_page_number },
+    ...Object.entries(primary?.metadata ?? {}).map(([label, value]) => ({
+      label: label
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, (character) => character.toUpperCase()),
+      value,
+    })),
+  ];
+  return entries.filter((entry): entry is { label: string; value: string } =>
+    Boolean(entry.value),
+  );
+}
+export async function getTopLevelCategories() {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("product_categories")
+    .select("id,name,slug,description,parent_id,sort_order,is_active")
+    .is("parent_id", null)
+    .eq("is_active", true)
+    .order("sort_order");
+  if (error) throw error;
+  return data as CatalogueCategory[];
+}
+export const getCategoryBySlug = cache(async (slug: string) => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("product_categories")
+    .select("id,name,slug,description,parent_id,sort_order,is_active")
+    .eq("slug", slug)
+    .eq("is_active", true)
+    .maybeSingle();
+  if (error) throw error;
+  return data as CatalogueCategory | null;
+});
+export async function getChildCategories(parentId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("product_categories")
+    .select("id,name,slug,description,parent_id,sort_order,is_active")
+    .eq("parent_id", parentId)
+    .eq("is_active", true)
+    .order("sort_order");
+  if (error) throw error;
+  return data as CatalogueCategory[];
+}
+export async function getDivisionCategories(division: ProductDivision) {
+  const supabase = await createClient();
+  const { data: direct, error } = await supabase
+    .from("product_categories")
+    .select("id,name,slug,description,parent_id,sort_order,is_active")
+    .in("slug", [...division.sourceCategorySlugs])
+    .eq("is_active", true)
+    .order("sort_order");
+  if (error) throw error;
+  const roots = (direct ?? []).filter(
+    (category) => !category.parent_id,
+  ) as CatalogueCategory[];
+  const children = roots.length
+    ? await Promise.all(roots.map((root) => getChildCategories(root.id)))
+    : [];
+  const all = [...(direct ?? []), ...children.flat()] as CatalogueCategory[];
+  const unique = new Map(all.map((category) => [category.id, category]));
+  if (division.slug === "smart-furniture")
+    return [...unique.values()].filter(
+      (category) => category.slug === "smart-furniture",
+    );
+  const allowed = new Set(
+    divisionSubcategorySlugs[
+      division.slug as keyof typeof divisionSubcategorySlugs
+    ],
+  );
+  return [...unique.values()].filter((category) =>
+    allowed.has(category.slug as never),
+  );
+}
+export async function getDivisionProducts(
+  division: ProductDivision,
+  categories: CatalogueCategory[],
+  params: CatalogueParams,
+) {
+  let selected = categories;
+  if (params.subcategory) {
+    const match = categories.find(
+      (category) => category.slug === params.subcategory,
+    );
+    if (match) selected = [match];
+  }
+  if (!selected.length)
+    return { products: [] as CatalogueProduct[], count: 0, pageCount: 1 };
+  const supabase = await createClient();
+  let query = supabase
+    .from("products")
+    .select(
+      "id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary)",
+      { count: "exact" },
+    )
+    .in(
+      "category_id",
+      selected.map((category) => category.id),
+    )
+    .eq("status", "published");
+  if (params.q)
+    query = query.or(
+      `name.ilike.%${params.q}%,product_code.ilike.%${params.q}%,short_description.ilike.%${params.q}%`,
+    );
+  query =
+    params.sort === "name-desc"
+      ? query.order("name", { ascending: false })
+      : params.sort === "name-asc"
+        ? query.order("name", { ascending: true })
+        : query.order("sort_order").order("name");
+  const from = (params.page - 1) * PAGE_SIZE;
+  const { data, error, count } = await query.range(from, from + PAGE_SIZE - 1);
+  if (error) throw error;
+  const products = (data ?? []).map((product) => ({
+    ...product,
+    category: Array.isArray(product.product_categories)
+      ? (product.product_categories[0] ?? null)
+      : product.product_categories,
+    images: product.product_images ?? [],
+  })) as CatalogueProduct[];
+  return {
+    products,
+    count: count ?? 0,
+    pageCount: Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE)),
+  };
+}
+export async function getProducts(
+  category: CatalogueCategory,
+  children: CatalogueCategory[],
+  params: CatalogueParams,
+) {
+  const categoryIds = [category.id, ...children.map((child) => child.id)];
+  if (params.subcategory) {
+    const match = children.find((child) => child.slug === params.subcategory);
+    if (match) categoryIds.splice(0, categoryIds.length, match.id);
+  }
+  const supabase = await createClient();
+  let query = supabase
+    .from("products")
+    .select(
+      "id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary)",
+      { count: "exact" },
+    )
+    .in("category_id", categoryIds)
+    .eq("status", "published");
+  if (params.q)
+    query = query.or(
+      `name.ilike.%${params.q}%,product_code.ilike.%${params.q}%,short_description.ilike.%${params.q}%`,
+    );
+  query =
+    params.sort === "name-desc"
+      ? query.order("name", { ascending: false })
+      : query.order("name", { ascending: true });
+  const from = (params.page - 1) * PAGE_SIZE;
+  const { data, error, count } = await query.range(from, from + PAGE_SIZE - 1);
+  if (error) throw error;
+  const products = (data ?? []).map((product) => ({
+    ...product,
+    category: Array.isArray(product.product_categories)
+      ? (product.product_categories[0] ?? null)
+      : product.product_categories,
+    images: product.product_images ?? [],
+  })) as CatalogueProduct[];
+  return {
+    products,
+    count: count ?? 0,
+    pageCount: Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE)),
+  };
+}
+export async function getFeaturedProducts(limit = 4) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("products")
+    .select(
+      "id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary)",
+    )
+    .eq("status", "published")
+    .eq("is_featured", true)
+    .order("sort_order")
+    .limit(limit);
+  if (error) throw error;
+  return (data ?? []).map((product) => ({
+    ...product,
+    category: Array.isArray(product.product_categories)
+      ? (product.product_categories[0] ?? null)
+      : product.product_categories,
+    images: product.product_images ?? [],
+  })) as CatalogueProduct[];
+}
+export const getProductBySlug = cache(async (productSlug: string) => {
+  const supabase = await createClient();
+  let { data, error } = await supabase
+    .from("products")
+    .select(
+      "id,name,slug,short_description,description,product_code,category_id,created_at,seo_title,seo_description,catalogue_page_number,catalogue_source_reference,raw_catalogue_data,whatsapp_enabled,product_categories(id,name,slug,parent_id,description,sort_order,is_active),product_images(storage_key,alt_text,sort_order,is_primary,image_role,raw_catalogue_reference),product_variants(id,name,sku,dimension,size,finish,colour,material,packing_information,raw_catalogue_data,metadata,sort_order)",
+    )
+    .eq("slug", productSlug)
+    .eq("status", "published")
+    .maybeSingle();
+  if (error?.code === "PGRST204" || error?.code === "42703") {
+    const legacy = await supabase
+      .from("products")
+      .select(
+        "id,name,slug,short_description,description,product_code,category_id,created_at,seo_title,seo_description,product_categories(id,name,slug,parent_id,description,sort_order,is_active),product_images(storage_key,alt_text,sort_order,is_primary),product_variants(id,name,sku,dimension,finish,metadata,sort_order)",
+      )
+      .eq("slug", productSlug)
+      .eq("status", "published")
+      .maybeSingle();
+    data = legacy.data as typeof data;
+    error = legacy.error;
+  }
+  if (error) throw error;
+  if (!data) return null;
+  const category = Array.isArray(data.product_categories)
+    ? data.product_categories[0]
+    : data.product_categories;
+  const parentCategory = category?.parent_id
+    ? await getCategoryById(category.parent_id)
+    : category;
+  return {
+    ...data,
+    category,
+    parentCategory,
+    images: data.product_images ?? [],
+    variants: (data.product_variants ?? []).sort(
+      (a, b) => a.sort_order - b.sort_order,
+    ),
+    features: Array.isArray(
+      (
+        data.product_variants?.[0]?.metadata as
+          Record<string, unknown> | undefined
+      )?.features,
+    )
+      ? (data.product_variants?.[0]?.metadata as { features: string[] })
+          .features
+      : [],
+  } as ProductDetail;
+});
+async function getCategoryById(id: string) {
+  const supabase = await createClient();
+  let { data, error } = await supabase
+    .from("product_categories")
+    .select("id,name,slug,description,parent_id,sort_order,is_active")
+    .eq("id", id)
+    .maybeSingle();
+  if (error?.code === "PGRST204" || error?.code === "42703") {
+    const legacy = await supabase
+      .from("product_categories")
+      .select("id,name,slug,description,parent_id,sort_order,is_active")
+      .eq("id", id)
+      .maybeSingle();
+    data = legacy.data as typeof data;
+    error = legacy.error;
+  }
+  if (error) throw error;
+  return data as CatalogueCategory | null;
+}
+export async function getRelatedProducts(product: ProductDetail, limit = 4) {
+  const supabase = await createClient();
+  const select =
+    "id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary)";
+  const map = (items: unknown[]) =>
+    items.map((item) => {
+      const row = item as {
+        product_categories: CatalogueProduct["category"];
+        product_images: CatalogueProduct["images"];
+      } & CatalogueProduct;
+      return {
+        ...row,
+        category: Array.isArray(row.product_categories)
+          ? (row.product_categories[0] ?? null)
+          : row.product_categories,
+        images: row.product_images ?? [],
+      };
+    }) as CatalogueProduct[];
+  const { data: direct, error } = await supabase
+    .from("products")
+    .select(select)
+    .eq("category_id", product.category_id)
+    .neq("id", product.id)
+    .eq("status", "published")
+    .order("sort_order")
+    .limit(limit);
+  if (error) throw error;
+  if (
+    (direct ?? []).length >= limit ||
+    !product.parentCategory ||
+    product.parentCategory.id === product.category_id
+  )
+    return map(direct ?? []);
+  const children = await getChildCategories(product.parentCategory.id);
+  const { data: fallback, error: fallbackError } = await supabase
+    .from("products")
+    .select(select)
+    .in("category_id", [
+      product.parentCategory.id,
+      ...children.map((child) => child.id),
+    ])
+    .neq("id", product.id)
+    .eq("status", "published")
+    .order("sort_order")
+    .limit(limit);
+  if (fallbackError) throw fallbackError;
+  return map(fallback ?? []);
+}

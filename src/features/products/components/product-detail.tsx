@@ -6,11 +6,11 @@ import {
   ChevronRight,
   MapPin,
   MessageCircle,
-  ShieldCheck,
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import type { ProductDetail, ProductVariant } from "../types";
+import { isWhatsAppEnquiry, productEnquiryHref } from "../data/enquiry";
 
 export function ProductGallery({ product }: { product: ProductDetail }) {
   const [index, setIndex] = useState(0);
@@ -151,28 +151,21 @@ export function ProductVariants({ variants }: { variants: ProductVariant[] }) {
 }
 
 export function ProductActions({ product }: { product: ProductDetail }) {
+  const whatsapp = isWhatsAppEnquiry();
   return (
     <section className="border-y border-[color:var(--border-gold)] py-6">
       <p className="text-xs font-bold tracking-[.14em] text-[color:var(--gold)] uppercase">
         Interested in this product?
       </p>
       <div className="mt-4 grid gap-3 sm:flex sm:flex-row">
-        <Link
-          href={`/contact?product=${product.slug}`}
-          className="max-sm:block"
-        >
+        <a href={productEnquiryHref(product)} target={whatsapp ? "_blank" : undefined} rel={whatsapp ? "noreferrer" : undefined} className="max-sm:block">
           <Button className="max-sm:w-full">
-            <MessageCircle size={16} /> Enquire now
+            <MessageCircle size={16} /> {whatsapp ? "WhatsApp enquiry" : "Enquire now"}
           </Button>
-        </Link>
+        </a>
         <Link href="/dealers" className="max-sm:block">
           <Button variant="secondary" className="max-sm:w-full">
             <MapPin size={16} /> Find a dealer
-          </Button>
-        </Link>
-        <Link href="/redeem" className="max-sm:block">
-          <Button variant="secondary" className="max-sm:w-full">
-            <ShieldCheck size={16} /> Verify voucher
           </Button>
         </Link>
       </div>
