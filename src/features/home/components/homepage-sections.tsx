@@ -5,7 +5,6 @@ import {
   Award,
   Check,
   CirclePlay,
-  Cog,
   Handshake,
   MapPin,
   Sparkles,
@@ -22,42 +21,57 @@ import {
 import { Button } from "@/components/ui/button";
 import { getPublishedProjectPreviews } from "@/features/projects/data";
 import { productDivisions } from "@/features/products/data/taxonomy";
-import { getFeaturedProducts } from "@/features/products/data/catalogue";
+import { getHomepageCatalogueProducts } from "@/features/products/data/catalogue";
 import { ProductCard } from "@/features/products/components/catalogue-ui";
 import type { CatalogueProduct } from "@/features/products/types";
 
-const featuredDiscovery = [
+const solutionLinks = [
   {
-    title: "Smart Kitchen Solutions",
-    href: "/products/kitchen-wardrobe-accessories",
-    description: "Pantry, pullout, corner and sink solutions.",
-    image: "/images/products/glass-pantry-with-bidding.webp",
+    title: "Pantry Systems",
+    href: "/products/kitchen-wardrobe-accessories?subcategory=pantry-solutions",
   },
   {
-    title: "Wallpapers & Wall Decor",
-    href: "/products/home-decor/wallpaper",
-    description: "Explore Woodbay wallpaper and wall decor collections.",
-    image: "/images/products/wallpaper.webp",
+    title: "Pull-Out Systems",
+    href: "/products/kitchen-wardrobe-accessories?subcategory=pullout-solutions",
   },
   {
-    title: "Wardrobe Solutions",
+    title: "Wardrobe Accessories",
     href: "/products/kitchen-wardrobe-accessories?subcategory=wardrobe-series",
-    description: "Organisers, racks, hangers and wardrobe lift systems.",
-    image: "/images/products/wardrobe-lifter.webp",
   },
   {
-    title: "Hardware & Profiles",
-    href: "/products/hardware-fittings-aluminium-profiles",
-    description: "Hardware fittings and aluminium profile systems.",
-    image: "/images/products/five-hole-ss-3d-hydraulic-hinge-premium.webp",
+    title: "Hinges & Fittings",
+    href: "/products/hardware-fittings?subcategory=cabinet-hinges",
   },
   {
-    title: "Smart Furniture",
-    href: "/products/smart-furniture",
-    description: "Genuine connected and adaptable furniture products.",
-    image: "/images/products/smart-wifi-side-table.webp",
+    title: "Aluminium Profiles",
+    href: "/products/hardware-fittings?subcategory=aluminium-profiles",
+  },
+  { title: "Wallpaper", href: "/products/home-decor?subcategory=wallpaper" },
+  { title: "Smart Furniture", href: "/products/smart-furniture" },
+  {
+    title: "Waterfall Sinks",
+    href: "/products/kitchen-wardrobe-accessories?subcategory=smart-kitchen-waterfall-sinks",
   },
 ] as const;
+
+const divisionPresentation = {
+  "kitchen-wardrobe-accessories": {
+    title: "Smart Kitchen & Wardrobe Solutions",
+    image: "/images/products/satin-pantry.webp",
+  },
+  "hardware-fittings": {
+    title: "Hardware Fittings & Aluminium Profiles",
+    image: "/images/products/full-ss-3d-304-hydraulic-hinge.webp",
+  },
+  "smart-furniture": {
+    title: "Smart Furniture",
+    image: "/images/products/extendable-study-table-box-desk.webp",
+  },
+  "home-decor": {
+    title: "Home Decor",
+    image: "/images/products/pu-stone-panels.webp",
+  },
+} as const;
 
 export function HeroSection({
   variant = "default",
@@ -160,27 +174,46 @@ export function CategoriesSection() {
           </Link>
         </div>
         <div className="mt-8 grid grid-cols-2 gap-3 sm:mt-12 sm:gap-4 lg:grid-cols-4">
-          {productDivisions.map((category) => (
-            <ProductCategoryCard
-              key={category.slug}
-              title={category.name}
-              href={`/products/${category.slug}`}
-              description={category.description}
-              image={category.image}
-              tone="light"
-            />
-          ))}
+          {productDivisions.map((category) => {
+            const presentation =
+              divisionPresentation[
+                category.slug as keyof typeof divisionPresentation
+              ];
+            return (
+              <ProductCategoryCard
+                key={category.slug}
+                title={presentation.title}
+                href={`/products/${category.slug}`}
+                description={category.description}
+                image={presentation.image}
+                tone="light"
+              />
+            );
+          })}
         </div>
-        <div className="mt-12 border-t border-[#d7cebf] pt-10">
+        <nav
+          aria-label="Explore products by solution"
+          className="mt-12 border-t border-[#d7cebf] pt-8"
+        >
           <p className="text-[10px] font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
-            Popular product areas
+            Explore by solution
           </p>
-          <div className="mt-5 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-5">
-            {featuredDiscovery.map((area) => (
-              <ProductCategoryCard key={area.href} {...area} tone="light" />
+          <div className="category-chips-scroll -mx-5 mt-5 flex gap-2 overflow-x-auto px-5 pb-2 md:mx-0 md:flex-wrap md:px-0">
+            {solutionLinks.map((area) => (
+              <Link
+                key={area.href}
+                href={area.href}
+                className="group inline-flex min-h-11 shrink-0 items-center gap-3 border border-[#cfc5b4] bg-transparent px-4 text-xs font-semibold transition-colors hover:border-[color:var(--gold)] hover:bg-[color:var(--surface-elevated)]"
+              >
+                {area.title}
+                <ArrowRight
+                  size={14}
+                  className="text-[color:var(--gold)] transition-transform group-hover:translate-x-1"
+                />
+              </Link>
             ))}
           </div>
-        </div>
+        </nav>
       </Container>
     </Section>
   );
@@ -188,7 +221,7 @@ export function CategoriesSection() {
 export async function FeaturedProductsSection() {
   let products: CatalogueProduct[] = [];
   try {
-    products = await getFeaturedProducts(8);
+    products = await getHomepageCatalogueProducts();
   } catch {
     /* safe empty state below */
   }
@@ -243,8 +276,13 @@ export function ManufacturingSection({ variant }: { variant?: "home-two" }) {
               control, precision engineering and dependable distribution—so
               every detail arrives ready for the space it is made for.
             </p>
-            <div className="mt-8 grid grid-cols-2 gap-x-7 gap-y-1 sm:grid-cols-3">
-              {homepage.capabilityLabels.map((label) => (
+            <div className="mt-8 grid grid-cols-2 gap-x-7 gap-y-1">
+              {[
+                "Manufacturing Quality",
+                "Reliable Supply",
+                "Product Innovation",
+                "Dealer Network",
+              ].map((label) => (
                 <div
                   className="border-t border-[color:var(--border-gold)] py-4"
                   key={label}
@@ -274,36 +312,37 @@ export function ManufacturingSection({ variant }: { variant?: "home-two" }) {
                 </span>
               </div>
             </div>
-            <div className="mt-3 grid grid-cols-3 gap-3 text-[10px] font-bold tracking-[.1em] text-[color:var(--muted)] uppercase sm:grid-cols-6">
+            <div className="mt-3 grid grid-cols-2 gap-3 text-[10px] font-bold tracking-[.1em] text-[color:var(--muted)] uppercase sm:grid-cols-4">
               {[
-                "Advanced Machinery",
                 "Precision Production",
                 "Quality Inspection",
                 "Packaging",
                 "Distribution",
-                "Support",
               ].map((item) => (
                 <span key={item}>{item}</span>
               ))}
             </div>
           </div>
         </div>
-        <div className="mt-16 grid gap-0 border-y border-[color:var(--border-gold)] sm:grid-cols-5">
-          {homepage.manufacturingFeatures.map((item) => (
-            <div
-              className="flex min-h-20 items-center gap-3 border-b border-[color:var(--border-gold)] px-4 text-xs font-bold tracking-[.1em] uppercase last:border-0 sm:border-r sm:border-b-0 sm:last:border-r-0"
-              key={item}
-            >
-              <Check size={15} className="text-[color:var(--gold)]" />
-              {item}
-            </div>
-          ))}
-        </div>
       </Container>
     </Section>
   );
 }
 export function SmartSection() {
+  const smartFeatures = [
+    {
+      title: "Smart Furniture",
+      text: "Connected comfort designed to sit naturally within contemporary rooms.",
+      image: "/images/products/smart-wifi-side-table.webp",
+      href: "/products/smart-furniture",
+    },
+    {
+      title: "Smart Waterfall Sinks",
+      text: "A focused kitchen system combining preparation, rinsing and considered utility.",
+      image: "/images/products/waterfall-sink.webp",
+      href: "/products/kitchen-wardrobe-accessories?subcategory=smart-kitchen-waterfall-sinks",
+    },
+  ] as const;
   return (
     <Section tone="light">
       <Container>
@@ -324,23 +363,36 @@ export function SmartSection() {
             </Link>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            {homepage.smart.map((item) => (
-              <article
+            {smartFeatures.map((item) => (
+              <Link
                 key={item.title}
-                className="border border-[#d7cebf] bg-white p-7"
+                href={item.href}
+                className="group overflow-hidden border border-[#d7cebf] bg-white"
               >
-                <Cog
-                  size={25}
-                  strokeWidth={1.15}
-                  className="text-[color:var(--gold)]"
-                />
-                <h3 className="font-display mt-14 text-4xl leading-none">
-                  {item.title}
-                </h3>
-                <p className="mt-4 text-sm leading-7 text-[color:var(--muted-dark)]">
-                  {item.text}
-                </p>
-              </article>
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <Image
+                    src={item.image}
+                    alt={`${item.title} by Woodbay`}
+                    fill
+                    sizes="(max-width: 640px) 100vw, 35vw"
+                    className="object-cover transition duration-500 group-hover:scale-[1.025]"
+                  />
+                </div>
+                <div className="p-6">
+                  <div className="flex items-start justify-between gap-4">
+                    <h3 className="font-display text-3xl leading-none">
+                      {item.title}
+                    </h3>
+                    <ArrowRight
+                      size={18}
+                      className="shrink-0 text-[color:var(--gold)] transition-transform group-hover:translate-x-1"
+                    />
+                  </div>
+                  <p className="mt-4 text-sm leading-7 text-[color:var(--muted-dark)]">
+                    {item.text}
+                  </p>
+                </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -396,7 +448,7 @@ export function DecorAndFurnitureSection({
             className={`relative overflow-hidden bg-[color:var(--background-deep)] px-6 py-14 text-[color:var(--foreground-light)] sm:px-10 lg:px-16 lg:py-20 ${variant === "home-two" ? "home-two-factory-promise" : ""}`}
           >
             <Image
-              src={homepage.assets.interiors}
+              src="/images/home-2/hero-interiors.png"
               alt="Custom furniture interior"
               fill
               sizes="100vw"
@@ -425,17 +477,6 @@ export function DecorAndFurnitureSection({
                 </Link>
                 <Link href="/furniture/factory-visit">
                   <Button variant="secondary">Book Factory Visit</Button>
-                </Link>
-              </div>
-              <div className="mt-10 border-t border-[color:var(--border-gold)] pt-5">
-                <p className="text-xs tracking-[.12em] text-[color:var(--gold)] uppercase">
-                  Interested in opening a Woodbay Furniture outlet?
-                </p>
-                <Link
-                  href="/furniture/outlets"
-                  className="mt-3 inline-flex items-center gap-2 text-xs font-bold tracking-[.14em] uppercase"
-                >
-                  Become a Furniture Outlet <ArrowRight size={15} />
                 </Link>
               </div>
             </div>
@@ -483,8 +524,8 @@ export async function ProjectsSection() {
             New Woodbay project highlights will appear here soon.
           </p>
         ) : (
-          <div className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-5">
-            {projects.map((project) => {
+          <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {projects.slice(0, 4).map((project) => {
               const image = project.featured_image;
               const canPreview =
                 image && (image.startsWith("http") || image.startsWith("/"));
@@ -500,7 +541,7 @@ export async function ProjectsSection() {
                       src={image}
                       alt={project.title}
                       fill
-                      sizes="(max-width: 768px) 50vw, 20vw"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                       className="object-cover transition duration-500 group-hover:scale-[1.03]"
                     />
                   ) : (
@@ -514,7 +555,9 @@ export async function ProjectsSection() {
                     <p className="mb-2 text-[10px] font-bold tracking-[.14em] text-[color:var(--gold)] uppercase">
                       {project.category}
                     </p>
-                    <h3 className="font-display text-3xl text-white">{project.title}</h3>
+                    <h3 className="font-display text-3xl text-white">
+                      {project.title}
+                    </h3>
                   </div>
                 </Link>
               );

@@ -242,6 +242,42 @@ export async function getFeaturedProducts(limit = 4) {
     images: product.product_images ?? [],
   })) as CatalogueProduct[];
 }
+
+export async function getHomepageCatalogueProducts() {
+  const slugs = [
+    "glass-pantry",
+    "tandem-box-system",
+    "wardrobe-lift",
+    "wallpaper",
+    "soft-close-hinge",
+    "bottle-pullout",
+    "corner-basket",
+    "wardrobe-trouser-rack",
+  ];
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("products")
+    .select(
+      "id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary)",
+    )
+    .eq("status", "published")
+    .in("slug", slugs);
+  if (error) throw error;
+  const order = new Map(slugs.map((slug, index) => [slug, index]));
+  return (data ?? [])
+    .map((product) => ({
+      ...product,
+      category: Array.isArray(product.product_categories)
+        ? (product.product_categories[0] ?? null)
+        : product.product_categories,
+      images: product.product_images ?? [],
+    }))
+    .sort(
+      (a, b) =>
+        (order.get(a.slug) ?? Number.MAX_SAFE_INTEGER) -
+        (order.get(b.slug) ?? Number.MAX_SAFE_INTEGER),
+    ) as CatalogueProduct[];
+}
 export const getProductBySlug = cache(async (productSlug: string) => {
   const supabase = await createClient();
   let { data, error } = await supabase
