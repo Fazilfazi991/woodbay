@@ -29,10 +29,15 @@ export function ProductCard({ product }: { product: CatalogueProduct }) {
             className="object-cover transition duration-500 group-hover:scale-[1.025]"
           />
         ) : (
-          <div className="grid h-full place-items-center">
-            <span className="font-display text-lg tracking-[.12em] text-[color:var(--gold)] sm:text-3xl">
-              WOODBAY
-            </span>
+          <div className="grid h-full place-items-center px-4 text-center">
+            <div>
+              <span className="block text-[10px] font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
+                Product imagery
+              </span>
+              <span className="font-display mt-2 block text-xl text-[color:var(--muted-dark)] sm:text-2xl">
+                Image coming soon
+              </span>
+            </div>
           </div>
         )}
       </Link>
@@ -94,7 +99,7 @@ export function CatalogueControls({
   return (
     <form
       action={path}
-      className="grid gap-3 border-y border-[color:var(--border-dark)] py-5 md:grid-cols-[1fr_auto_auto]"
+      className="grid gap-2.5 border-y border-[color:var(--border-dark)] py-4 md:grid-cols-[1fr_auto_auto]"
     >
       <label className="relative">
         <span className="sr-only">Search products</span>
@@ -144,14 +149,12 @@ export function CatalogueControls({
 }
 export function EmptyProducts({ path }: { path: string }) {
   return (
-    <div className="border border-[color:var(--border-gold)] bg-[color:var(--surface-dark)] px-6 py-14 text-center">
-      <p className="font-display text-4xl">
-        No products found in this selection.
+    <div className="border border-[color:var(--border-gold)] bg-[color:var(--surface-dark)] px-5 py-8 text-center sm:px-6 sm:py-10">
+      <p className="font-display text-3xl">No products here yet</p>
+      <p className="mt-3 text-sm text-[color:var(--muted)]">
+        Try another category or browse the full catalogue.
       </p>
-      <p className="mt-4 text-sm text-[color:var(--muted)]">
-        Try another category or clear your search.
-      </p>
-      <Link href={path} className="mt-7 inline-block">
+      <Link href={path} className="mt-5 inline-block">
         <Button>Browse all products</Button>
       </Link>
     </div>

@@ -16,10 +16,15 @@ export function ProductGallery({ product }: { product: ProductDetail }) {
   const image = images[index];
   if (!image)
     return (
-      <div className="grid aspect-square place-items-center border border-[color:var(--border-dark)] bg-[radial-gradient(circle_at_50%_20%,#48483f,transparent_68%),#252620]">
-        <span className="font-display text-4xl tracking-[.14em] text-[color:var(--gold)]">
-          WOODBAY
-        </span>
+      <div className="grid aspect-square place-items-center border border-[color:var(--border-dark)] bg-[color:var(--surface-dark)] px-6 text-center">
+        <div>
+          <span className="block text-[10px] font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
+            Product imagery
+          </span>
+          <span className="font-display mt-3 block text-3xl text-[color:var(--muted)]">
+            Image coming soon
+          </span>
+        </div>
       </div>
     );
   return (

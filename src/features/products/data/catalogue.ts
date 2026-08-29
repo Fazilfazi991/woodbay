@@ -123,9 +123,21 @@ export async function getDivisionCategories(division: ProductDivision) {
       division.slug as keyof typeof divisionSubcategorySlugs
     ],
   );
-  return [...unique.values()].filter((category) =>
+  const eligible = [...unique.values()].filter((category) =>
     allowed.has(category.slug as never),
   );
+  if (!eligible.length) return [];
+  const { data: populated, error: populatedError } = await supabase
+    .from("products")
+    .select("category_id")
+    .in(
+      "category_id",
+      eligible.map((category) => category.id),
+    )
+    .eq("status", "published");
+  if (populatedError) throw populatedError;
+  const populatedIds = new Set((populated ?? []).map((row) => row.category_id));
+  return eligible.filter((category) => populatedIds.has(category.id));
 }
 export async function getDivisionProducts(
   division: ProductDivision,

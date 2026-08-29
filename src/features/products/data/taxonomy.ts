@@ -58,6 +58,7 @@ export const divisionSubcategorySlugs = {
     "wardrobe-series",
     "wardrobe-lifters",
     "trouser-racks",
+    "shoe-racks",
     "smart-kitchen-waterfall-sinks",
   ],
   "hardware-fittings": [

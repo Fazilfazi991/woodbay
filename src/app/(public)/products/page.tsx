@@ -46,7 +46,7 @@ export default async function ProductsPage() {
             />
             <Link
               href="#catalogue-search"
-              className="inline-flex items-center gap-2 text-xs font-bold tracking-[.12em] uppercase"
+              className="inline-flex min-h-11 w-fit items-center gap-2 border border-[color:var(--foreground-dark)] px-4 text-xs font-bold tracking-[.12em] uppercase transition-colors hover:border-[color:var(--gold)] hover:text-[color:var(--gold)]"
             >
               Search catalogue <ArrowRight size={15} />
             </Link>
