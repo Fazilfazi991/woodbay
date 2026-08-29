@@ -42,6 +42,53 @@ export function productDetailPath(
   const subcategory = product.category?.slug ?? "collection";
   return `/products/${divisionSlugForCategory(subcategory)}/${subcategory}/${product.slug}`;
 }
+
+export type ProductSpecificationEntry = {
+  label: string;
+  value: string | string[];
+};
+
+function specificationValue(value: unknown): string | string[] | null {
+  if (Array.isArray(value)) {
+    const items = value
+      .flatMap((item) => (Array.isArray(item) ? item : [item]))
+      .filter(
+        (item): item is string | number | boolean =>
+          typeof item === "string" ||
+          typeof item === "number" ||
+          typeof item === "boolean",
+      )
+      .map((item) => String(item).trim())
+      .filter(Boolean);
+    return items.length ? items : null;
+  }
+
+  if (typeof value === "string") {
+    const clean = value.trim();
+    if (!clean) return null;
+
+    if (clean.startsWith("[") && clean.endsWith("]")) {
+      try {
+        return specificationValue(JSON.parse(clean));
+      } catch {
+        // Keep malformed legacy text readable instead of failing the page.
+      }
+    }
+
+    const lines = clean
+      .split(/\r?\n|\\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+    return lines.length > 1 ? lines : clean;
+  }
+
+  if (typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+
+  return null;
+}
+
 export function productSpecifications(product: ProductDetail) {
   const primary = product.variants[0];
   const entries = [
@@ -57,12 +104,14 @@ export function productSpecifications(product: ProductDetail) {
       label: label
         .replace(/_/g, " ")
         .replace(/\b\w/g, (character) => character.toUpperCase()),
-      value,
+      value: specificationValue(value),
     })),
   ];
-  return entries.filter((entry): entry is { label: string; value: string } =>
-    Boolean(entry.value),
-  );
+  return entries
+    .map((entry) => ({ ...entry, value: specificationValue(entry.value) }))
+    .filter(
+      (entry): entry is ProductSpecificationEntry => entry.value !== null,
+    );
 }
 export async function getTopLevelCategories() {
   const supabase = await createClient();

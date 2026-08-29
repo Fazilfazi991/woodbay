@@ -43,7 +43,7 @@ export type ProductVariant = {
   material?: string | null;
   packing_information?: string | null;
   raw_catalogue_data?: Record<string, unknown>;
-  metadata: Record<string, string>;
+  metadata: Record<string, unknown>;
   sort_order: number;
 };
 export type ProductDetail = Omit<CatalogueProduct, "category"> & {

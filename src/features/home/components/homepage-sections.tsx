@@ -620,15 +620,29 @@ export function DealerAndCatalogueSection() {
                 join our growing dealer network.
               </p>
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
-              <Link href="/dealers">
-                <Button variant="light">
+            <div className="grid grid-cols-2 gap-2.5 lg:justify-self-end">
+              <Link href="/dealers" className="min-w-0">
+                <Button
+                  variant="gold"
+                  className="h-14 w-full gap-1.5 px-1.5 py-0 text-[9px] tracking-[.02em] whitespace-nowrap min-[360px]:px-2 min-[430px]:text-[10px]"
+                >
                   <MapPin size={15} />
-                  Find a Dealer
+                  <span className="min-[360px]:hidden">Find Dealer</span>
+                  <span className="hidden min-[360px]:inline">
+                    Find a Dealer
+                  </span>
                 </Button>
               </Link>
-              <Link href="/dealers/become-a-dealer">
-                <Button variant="light">Become a Dealer</Button>
+              <Link href="/dealers/become-a-dealer" className="min-w-0">
+                <Button
+                  variant="light"
+                  className="h-14 w-full px-1.5 py-0 text-[9px] tracking-[.02em] whitespace-nowrap min-[360px]:px-2 min-[430px]:text-[10px]"
+                >
+                  <span className="min-[360px]:hidden">Become Dealer</span>
+                  <span className="hidden min-[360px]:inline">
+                    Become a Dealer
+                  </span>
+                </Button>
               </Link>
             </div>
           </div>

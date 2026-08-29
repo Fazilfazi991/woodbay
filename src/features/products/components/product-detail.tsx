@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import type { ProductDetail, ProductVariant } from "../types";
 import { productEnquiryHref } from "../data/enquiry";
 import { localProductImage } from "../data/local-images";
+import type { ProductSpecificationEntry } from "../data/catalogue";
 
 export function ProductGallery({ product }: { product: ProductDetail }) {
   const [index, setIndex] = useState(0);
@@ -87,7 +88,7 @@ export function ProductGallery({ product }: { product: ProductDetail }) {
 export function ProductSpecifications({
   entries,
 }: {
-  entries: { label: string; value: string }[];
+  entries: ProductSpecificationEntry[];
 }) {
   if (!entries.length) return null;
   return (
@@ -107,7 +108,23 @@ export function ProductSpecifications({
             <dt className="font-bold tracking-[.1em] text-[color:var(--gold)] uppercase">
               {entry.label}
             </dt>
-            <dd>{entry.value}</dd>
+            <dd>
+              {Array.isArray(entry.value) ? (
+                <ul className="grid gap-2" aria-label={entry.label}>
+                  {entry.value.map((item) => (
+                    <li key={item} className="flex gap-2.5 leading-6">
+                      <span
+                        aria-hidden="true"
+                        className="mt-[.6rem] size-1 shrink-0 rounded-full bg-[color:var(--gold)]"
+                      />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                entry.value
+              )}
+            </dd>
           </div>
         ))}
       </dl>
