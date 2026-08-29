@@ -121,17 +121,23 @@ export function HeroSection({
           >
             {homepage.hero.description}
           </p>
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <Link href="/products">
+          <div className="mt-8 grid w-full gap-2.5 sm:mt-9 sm:flex sm:flex-row sm:gap-3">
+            <Link href="/products" className="block sm:inline-block">
               <Button
                 variant={light ? "primary" : "gold"}
-                className={light ? "home-two-button" : ""}
+                className={`h-13 w-full !px-5 py-0 !text-[13px] !tracking-[.08em] sm:h-auto sm:w-auto sm:!px-6 sm:py-3 sm:!text-[11px] sm:!tracking-[.14em] ${light ? "home-two-button" : ""}`}
               >
                 Explore Products <ArrowRight size={15} />
               </Button>
             </Link>
-            <Link href="/furniture/factory-visit">
-              <Button variant={light ? "light" : "secondary"}>
+            <Link
+              href="/furniture/factory-visit"
+              className="block sm:inline-block"
+            >
+              <Button
+                variant={light ? "light" : "secondary"}
+                className="h-13 w-full !px-5 py-0 !text-[13px] !tracking-[.08em] sm:h-auto sm:w-auto sm:!px-6 sm:py-3 sm:!text-[11px] sm:!tracking-[.14em]"
+              >
                 Book Factory Visit
               </Button>
             </Link>
@@ -607,12 +613,12 @@ export async function ProjectsSection() {
 export function DealerAndCatalogueSection() {
   return (
     <>
-      <Section tone="light">
+      <Section tone="light" className="!py-8 sm:!py-16 md:!py-20 lg:!py-28">
         <Container>
-          <div className="grid gap-10 border-y border-[#cfc5b4] py-12 lg:grid-cols-[1.2fr_.8fr] lg:items-center">
+          <div className="grid gap-7 border-y border-[#cfc5b4] py-8 sm:gap-10 sm:py-12 lg:grid-cols-[1.2fr_.8fr] lg:items-center">
             <div>
               <Eyebrow>Woodbay Dealer Network</Eyebrow>
-              <h2 className="font-display mt-4 text-5xl leading-none">
+              <h2 className="font-display mt-4 text-[2.6rem] leading-none sm:text-5xl">
                 Find Woodbay Near You
               </h2>
               <p className="mt-5 max-w-xl text-sm leading-7 text-[color:var(--muted-dark)]">
@@ -620,28 +626,26 @@ export function DealerAndCatalogueSection() {
                 join our growing dealer network.
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-2.5 lg:justify-self-end">
+            <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-[auto_auto] lg:justify-self-end">
               <Link href="/dealers" className="min-w-0">
                 <Button
                   variant="gold"
-                  className="h-14 w-full gap-1.5 px-1.5 py-0 text-[9px] tracking-[.02em] whitespace-nowrap min-[360px]:px-2 min-[430px]:text-[10px]"
+                  aria-label="Find a dealer"
+                  className="h-13 w-full !gap-1.5 !px-2 py-0 !text-[10px] !tracking-[.04em] whitespace-nowrap min-[360px]:!text-[12px] min-[390px]:!text-[13px] sm:h-14 sm:!gap-2 sm:!px-6 sm:!text-[11px] sm:!tracking-[.14em]"
                 >
-                  <MapPin size={15} />
-                  <span className="min-[360px]:hidden">Find Dealer</span>
-                  <span className="hidden min-[360px]:inline">
-                    Find a Dealer
-                  </span>
+                  <MapPin size={14} className="hidden sm:block" />
+                  <span className="sm:hidden">Find Dealer</span>
+                  <span className="hidden sm:inline">Find a Dealer</span>
                 </Button>
               </Link>
               <Link href="/dealers/become-a-dealer" className="min-w-0">
                 <Button
                   variant="light"
-                  className="h-14 w-full px-1.5 py-0 text-[9px] tracking-[.02em] whitespace-nowrap min-[360px]:px-2 min-[430px]:text-[10px]"
+                  aria-label="Become a dealer"
+                  className="h-13 w-full !px-2 py-0 !text-[10px] !tracking-[.04em] whitespace-nowrap min-[360px]:!text-[12px] min-[390px]:!text-[13px] sm:h-14 sm:!px-6 sm:!text-[11px] sm:!tracking-[.14em]"
                 >
-                  <span className="min-[360px]:hidden">Become Dealer</span>
-                  <span className="hidden min-[360px]:inline">
-                    Become a Dealer
-                  </span>
+                  <span className="sm:hidden">Become Dealer</span>
+                  <span className="hidden sm:inline">Become a Dealer</span>
                 </Button>
               </Link>
             </div>

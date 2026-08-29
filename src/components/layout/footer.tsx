@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { BrandMark } from "./brand-mark";
 
 const columns = [
@@ -119,24 +119,21 @@ export function Footer() {
         </div>
         <div className="flex flex-col gap-1 border-t border-[color:var(--border-dark)] pt-4 text-[11px] text-[#96928a] sm:flex-row sm:items-center sm:gap-4 sm:pt-6 sm:text-xs">
           <p>© {new Date().getFullYear()} WoodBay Decor & Interiors</p>
-          <div className="flex flex-wrap gap-x-4 sm:ml-5 sm:gap-x-5">
+          <div className="flex flex-wrap items-center gap-x-2 sm:ml-5 sm:gap-x-3">
             <Link
               href="/privacy"
               className="inline-flex min-h-9 items-center hover:text-[color:var(--gold)] sm:min-h-11"
             >
               Privacy
             </Link>
+            <span aria-hidden="true" className="text-[color:var(--gold)]">
+              ·
+            </span>
             <Link
               href="/terms"
               className="inline-flex min-h-9 items-center hover:text-[color:var(--gold)] sm:min-h-11"
             >
               Terms
-            </Link>
-            <Link
-              href="/sitemap.xml"
-              className="inline-flex min-h-9 items-center gap-1 sm:min-h-11"
-            >
-              Sitemap <ArrowUpRight size={12} />
             </Link>
           </div>
         </div>

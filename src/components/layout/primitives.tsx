@@ -314,7 +314,7 @@ export function CTASection({
             {description}
           </p>
           <Link href={action.href} className="mt-7 inline-block">
-            <Button>
+            <Button className="h-13 !px-5 py-0 !text-[13px] !tracking-[.08em] sm:h-auto sm:!px-6 sm:py-3 sm:!text-[11px] sm:!tracking-[.14em]">
               {action.label}
               <ArrowRight size={15} />
             </Button>
