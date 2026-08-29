@@ -242,6 +242,11 @@ a {
   opacity: 1;
   transform: translateY(0);
 }
+@media (max-width: 639px) {
+  .home-product-discovery-section.scroll-reveal {
+    transform: none;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

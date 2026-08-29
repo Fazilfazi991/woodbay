@@ -24,6 +24,7 @@ import { productDivisions } from "@/features/products/data/taxonomy";
 import { getHomepageCatalogueProducts } from "@/features/products/data/catalogue";
 import { ProductCard } from "@/features/products/components/catalogue-ui";
 import type { CatalogueProduct } from "@/features/products/types";
+import { SolutionCarousel } from "./solution-carousel";
 
 const solutionLinks = [
   {
@@ -199,7 +200,10 @@ function TrustStrip({ light = false }: { light?: boolean }) {
 }
 export function CategoriesSection() {
   return (
-    <Section tone="light">
+    <Section
+      tone="light"
+      className="home-product-discovery-section !pb-4 sm:!pb-16 md:!pb-20 lg:!pb-28"
+    >
       <Container>
         <div>
           <SectionHeader
@@ -230,36 +234,7 @@ export function CategoriesSection() {
             );
           })}
         </div>
-        <nav
-          aria-label="Explore products by solution"
-          className="mt-12 border-t border-[#d7cebf] pt-8"
-        >
-          <p className="text-[10px] font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
-            Explore by solution
-          </p>
-          <div className="category-chips-scroll -mx-5 mt-5 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-8 md:gap-3 md:px-0">
-            {solutionLinks.map((area) => (
-              <Link
-                key={area.href}
-                href={area.href}
-                className="group block w-32 shrink-0 snap-start md:w-auto"
-              >
-                <span className="relative block aspect-square overflow-hidden border border-[#d7cebf] bg-white transition-colors group-hover:border-[color:var(--gold)]">
-                  <Image
-                    src={area.image}
-                    alt={`${area.title} solutions by Woodbay`}
-                    fill
-                    sizes="(max-width: 767px) 128px, 12vw"
-                    className={`${area.imageClassName} transition duration-500 group-hover:scale-[1.025]`}
-                  />
-                </span>
-                <span className="mt-2 block min-h-11 text-sm leading-5 font-semibold text-[color:var(--foreground-dark)]">
-                  {area.title}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </nav>
+        <SolutionCarousel solutions={solutionLinks} />
       </Container>
     </Section>
   );
@@ -272,7 +247,10 @@ export async function FeaturedProductsSection() {
     /* safe empty state below */
   }
   return (
-    <Section tone="muted">
+    <Section
+      tone="muted"
+      className="home-product-discovery-section !pt-5 sm:!pt-16 md:!pt-20 lg:!pt-28"
+    >
       <Container>
         <div>
           <SectionHeader
