@@ -8,6 +8,7 @@ import type {
 } from "../types";
 import type { ProductDivision } from "./taxonomy";
 import { divisionSlugForCategory, divisionSubcategorySlugs } from "./taxonomy";
+import { localProductImage } from "./local-images";
 export const PAGE_SIZE = 12;
 export function parseCatalogueParams(
   input: Record<string, string | string[] | undefined>,
@@ -32,7 +33,7 @@ export function primaryImage(product: CatalogueProduct) {
       (a, b) =>
         Number(b.is_primary) - Number(a.is_primary) ||
         a.sort_order - b.sort_order,
-    )[0] ?? null
+    )[0] ?? localProductImage(product.slug, product.name)
   );
 }
 export function productDetailPath(

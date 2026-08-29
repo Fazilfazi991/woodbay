@@ -18,3 +18,4 @@ qa-*.png
 *-390.png
 .codex-dev.*.log
 supabase/.temp/
+tmp/

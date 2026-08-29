@@ -12,7 +12,7 @@ export const productDivisions: readonly ProductDivision[] = [
     name: "Kitchen & Wardrobe Accessories",
     description:
       "Pantry, pullout, corner, sink and wardrobe systems from the Woodbay catalogue.",
-    image: "/images/categories/kitchen-accessories.png",
+    image: "/images/products/glass-pantry-with-bidding.webp",
     sourceCategorySlugs: [
       "kitchen-wardrobe-accessories",
       "kitchen-accessories",
@@ -24,7 +24,7 @@ export const productDivisions: readonly ProductDivision[] = [
     name: "Hardware Fittings & Aluminium Profiles",
     description:
       "Hinges, lift-up systems, furniture hardware, handles and aluminium profiles.",
-    image: "/images/categories/hardware-fittings.png",
+    image: "/images/products/five-hole-ss-3d-hydraulic-hinge-premium.webp",
     sourceCategorySlugs: ["hardware-fittings"],
   },
   {
@@ -32,7 +32,7 @@ export const productDivisions: readonly ProductDivision[] = [
     name: "Smart Furniture",
     description:
       "Connected side tables, adaptable desks and lift-up furniture from the Woodbay catalogue.",
-    image: "/images/categories/smart-products.png",
+    image: "/images/products/smart-wifi-side-table.webp",
     sourceCategorySlugs: ["smart-furniture", "smart-products"],
   },
   {
@@ -40,7 +40,7 @@ export const productDivisions: readonly ProductDivision[] = [
     name: "Home Decor",
     description:
       "Wallpaper, architectural surfaces, wall treatments, lighting and decor products.",
-    image: "/images/categories/decor-products.png",
+    image: "/images/products/wallpaper.webp",
     sourceCategorySlugs: ["home-decor", "decor", "decor-products"],
   },
 ] as const;

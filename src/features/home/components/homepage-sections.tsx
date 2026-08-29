@@ -31,31 +31,31 @@ const featuredDiscovery = [
     title: "Smart Kitchen Solutions",
     href: "/products/kitchen-wardrobe-accessories",
     description: "Pantry, pullout, corner and sink solutions.",
-    image: "/images/categories/kitchen-accessories.png",
+    image: "/images/products/glass-pantry-with-bidding.webp",
   },
   {
     title: "Wallpapers & Wall Decor",
     href: "/products/home-decor/wallpaper",
     description: "Explore Woodbay wallpaper and wall decor collections.",
-    image: "/images/categories/decor-products.png",
+    image: "/images/products/wallpaper.webp",
   },
   {
     title: "Wardrobe Solutions",
     href: "/products/kitchen-wardrobe-accessories?subcategory=wardrobe-series",
     description: "Organisers, racks, hangers and wardrobe lift systems.",
-    image: "/images/categories/wardrobe-accessories.png",
+    image: "/images/products/wardrobe-lifter.webp",
   },
   {
     title: "Hardware & Profiles",
     href: "/products/hardware-fittings-aluminium-profiles",
     description: "Hardware fittings and aluminium profile systems.",
-    image: "/images/categories/hardware-fittings.png",
+    image: "/images/products/five-hole-ss-3d-hydraulic-hinge-premium.webp",
   },
   {
     title: "Smart Furniture",
     href: "/products/smart-furniture",
     description: "Genuine connected and adaptable furniture products.",
-    image: "/images/categories/smart-products.png",
+    image: "/images/products/smart-wifi-side-table.webp",
   },
 ] as const;
 

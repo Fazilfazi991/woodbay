@@ -11,10 +11,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import type { ProductDetail, ProductVariant } from "../types";
 import { isWhatsAppEnquiry, productEnquiryHref } from "../data/enquiry";
+import { localProductImage } from "../data/local-images";
 
 export function ProductGallery({ product }: { product: ProductDetail }) {
   const [index, setIndex] = useState(0);
-  const image = product.images[index];
+  const fallback = localProductImage(product.slug, product.name);
+  const images = product.images.length > 0 ? product.images : fallback ? [fallback] : [];
+  const image = images[index];
   if (!image)
     return (
       <div className="grid aspect-square place-items-center border border-[color:var(--border-dark)] bg-[radial-gradient(circle_at_50%_20%,#48483f,transparent_68%),#252620]">
@@ -34,13 +37,13 @@ export function ProductGallery({ product }: { product: ProductDetail }) {
           sizes="(max-width: 1024px) 100vw, 50vw"
           className="object-contain"
         />
-        {product.images.length > 1 && (
+        {images.length > 1 && (
           <>
             <button
               aria-label="Previous product image"
               onClick={() =>
                 setIndex(
-                  (index - 1 + product.images.length) % product.images.length,
+                  (index - 1 + images.length) % images.length,
                 )
               }
               className="absolute top-1/2 left-3 grid size-11 -translate-y-1/2 place-items-center border border-[color:var(--border-gold)] bg-black/50"
@@ -49,7 +52,7 @@ export function ProductGallery({ product }: { product: ProductDetail }) {
             </button>
             <button
               aria-label="Next product image"
-              onClick={() => setIndex((index + 1) % product.images.length)}
+              onClick={() => setIndex((index + 1) % images.length)}
               className="absolute top-1/2 right-3 grid size-11 -translate-y-1/2 place-items-center border border-[color:var(--border-gold)] bg-black/50"
             >
               <ChevronRight size={18} />
@@ -57,9 +60,9 @@ export function ProductGallery({ product }: { product: ProductDetail }) {
           </>
         )}
       </div>
-      {product.images.length > 1 && (
+      {images.length > 1 && (
         <div className="mt-3 flex gap-3">
-          {product.images.map((item, itemIndex) => (
+          {images.map((item, itemIndex) => (
             <button
               key={`${item.storage_key}-${itemIndex}`}
               aria-label={`Show image ${itemIndex + 1}`}
