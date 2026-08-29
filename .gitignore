@@ -16,6 +16,6 @@ cta-*.png
 navbar-*.png
 qa-*.png
 *-390.png
-.codex-dev.*.log
+.codex-*.log
 supabase/.temp/
 tmp/
