@@ -131,7 +131,7 @@ export function Header() {
           role="dialog"
           aria-modal="true"
           aria-label="Main menu"
-          className="mobile-menu-panel fixed inset-0 z-[60] overflow-y-auto bg-[#0e0e0e] px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(1.25rem,env(safe-area-inset-bottom))] xl:hidden"
+          className="mobile-menu-panel fixed inset-0 z-[60] h-[100dvh] w-full max-w-full overflow-x-hidden overflow-y-auto overscroll-contain bg-[#0e0e0e] px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(1.25rem,env(safe-area-inset-bottom))] xl:hidden"
         >
           <div className="flex items-start justify-between">
             <BrandMark />
@@ -152,6 +152,7 @@ export function Header() {
               <MobileItem
                 key={item.label}
                 item={item}
+                pathname={pathname}
                 onNavigate={() => setDrawer(false)}
               />
             ))}
@@ -163,9 +164,11 @@ export function Header() {
 }
 function MobileItem({
   item,
+  pathname,
   onNavigate,
 }: {
   item: (typeof primaryNavigation)[number];
+  pathname: string;
   onNavigate: () => void;
 }) {
   const [expanded, setExpanded] = useState(false);
@@ -174,7 +177,8 @@ function MobileItem({
       <Link
         href={item.href}
         onClick={onNavigate}
-        className="flex min-h-14 items-center border-b border-[color:var(--border-dark)] text-sm font-bold tracking-[.12em] !text-[#f7f3eb] uppercase"
+        aria-current={pathname === item.href ? "page" : undefined}
+        className={`flex min-h-14 items-center border-b border-[color:var(--border-dark)] text-sm font-bold tracking-[.12em] uppercase transition-colors active:bg-white/[.06] ${pathname === item.href ? "!text-[color:var(--gold)]" : "!text-[#f7f3eb]"}`}
       >
         {item.label}
       </Link>
@@ -186,23 +190,24 @@ function MobileItem({
         onClick={() => setExpanded(!expanded)}
         aria-expanded={expanded}
         aria-controls={`mobile-${item.label.toLowerCase()}`}
-        className="flex min-h-14 w-full items-center justify-between text-left text-sm font-bold tracking-[.12em] !text-[#f7f3eb] uppercase"
+        className="flex min-h-14 w-full items-center justify-between text-left text-sm font-bold tracking-[.12em] !text-[#f7f3eb] uppercase transition-colors active:bg-white/[.06] active:!text-[color:var(--gold)]"
       >
         {item.label}
         <ChevronDown
-          className={expanded ? "rotate-180" : ""}
+          className={`transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
           size={17}
           strokeWidth={1.5}
         />
       </button>
       {expanded && (
-        <div id={`mobile-${item.label.toLowerCase()}`} className="pb-3 pl-4">
+        <div id={`mobile-${item.label.toLowerCase()}`} className="pb-3 pl-3">
           {item.children.map((child) => (
             <Link
               key={child.href}
               href={child.href}
               onClick={onNavigate}
-              className="flex min-h-11 items-center text-sm text-[#c4beb4]"
+              aria-current={pathname === child.href ? "page" : undefined}
+              className={`flex min-h-12 items-center py-2 text-[15px] leading-5 font-medium opacity-100 transition-colors active:bg-white/[.06] ${pathname === child.href ? "!text-[color:var(--gold)]" : "!text-[#d6d0c7]"}`}
             >
               {child.label}
             </Link>
