@@ -27,30 +27,52 @@ import type { CatalogueProduct } from "@/features/products/types";
 
 const solutionLinks = [
   {
-    title: "Pantry Systems",
+    title: "Pantry",
     href: "/products/kitchen-wardrobe-accessories?subcategory=pantry-solutions",
+    image: "/images/categories/pantry-solutions.png",
+    imageClassName: "object-cover object-center",
   },
   {
-    title: "Pull-Out Systems",
+    title: "Pull-Outs",
     href: "/products/kitchen-wardrobe-accessories?subcategory=pullout-solutions",
+    image: "/images/categories/pullout-solutions.png",
+    imageClassName: "object-cover object-center",
   },
   {
-    title: "Wardrobe Accessories",
+    title: "Wardrobe",
     href: "/products/kitchen-wardrobe-accessories?subcategory=wardrobe-series",
+    image: "/images/categories/wardrobe-accessories.png",
+    imageClassName: "object-cover object-center",
   },
   {
-    title: "Hinges & Fittings",
+    title: "Hardware",
     href: "/products/hardware-fittings?subcategory=cabinet-hinges",
+    image: "/images/products/full-ss-3d-304-hydraulic-hinge.webp",
+    imageClassName: "object-contain object-center p-2",
   },
   {
-    title: "Aluminium Profiles",
+    title: "Profiles",
     href: "/products/hardware-fittings?subcategory=aluminium-profiles",
+    image: "/images/products/j-gola.webp",
+    imageClassName: "object-contain object-center p-2",
   },
-  { title: "Wallpaper", href: "/products/home-decor?subcategory=wallpaper" },
-  { title: "Smart Furniture", href: "/products/smart-furniture" },
   {
-    title: "Waterfall Sinks",
+    title: "Wallpaper",
+    href: "/products/home-decor?subcategory=wallpaper",
+    image: "/images/products/wallpaper.webp",
+    imageClassName: "object-cover object-center",
+  },
+  {
+    title: "Smart Furniture",
+    href: "/products/smart-furniture",
+    image: "/images/products/smart-wifi-side-table.webp",
+    imageClassName: "object-cover object-center",
+  },
+  {
+    title: "Smart Sinks",
     href: "/products/kitchen-wardrobe-accessories?subcategory=smart-kitchen-waterfall-sinks",
+    image: "/images/products/waterfall-sink.webp",
+    imageClassName: "object-cover object-center",
   },
 ] as const;
 
@@ -121,24 +143,13 @@ export function HeroSection({
           >
             {homepage.hero.description}
           </p>
-          <div className="mt-8 grid w-full gap-2.5 sm:mt-9 sm:flex sm:flex-row sm:gap-3">
-            <Link href="/products" className="block sm:inline-block">
+          <div className="mt-8 sm:mt-9">
+            <Link href="/products" className="inline-block">
               <Button
                 variant={light ? "primary" : "gold"}
-                className={`h-13 w-full !px-5 py-0 !text-[13px] !tracking-[.08em] sm:h-auto sm:w-auto sm:!px-6 sm:py-3 sm:!text-[11px] sm:!tracking-[.14em] ${light ? "home-two-button" : ""}`}
+                className={`h-12 w-auto !px-5 py-0 !text-[13px] !tracking-[.08em] sm:h-auto sm:!px-6 sm:py-3 sm:!text-[11px] sm:!tracking-[.14em] ${light ? "home-two-button" : ""}`}
               >
                 Explore Products <ArrowRight size={15} />
-              </Button>
-            </Link>
-            <Link
-              href="/furniture/factory-visit"
-              className="block sm:inline-block"
-            >
-              <Button
-                variant={light ? "light" : "secondary"}
-                className="h-13 w-full !px-5 py-0 !text-[13px] !tracking-[.08em] sm:h-auto sm:w-auto sm:!px-6 sm:py-3 sm:!text-[11px] sm:!tracking-[.14em]"
-              >
-                Book Factory Visit
               </Button>
             </Link>
           </div>
@@ -190,18 +201,12 @@ export function CategoriesSection() {
   return (
     <Section tone="light">
       <Container>
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+        <div>
           <SectionHeader
             eyebrow="Our Products"
             title="Designed for Modern Living"
             description="Considered solutions for kitchens, wardrobes and contemporary interiors."
           />
-          <Link
-            href="/products"
-            className="inline-flex min-h-11 w-fit items-center gap-2 border border-[color:var(--foreground-dark)] px-4 text-xs font-bold tracking-[.12em] text-[color:var(--foreground-dark)] uppercase transition-colors hover:border-[color:var(--gold)] hover:text-[color:var(--gold)]"
-          >
-            View All Products <ArrowRight size={15} />
-          </Link>
         </div>
         <div className="mt-8 grid grid-cols-1 gap-4 sm:mt-12 sm:grid-cols-2 lg:grid-cols-4">
           {productDivisions.map((category) => {
@@ -232,18 +237,29 @@ export function CategoriesSection() {
           <p className="text-[10px] font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
             Explore by solution
           </p>
-          <div className="category-chips-scroll -mx-5 mt-5 flex gap-2 overflow-x-auto px-5 pb-2 md:mx-0 md:flex-wrap md:px-0">
+          <div className="category-chips-scroll -mx-5 mt-5 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-8 md:gap-3 md:px-0">
             {solutionLinks.map((area) => (
               <Link
                 key={area.href}
                 href={area.href}
-                className="group inline-flex min-h-11 shrink-0 items-center gap-3 border border-[#cfc5b4] bg-transparent px-4 text-xs font-semibold transition-colors hover:border-[color:var(--gold)] hover:bg-[color:var(--surface-elevated)]"
+                className="group block w-[104px] shrink-0 snap-start md:w-auto"
               >
-                {area.title}
-                <ArrowRight
-                  size={14}
-                  className="text-[color:var(--gold)] transition-transform group-hover:translate-x-1"
-                />
+                <span className="relative block aspect-square overflow-hidden border border-[#d7cebf] bg-white transition-colors group-hover:border-[color:var(--gold)]">
+                  <Image
+                    src={area.image}
+                    alt={`${area.title} solutions by Woodbay`}
+                    fill
+                    sizes="(max-width: 767px) 104px, 12vw"
+                    className={`${area.imageClassName} transition duration-500 group-hover:scale-[1.025]`}
+                  />
+                </span>
+                <span className="mt-2 flex min-h-11 items-start justify-between gap-1 text-[11px] leading-4 font-semibold text-[color:var(--foreground-dark)]">
+                  {area.title}
+                  <ArrowRight
+                    size={12}
+                    className="mt-0.5 shrink-0 text-[color:var(--gold)] transition-transform group-hover:translate-x-0.5"
+                  />
+                </span>
               </Link>
             ))}
           </div>
@@ -262,23 +278,22 @@ export async function FeaturedProductsSection() {
   return (
     <Section tone="muted">
       <Container>
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <div>
           <SectionHeader
             eyebrow="Featured products"
             title="Browse the Woodbay catalogue."
             description="A focused selection of catalogue products, ready to explore or enquire about."
           />
-          <Link
-            href="/products"
-            className="inline-flex items-center gap-2 text-xs font-bold tracking-[.14em] text-[color:var(--foreground-dark)] uppercase hover:text-[color:var(--gold)]"
-          >
-            View all products <ArrowRight size={15} />
-          </Link>
         </div>
         {products.length > 0 ? (
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:mt-12 sm:gap-4 lg:grid-cols-4">
+          <div className="category-chips-scroll -mx-5 mt-8 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 sm:mx-0 sm:mt-12 sm:grid sm:grid-cols-2 sm:gap-4 sm:px-0 lg:grid-cols-4">
             {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <div
+                key={product.id}
+                className="w-[82vw] max-w-[330px] shrink-0 snap-start sm:w-auto sm:max-w-none"
+              >
+                <ProductCard product={product} />
+              </div>
             ))}
           </div>
         ) : (
@@ -286,6 +301,12 @@ export async function FeaturedProductsSection() {
             Featured catalogue products will appear here as they are published.
           </p>
         )}
+        <Link
+          href="/products"
+          className="mt-7 inline-flex min-h-11 items-center gap-2 border-b border-[color:var(--foreground-dark)] text-xs font-bold tracking-[.12em] text-[color:var(--foreground-dark)] uppercase transition-colors hover:border-[color:var(--gold)] hover:text-[color:var(--gold)] sm:mt-8"
+        >
+          Browse All Products <ArrowRight size={15} />
+        </Link>
       </Container>
     </Section>
   );
