@@ -143,7 +143,7 @@ export function HeroSection({
           >
             {homepage.hero.description}
           </p>
-          <div className="mt-8 sm:mt-9">
+          <div className="mt-8 flex justify-center sm:mt-9 sm:justify-start">
             <Link href="/products" className="inline-block">
               <Button
                 variant={light ? "primary" : "gold"}
@@ -286,14 +286,9 @@ export async function FeaturedProductsSection() {
           />
         </div>
         {products.length > 0 ? (
-          <div className="category-chips-scroll -mx-5 mt-8 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 sm:mx-0 sm:mt-12 sm:grid sm:grid-cols-2 sm:gap-4 sm:px-0 lg:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 gap-x-2.5 gap-y-4 sm:mt-12 sm:gap-4 lg:grid-cols-4">
             {products.map((product) => (
-              <div
-                key={product.id}
-                className="w-[82vw] max-w-[330px] shrink-0 snap-start sm:w-auto sm:max-w-none"
-              >
-                <ProductCard product={product} />
-              </div>
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         ) : (
@@ -410,7 +405,7 @@ export function SmartSection() {
             />
             <Link
               href="/products/smart-furniture"
-              className="mt-8 inline-block"
+              className="mt-8 flex justify-center sm:inline-flex"
             >
               <Button variant="light">
                 Explore Smart Products <ArrowRight size={15} />
@@ -496,7 +491,10 @@ export function DecorAndFurnitureSection({
                   </span>
                 ))}
               </div>
-              <Link href="/products/home-decor" className="mt-9 inline-block">
+              <Link
+                href="/products/home-decor"
+                className="mt-9 flex justify-center sm:inline-flex"
+              >
                 <Button variant="light">
                   Explore Decor <ArrowRight size={15} />
                 </Button>
@@ -532,7 +530,7 @@ export function DecorAndFurnitureSection({
                 Bring your vision closer with premium materials, considered
                 design and direct consultation from the factory.
               </p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:items-stretch">
                 <Link href="/furniture">
                   <Button>
                     Explore Furniture <ArrowRight size={15} />

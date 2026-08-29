@@ -110,7 +110,7 @@ export default async function SubcategoryPage({
               shortly.
             </div>
           ) : result.products.length ? (
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="mt-8 grid grid-cols-2 gap-x-2.5 gap-y-4 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
               {result.products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

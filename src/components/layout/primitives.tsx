@@ -206,7 +206,7 @@ export function ProductCategoryCard({
             <span className="hidden sm:inline">{description}</span>
           </p>
         )}
-        <span className="mt-4 inline-flex min-h-11 items-center text-xs font-bold tracking-[.12em] uppercase sm:hidden">
+        <span className="mt-4 flex min-h-11 w-full items-center justify-center text-xs font-bold tracking-[.12em] uppercase sm:hidden">
           Explore{" "}
           <ArrowRight size={15} className="ml-2 text-[color:var(--gold)]" />
         </span>

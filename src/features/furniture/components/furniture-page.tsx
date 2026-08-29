@@ -5,7 +5,10 @@ import { CTASection, Container, Section } from "@/components/layout/primitives";
 import { Button } from "@/components/ui/button";
 import { furniture } from "@/config/furniture";
 import { ProductCard } from "@/features/products/components/catalogue-ui";
-import { getCategoryBySlug, getProducts } from "@/features/products/data/catalogue";
+import {
+  getCategoryBySlug,
+  getProducts,
+} from "@/features/products/data/catalogue";
 import type { CatalogueProduct } from "@/features/products/types";
 
 export async function FurniturePage() {
@@ -14,12 +17,14 @@ export async function FurniturePage() {
   try {
     const smartCategory = await getCategoryBySlug("smart-products");
     if (smartCategory) {
-      smartProducts = (await getProducts(smartCategory, [], {
-        q: "",
-        subcategory: null,
-        page: 1,
-        sort: "default",
-      })).products.slice(0, 3);
+      smartProducts = (
+        await getProducts(smartCategory, [], {
+          q: "",
+          subcategory: null,
+          page: 1,
+          sort: "default",
+        })
+      ).products.slice(0, 3);
     }
   } catch {
     // The furniture page remains available while the optional catalogue data is unavailable.
@@ -115,12 +120,15 @@ export async function FurniturePage() {
                 Pair your made-to-measure furniture brief with Woodbay smart
                 products for more considered everyday living.
               </p>
-              <Link href="/products/smart-products" className="mt-7 inline-block">
+              <Link
+                href="/products/smart-products"
+                className="mt-7 inline-block"
+              >
                 <Button variant="light">Explore smart products</Button>
               </Link>
             </article>
             {smartProducts.length > 0 && (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-2 gap-x-2.5 gap-y-4 sm:gap-4 lg:grid-cols-3">
                 {smartProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
@@ -130,7 +138,9 @@ export async function FurniturePage() {
               <p className="text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
                 Projects
               </p>
-              <h2 className="font-display mt-4 text-5xl">Spaces worth studying.</h2>
+              <h2 className="font-display mt-4 text-5xl">
+                Spaces worth studying.
+              </h2>
               <p className="mt-5 text-sm leading-7 text-[color:var(--muted)]">
                 Explore Woodbay work across kitchens, wardrobes, living rooms,
                 bedrooms and study spaces.

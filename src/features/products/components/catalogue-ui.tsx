@@ -1,11 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowRight,
-  MessageCircle,
-  Search,
-  SlidersHorizontal,
-} from "lucide-react";
+import { Eye, MessageCircle, Search, SlidersHorizontal } from "lucide-react";
 import { primaryImage, productDetailPath } from "../data/catalogue";
 import type { CatalogueCategory, CatalogueProduct } from "../types";
 import { Button } from "@/components/ui/button";
@@ -14,8 +9,11 @@ export { CategoryChips } from "./category-chips";
 export function ProductCard({ product }: { product: CatalogueProduct }) {
   const image = primaryImage(product);
   const enquiry = productEnquiryHref(product);
+  const isolatedHardware = /hinge|profile/i.test(
+    `${product.name} ${product.category?.name ?? ""}`,
+  );
   return (
-    <article className="group flex min-w-0 flex-col overflow-hidden border border-[color:var(--border-light)] bg-[color:var(--surface-elevated)] text-[color:var(--foreground-dark)] transition-colors duration-300 hover:border-[color:var(--gold)]">
+    <article className="group flex h-full min-w-0 flex-col overflow-hidden rounded-[10px] border border-[#d8d0c3] bg-[#fbf8f1] text-[color:var(--foreground-dark)] transition-colors duration-300 hover:border-[color:var(--gold)]">
       <Link
         href={productDetailPath(product)}
         className="relative block aspect-[4/3] overflow-hidden bg-[color:var(--surface-muted)]"
@@ -26,7 +24,7 @@ export function ProductCard({ product }: { product: CatalogueProduct }) {
             alt={image.alt_text ?? `${product.name} by Woodbay`}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-cover transition duration-500 group-hover:scale-[1.025]"
+            className={`${isolatedHardware ? "object-contain p-2.5" : "object-cover"} transition duration-500 group-hover:scale-[1.025]`}
           />
         ) : (
           <div className="grid h-full place-items-center px-4 text-center">
@@ -41,31 +39,35 @@ export function ProductCard({ product }: { product: CatalogueProduct }) {
           </div>
         )}
       </Link>
-      <div className="flex flex-1 flex-col p-4 sm:p-5">
-        <p className="line-clamp-1 text-[11px] font-bold tracking-[.1em] text-[color:var(--gold)] uppercase sm:tracking-[.14em]">
+      <div className="flex flex-1 flex-col p-3.5 sm:p-5">
+        <p className="line-clamp-1 text-[10px] font-semibold tracking-[.1em] text-[color:var(--gold)] uppercase sm:text-[11px] sm:tracking-[.12em]">
           {product.category?.name ?? "Woodbay Collection"}
         </p>
-        <h3 className="font-display mt-2 text-2xl leading-none sm:text-3xl">
+        <h3 className="font-display mt-2 line-clamp-2 min-h-[2.15em] text-[1.3rem] leading-[1.075] sm:text-[1.65rem]">
           {product.name}
         </h3>
+        <span
+          aria-hidden="true"
+          className="mt-2 block h-px w-7 bg-[color:var(--gold)]"
+        />
         {product.product_code && (
-          <p className="mt-2 truncate text-[11px] text-[color:var(--muted-dark)]">
+          <p className="mt-2.5 truncate text-[11px] text-[color:var(--muted-dark)] sm:text-xs">
             Code: {product.product_code}
           </p>
         )}
-        <div className="mt-auto grid grid-cols-2 gap-2 pt-4">
+        <div className="mt-auto grid grid-cols-2 gap-1.5 pt-3.5 sm:gap-2 sm:pt-4">
           <Link
             href={productDetailPath(product)}
-            className="inline-flex min-h-11 items-center justify-center gap-1 border border-[color:var(--foreground-dark)] px-2 text-[10px] font-bold tracking-[.08em] uppercase transition-colors hover:bg-[color:var(--foreground-dark)] hover:text-[color:var(--foreground-light)] sm:text-xs"
+            className="inline-flex h-10 min-w-0 items-center justify-center gap-1 rounded-full border border-[#3f403b] px-1.5 text-[10px] font-semibold whitespace-nowrap transition-colors hover:bg-[color:var(--foreground-dark)] hover:text-[color:var(--foreground-light)] sm:gap-1.5 sm:px-2 sm:text-xs"
           >
-            View <ArrowRight size={13} />
+            <Eye size={13} strokeWidth={1.6} /> View
           </Link>
           {enquiry ? (
             <a
               href={enquiry}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex min-h-11 items-center justify-center gap-1 border border-[#198f46]/55 px-2 text-[10px] font-bold tracking-[.06em] text-[#157a3b] uppercase transition-colors hover:bg-[#157a3b] hover:text-white sm:text-xs"
+              className="inline-flex h-10 min-w-0 items-center justify-center gap-1 rounded-full border border-[color:var(--gold)] px-1.5 text-[10px] font-semibold whitespace-nowrap text-[#9a7628] transition-colors hover:bg-[color:var(--gold)] hover:text-[#171711] sm:gap-1.5 sm:px-2 sm:text-xs"
             >
               <MessageCircle size={13} /> Enquire
             </a>
@@ -73,7 +75,7 @@ export function ProductCard({ product }: { product: CatalogueProduct }) {
             <span
               aria-disabled="true"
               title="WhatsApp enquiries are temporarily unavailable"
-              className="inline-flex min-h-11 cursor-not-allowed items-center justify-center gap-1 border border-[#198f46]/30 px-2 text-[10px] font-bold tracking-[.06em] text-[#157a3b]/55 uppercase sm:text-xs"
+              className="inline-flex h-10 min-w-0 cursor-not-allowed items-center justify-center gap-1 rounded-full border border-[color:var(--gold)]/40 px-1.5 text-[10px] font-semibold whitespace-nowrap text-[#9a7628]/55 sm:gap-1.5 sm:px-2 sm:text-xs"
             >
               <MessageCircle size={13} /> Enquire
             </span>
