@@ -42,7 +42,7 @@ export async function DealerLocatorPage({
           <p className="mt-8 text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
             Woodbay dealer network
           </p>
-          <h1 className="font-display mt-4 text-[clamp(2.75rem,12vw,4.5rem)] leading-[.9]">
+          <h1 className="font-display mt-4 text-[2.5rem] leading-[.94] sm:text-[4.5rem]">
             Find Woodbay Near You.
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-7 text-[color:var(--muted)]">

@@ -134,7 +134,7 @@ function TrustStrip({ light = false }: { light?: boolean }) {
           {homepage.trust.map((item, index) => {
             const Icon = icons[index];
             return (
-              <div key={item.title} className="p-5 lg:px-7 lg:py-6">
+              <div key={item.title} className="p-4 sm:p-5 lg:px-7 lg:py-6">
                 <Icon
                   size={19}
                   strokeWidth={1.25}
@@ -144,7 +144,7 @@ function TrustStrip({ light = false }: { light?: boolean }) {
                   {item.title}
                 </h2>
                 <p
-                  className={`mt-2 text-xs leading-5 ${light ? "text-[#626262]" : "text-[#bcb6ac]"}`}
+                  className={`mt-2 hidden text-xs leading-5 sm:block ${light ? "text-[#626262]" : "text-[#bcb6ac]"}`}
                 >
                   {item.text}
                 </p>

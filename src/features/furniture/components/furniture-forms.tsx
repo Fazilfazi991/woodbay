@@ -76,7 +76,7 @@ export function FurnitureDesignForm() {
           ].map((item) => (
             <label
               key={item}
-              className="flex min-h-11 items-center gap-3 border border-[color:var(--border-dark)] px-4"
+              className="flex min-h-12 items-center gap-3 border border-[color:var(--border-dark)] px-4"
             >
               <input
                 type="radio"
@@ -92,7 +92,7 @@ export function FurnitureDesignForm() {
       <Field label="Requirement type">
         <select
           name="requirement_type"
-          className="min-h-11 border border-[color:var(--border-dark)] bg-transparent px-3"
+          className="min-h-12 border border-[color:var(--border-dark)] bg-transparent px-3"
         >
           <option>New furniture</option>
           <option>Replacement</option>
@@ -221,7 +221,7 @@ function ColourGroup({
             key={colour.name}
             onClick={() => onChange(colour.name)}
             aria-pressed={value === colour.name}
-            className={`min-h-11 border px-3 text-xs font-bold tracking-[.08em] uppercase ${value === colour.name ? "border-[color:var(--gold)]" : "border-[color:var(--border-dark)]"}`}
+            className={`min-h-12 border px-3 text-xs font-bold tracking-[.08em] uppercase ${value === colour.name ? "border-[color:var(--gold)]" : "border-[color:var(--border-dark)]"}`}
           >
             <span
               className="mr-2 inline-block size-4 align-middle"
@@ -266,7 +266,7 @@ export function FactoryVisitForm() {
           <select
             required
             name="furniture_interest"
-            className="min-h-11 border border-[color:var(--border-dark)] bg-transparent px-3"
+            className="min-h-12 border border-[color:var(--border-dark)] bg-transparent px-3"
           >
             {factoryVisitInterests.map((item) => (
               <option key={item}>{item}</option>

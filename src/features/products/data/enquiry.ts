@@ -1,26 +1,43 @@
 import { siteConfig } from "@/config/site";
 
-export function productEnquiryHref(product: {
+type ProductEnquiry = {
   name: string;
   slug: string;
   product_code?: string | null;
-}) {
-  if (!siteConfig.whatsappUrl) return `/contact?product=${product.slug}`;
-  const page = `${siteConfig.url}/products/${product.slug}`;
-  const message = [
-    "Hello WoodBay, I'm interested in:",
-    `Product: ${product.name}`,
-    product.product_code ? `Code: ${product.product_code}` : null,
-    `Page: ${page}`,
-    "",
-    "Please share more details.",
-  ]
-    .filter((line): line is string => line !== null)
-    .join("\n");
-  const separator = siteConfig.whatsappUrl.includes("?") ? "&" : "?";
-  return `${siteConfig.whatsappUrl}${separator}text=${encodeURIComponent(message)}`;
+  category?: { name: string } | null;
+};
+
+export type ProductEnquirySelection = {
+  variant?: string | null;
+  size?: string | null;
+  finish?: string | null;
+  model?: string | null;
+};
+
+export function buildWhatsAppEnquiryUrl(
+  whatsappUrl: string,
+  product: ProductEnquiry,
+  selection: ProductEnquirySelection = {},
+) {
+  const selectedDetails = [
+    selection.variant,
+    selection.size,
+    selection.finish,
+    selection.model,
+  ].filter((value): value is string => Boolean(value?.trim()));
+  const productContext = [product.name, ...selectedDetails].join(" — ");
+  const categoryContext = product.category?.name
+    ? ` from ${product.category.name}`
+    : "";
+  const message = `Hi WoodBay, I’m interested in ${productContext}${categoryContext}. Please share more details.`;
+  const separator = whatsappUrl.includes("?") ? "&" : "?";
+  return `${whatsappUrl}${separator}text=${encodeURIComponent(message)}`;
 }
 
-export function isWhatsAppEnquiry() {
-  return Boolean(siteConfig.whatsappUrl);
+export function productEnquiryHref(
+  product: ProductEnquiry,
+  selection?: ProductEnquirySelection,
+) {
+  if (!siteConfig.whatsappUrl) return null;
+  return buildWhatsAppEnquiryUrl(siteConfig.whatsappUrl, product, selection);
 }

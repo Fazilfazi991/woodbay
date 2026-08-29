@@ -12,7 +12,7 @@ export default function Page() {
         <p className="text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
           Furniture showroom opportunity
         </p>
-        <h1 className="font-display mt-4 text-6xl">
+        <h1 className="font-display mt-4 text-[2.5rem] leading-[.94] sm:text-6xl">
           Become a Woodbay Furniture Outlet.
         </h1>
         <p className="mt-5 text-sm leading-7 text-[color:var(--muted)]">

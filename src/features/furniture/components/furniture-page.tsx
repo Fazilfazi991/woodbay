@@ -40,7 +40,7 @@ export async function FurniturePage() {
           <p className="text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
             {furniture.hero.eyebrow}
           </p>
-          <h1 className="font-display mt-5 max-w-3xl text-6xl leading-[.9] whitespace-pre-line sm:text-8xl">
+          <h1 className="font-display mt-5 max-w-3xl text-[2.5rem] leading-[.94] whitespace-pre-line sm:text-8xl">
             {furniture.hero.title}
           </h1>
           <p className="mt-7 max-w-xl text-base leading-7 text-[color:var(--muted)]">

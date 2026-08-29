@@ -57,7 +57,7 @@ export function DealerMiniPage({
               <p className="flex items-center gap-2 text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
                 <BadgeCheck size={17} /> Authorised Woodbay Dealer
               </p>
-              <h1 className="font-display mt-5 text-6xl leading-[.9] sm:text-7xl">
+              <h1 className="font-display mt-5 text-[2.5rem] leading-[.94] sm:text-7xl">
                 {detail.business_name}
               </h1>
               {location && (

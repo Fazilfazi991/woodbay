@@ -1,12 +1,207 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, MessageCircle, Search, SlidersHorizontal } from "lucide-react";
+import {
+  ArrowRight,
+  MessageCircle,
+  Search,
+  SlidersHorizontal,
+} from "lucide-react";
 import { primaryImage, productDetailPath } from "../data/catalogue";
 import type { CatalogueCategory, CatalogueProduct } from "../types";
 import { Button } from "@/components/ui/button";
-import { isWhatsAppEnquiry, productEnquiryHref } from "../data/enquiry";
+import { productEnquiryHref } from "../data/enquiry";
 export { CategoryChips } from "./category-chips";
-export function ProductCard({ product }: { product: CatalogueProduct }) { const image = primaryImage(product); const enquiry = productEnquiryHref(product); const whatsapp = isWhatsAppEnquiry(); return <article className="group flex min-w-0 flex-col overflow-hidden border border-[color:var(--border-light)] bg-[color:var(--surface-elevated)] text-[color:var(--foreground-dark)] transition-colors duration-300 hover:border-[color:var(--gold)]"><Link href={productDetailPath(product)} className="relative block aspect-[4/3] overflow-hidden bg-[color:var(--surface-muted)]">{image ? <Image src={image.storage_key} alt={image.alt_text ?? `${product.name} by Woodbay`} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw" className="object-cover transition duration-500 group-hover:scale-[1.025]" /> : <div className="grid h-full place-items-center"><span className="font-display text-lg tracking-[.12em] text-[color:var(--gold)] sm:text-3xl">WOODBAY</span></div>}</Link><div className="flex flex-1 flex-col p-4 sm:p-5"><p className="line-clamp-1 text-[9px] font-bold uppercase tracking-[.12em] text-[color:var(--gold)] sm:text-[10px] sm:tracking-[.16em]">{product.category?.name ?? "Woodbay Collection"}</p><h3 className="font-display mt-2 text-2xl leading-none sm:text-3xl">{product.name}</h3>{product.product_code && <p className="mt-2 truncate text-[10px] text-[color:var(--muted-dark)]">Code: {product.product_code}</p>}<div className="mt-auto grid grid-cols-2 gap-2 pt-4"><Link href={productDetailPath(product)} className="inline-flex min-h-10 items-center justify-center gap-1 border border-[color:var(--foreground-dark)] px-2 text-[10px] font-bold uppercase tracking-[.08em] transition-colors hover:bg-[color:var(--foreground-dark)] hover:text-[color:var(--foreground-light)] sm:text-xs">View <ArrowRight size={13} /></Link><a href={enquiry} target={whatsapp ? "_blank" : undefined} rel={whatsapp ? "noreferrer" : undefined} className="inline-flex min-h-10 items-center justify-center gap-1 border border-[#198f46]/55 px-2 text-[10px] font-bold uppercase tracking-[.06em] text-[#157a3b] transition-colors hover:bg-[#157a3b] hover:text-white sm:text-xs"><MessageCircle size={13} /> {whatsapp ? "WhatsApp" : "Enquire"}</a></div></div></article>; }
-export function CatalogueControls({ path, q, subcategory, sort, categories }: { path: string; q: string; subcategory: string | null; sort: string; categories: CatalogueCategory[] }) { return <form action={path} className="grid gap-3 border-y border-[color:var(--border-dark)] py-5 md:grid-cols-[1fr_auto_auto]"><label className="relative"><span className="sr-only">Search products</span><Search size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-[color:var(--gold)]" /><input name="q" defaultValue={q} placeholder="Search products or product code" className="min-h-11 w-full border border-[color:var(--border-dark)] bg-transparent pl-11 pr-4 text-sm text-[color:var(--foreground-light)] outline-none placeholder:text-[#85847d] focus:border-[color:var(--gold)]" /></label><label className="flex min-h-11 items-center gap-2 border border-[color:var(--border-dark)] px-3 text-xs text-[color:var(--foreground-light)]"><SlidersHorizontal size={15} className="text-[color:var(--gold)]" /><span className="sr-only">Filter by subcategory</span><select name="subcategory" defaultValue={subcategory ?? ""} className="bg-transparent outline-none"><option value="">All categories</option>{categories.map((category) => <option key={category.id} value={category.slug}>{category.name}</option>)}</select></label><select aria-label="Sort products" name="sort" defaultValue={sort} className="min-h-11 border border-[color:var(--border-dark)] bg-transparent px-3 text-xs text-[color:var(--foreground-light)] outline-none"><option value="default">Recommended</option><option value="name-asc">Name A–Z</option><option value="name-desc">Name Z–A</option></select><input type="hidden" name="page" value="1" /><Button type="submit" className="md:col-start-3">Apply filters</Button></form>; }
-export function EmptyProducts({ path }: { path: string }) { return <div className="border border-[color:var(--border-gold)] bg-[color:var(--surface-dark)] px-6 py-14 text-center"><p className="font-display text-4xl">No products found in this selection.</p><p className="mt-4 text-sm text-[color:var(--muted)]">Try another category or clear your search.</p><Link href={path} className="mt-7 inline-block"><Button>Browse all products</Button></Link></div>; }
-export function Pagination({ path, page, pageCount, q, subcategory, sort }: { path: string; page: number; pageCount: number; q: string; subcategory: string | null; sort: string }) { if (pageCount <= 1) return null; const href = (target: number) => { const params = new URLSearchParams({ page: String(target) }); if (q) params.set("q", q); if (subcategory) params.set("subcategory", subcategory); if (sort !== "default") params.set("sort", sort); return `${path}?${params}`; }; return <nav aria-label="Product pages" className="mt-10 grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:flex sm:justify-center sm:gap-3"><Link aria-disabled={page === 1} className="min-h-11 border border-[color:var(--border-dark)] px-3 py-3 text-center text-[11px] uppercase tracking-[.08em] disabled:opacity-40 sm:px-4 sm:text-xs sm:tracking-[.1em]" href={page === 1 ? path : href(page - 1)}>Previous</Link><span className="text-center text-xs text-[color:var(--muted)] sm:text-sm">Page {page} of {pageCount}</span><Link aria-disabled={page === pageCount} className="min-h-11 border border-[color:var(--border-dark)] px-3 py-3 text-center text-[11px] uppercase tracking-[.08em] sm:px-4 sm:text-xs sm:tracking-[.1em]" href={page === pageCount ? path : href(page + 1)}>Next</Link></nav>; }
+export function ProductCard({ product }: { product: CatalogueProduct }) {
+  const image = primaryImage(product);
+  const enquiry = productEnquiryHref(product);
+  return (
+    <article className="group flex min-w-0 flex-col overflow-hidden border border-[color:var(--border-light)] bg-[color:var(--surface-elevated)] text-[color:var(--foreground-dark)] transition-colors duration-300 hover:border-[color:var(--gold)]">
+      <Link
+        href={productDetailPath(product)}
+        className="relative block aspect-[4/3] overflow-hidden bg-[color:var(--surface-muted)]"
+      >
+        {image ? (
+          <Image
+            src={image.storage_key}
+            alt={image.alt_text ?? `${product.name} by Woodbay`}
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
+            className="object-cover transition duration-500 group-hover:scale-[1.025]"
+          />
+        ) : (
+          <div className="grid h-full place-items-center">
+            <span className="font-display text-lg tracking-[.12em] text-[color:var(--gold)] sm:text-3xl">
+              WOODBAY
+            </span>
+          </div>
+        )}
+      </Link>
+      <div className="flex flex-1 flex-col p-4 sm:p-5">
+        <p className="line-clamp-1 text-[11px] font-bold tracking-[.1em] text-[color:var(--gold)] uppercase sm:tracking-[.14em]">
+          {product.category?.name ?? "Woodbay Collection"}
+        </p>
+        <h3 className="font-display mt-2 text-2xl leading-none sm:text-3xl">
+          {product.name}
+        </h3>
+        {product.product_code && (
+          <p className="mt-2 truncate text-[11px] text-[color:var(--muted-dark)]">
+            Code: {product.product_code}
+          </p>
+        )}
+        <div className="mt-auto grid grid-cols-2 gap-2 pt-4">
+          <Link
+            href={productDetailPath(product)}
+            className="inline-flex min-h-11 items-center justify-center gap-1 border border-[color:var(--foreground-dark)] px-2 text-[10px] font-bold tracking-[.08em] uppercase transition-colors hover:bg-[color:var(--foreground-dark)] hover:text-[color:var(--foreground-light)] sm:text-xs"
+          >
+            View <ArrowRight size={13} />
+          </Link>
+          {enquiry ? (
+            <a
+              href={enquiry}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-h-11 items-center justify-center gap-1 border border-[#198f46]/55 px-2 text-[10px] font-bold tracking-[.06em] text-[#157a3b] uppercase transition-colors hover:bg-[#157a3b] hover:text-white sm:text-xs"
+            >
+              <MessageCircle size={13} /> Enquire
+            </a>
+          ) : (
+            <span
+              aria-disabled="true"
+              title="WhatsApp enquiries are temporarily unavailable"
+              className="inline-flex min-h-11 cursor-not-allowed items-center justify-center gap-1 border border-[#198f46]/30 px-2 text-[10px] font-bold tracking-[.06em] text-[#157a3b]/55 uppercase sm:text-xs"
+            >
+              <MessageCircle size={13} /> Enquire
+            </span>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+}
+export function CatalogueControls({
+  path,
+  q,
+  subcategory,
+  sort,
+  categories,
+}: {
+  path: string;
+  q: string;
+  subcategory: string | null;
+  sort: string;
+  categories: CatalogueCategory[];
+}) {
+  return (
+    <form
+      action={path}
+      className="grid gap-3 border-y border-[color:var(--border-dark)] py-5 md:grid-cols-[1fr_auto_auto]"
+    >
+      <label className="relative">
+        <span className="sr-only">Search products</span>
+        <Search
+          size={17}
+          className="absolute top-1/2 left-4 -translate-y-1/2 text-[color:var(--gold)]"
+        />
+        <input
+          name="q"
+          defaultValue={q}
+          placeholder="Search products or product code"
+          className="min-h-12 w-full border border-[color:var(--border-dark)] bg-transparent pr-4 pl-11 text-sm text-[color:var(--foreground-light)] outline-none placeholder:text-[#85847d] focus:border-[color:var(--gold)]"
+        />
+      </label>
+      <label className="flex min-h-12 items-center gap-2 border border-[color:var(--border-dark)] px-3 text-xs text-[color:var(--foreground-light)]">
+        <SlidersHorizontal size={15} className="text-[color:var(--gold)]" />
+        <span className="sr-only">Filter by subcategory</span>
+        <select
+          name="subcategory"
+          defaultValue={subcategory ?? ""}
+          className="h-12 flex-1 bg-transparent outline-none"
+        >
+          <option value="">All categories</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.slug}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+      </label>
+      <select
+        aria-label="Sort products"
+        name="sort"
+        defaultValue={sort}
+        className="min-h-12 border border-[color:var(--border-dark)] bg-transparent px-3 text-xs text-[color:var(--foreground-light)] outline-none"
+      >
+        <option value="default">Recommended</option>
+        <option value="name-asc">Name A–Z</option>
+        <option value="name-desc">Name Z–A</option>
+      </select>
+      <input type="hidden" name="page" value="1" />
+      <Button type="submit" className="md:col-start-3">
+        Apply filters
+      </Button>
+    </form>
+  );
+}
+export function EmptyProducts({ path }: { path: string }) {
+  return (
+    <div className="border border-[color:var(--border-gold)] bg-[color:var(--surface-dark)] px-6 py-14 text-center">
+      <p className="font-display text-4xl">
+        No products found in this selection.
+      </p>
+      <p className="mt-4 text-sm text-[color:var(--muted)]">
+        Try another category or clear your search.
+      </p>
+      <Link href={path} className="mt-7 inline-block">
+        <Button>Browse all products</Button>
+      </Link>
+    </div>
+  );
+}
+export function Pagination({
+  path,
+  page,
+  pageCount,
+  q,
+  subcategory,
+  sort,
+}: {
+  path: string;
+  page: number;
+  pageCount: number;
+  q: string;
+  subcategory: string | null;
+  sort: string;
+}) {
+  if (pageCount <= 1) return null;
+  const href = (target: number) => {
+    const params = new URLSearchParams({ page: String(target) });
+    if (q) params.set("q", q);
+    if (subcategory) params.set("subcategory", subcategory);
+    if (sort !== "default") params.set("sort", sort);
+    return `${path}?${params}`;
+  };
+  return (
+    <nav
+      aria-label="Product pages"
+      className="mt-10 grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:flex sm:justify-center sm:gap-3"
+    >
+      <Link
+        aria-disabled={page === 1}
+        className="min-h-11 border border-[color:var(--border-dark)] px-3 py-3 text-center text-[11px] tracking-[.08em] uppercase disabled:opacity-40 sm:px-4 sm:text-xs sm:tracking-[.1em]"
+        href={page === 1 ? path : href(page - 1)}
+      >
+        Previous
+      </Link>
+      <span className="text-center text-xs text-[color:var(--muted)] sm:text-sm">
+        Page {page} of {pageCount}
+      </span>
+      <Link
+        aria-disabled={page === pageCount}
+        className="min-h-11 border border-[color:var(--border-dark)] px-3 py-3 text-center text-[11px] tracking-[.08em] uppercase sm:px-4 sm:text-xs sm:tracking-[.1em]"
+        href={page === pageCount ? path : href(page + 1)}
+      >
+        Next
+      </Link>
+    </nav>
+  );
+}

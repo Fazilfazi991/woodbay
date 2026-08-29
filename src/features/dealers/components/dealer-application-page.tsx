@@ -13,7 +13,7 @@ export function DealerApplicationPage() {
           <p className="text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
             {dealer.hero.eyebrow}
           </p>
-          <h1 className="font-display mt-5 max-w-3xl text-6xl leading-[.9] sm:text-8xl">
+          <h1 className="font-display mt-5 max-w-3xl text-[2.5rem] leading-[.94] sm:text-8xl">
             {dealer.hero.title}
           </h1>
           <p className="mt-7 max-w-2xl text-base leading-7 text-[color:var(--muted)]">

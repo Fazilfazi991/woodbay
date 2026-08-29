@@ -6,9 +6,7 @@ import { usePathname } from "next/navigation";
 import { primaryNavigation } from "@/config/navigation";
 import { BrandMark } from "./brand-mark";
 
-const headerNavigation = primaryNavigation.filter(
-  (item) => item.label !== "Projects",
-);
+const headerNavigation = primaryNavigation;
 const desktopNavLabelClass = "desktop-nav-link";
 
 export function Header() {
@@ -58,7 +56,7 @@ export function Header() {
   }, [drawer]);
   return (
     <header className={`sticky top-0 z-50 border-b border-[color:var(--border-dark)] ${isHomeTwo ? "home-two-header bg-[#0e0e0e]" : "bg-[color:var(--background-dark)]"}`}>
-      <div className="mx-auto flex h-20 max-w-[1440px] items-center px-5 md:px-8 xl:px-14">
+      <div className="mx-auto flex h-[4.5rem] max-w-[1440px] items-center px-5 md:px-8 xl:h-20 xl:px-14">
         <BrandMark />
         <nav
           ref={navRef}
@@ -115,7 +113,7 @@ export function Header() {
         </nav>
         <Link
           href="/furniture/factory-visit"
-          className={`factory-visit-link hidden min-h-11 items-center gap-2 rounded-[3px] border border-[color:var(--gold)] px-5 text-[10px] leading-none font-medium tracking-[.13em] uppercase transition-[background-color,border-color,color] duration-250 ease-out xl:inline-flex ${isHomeTwo ? "home-two-factory-link" : ""}`}
+          className={`factory-visit-link hidden min-h-11 items-center gap-2 rounded-[3px] border border-[color:var(--gold)] px-5 text-[11px] leading-none font-medium tracking-[.12em] uppercase transition-[background-color,border-color,color] duration-250 ease-out xl:inline-flex ${isHomeTwo ? "home-two-factory-link" : ""}`}
         >
           Book Factory Visit
           <ArrowRight size={13} strokeWidth={1.5} />
@@ -138,7 +136,7 @@ export function Header() {
           role="dialog"
           aria-modal="true"
           aria-label="Main menu"
-          className="fixed inset-0 z-[60] overflow-y-auto bg-[#0e0e0e] px-6 py-6 xl:hidden"
+          className="mobile-menu-panel fixed inset-0 z-[60] overflow-y-auto bg-[#0e0e0e] px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(1.25rem,env(safe-area-inset-bottom))] xl:hidden"
         >
           <div className="flex items-start justify-between">
             <BrandMark />
@@ -152,7 +150,7 @@ export function Header() {
             </button>
           </div>
           <nav
-            className="mt-14 border-t border-[color:var(--border-dark)]"
+            className="mt-10 border-t border-[color:var(--border-dark)]"
             aria-label="Mobile navigation"
           >
             {headerNavigation.map((item) => (
@@ -217,7 +215,7 @@ function MobileItem({
               key={child.href}
               href={child.href}
               onClick={onNavigate}
-              className="block py-2 text-sm text-[#c4beb4]"
+              className="flex min-h-11 items-center text-sm text-[#c4beb4]"
             >
               {child.label}
             </Link>

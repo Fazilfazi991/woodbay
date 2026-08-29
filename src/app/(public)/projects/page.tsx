@@ -24,6 +24,7 @@ export default async function ProjectsPage() {
     <Section tone="dark" className="pt-12">
       <Container>
         <SectionHeader
+          as="h1"
           eyebrow="Our Projects"
           title="Spaces made personal."
           description="Explore published Woodbay project work from the canonical gallery."

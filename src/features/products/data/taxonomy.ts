@@ -56,6 +56,8 @@ export const divisionSubcategorySlugs = {
     "pulldown-solutions",
     "dish-racks",
     "wardrobe-series",
+    "wardrobe-lifters",
+    "trouser-racks",
     "smart-kitchen-waterfall-sinks",
   ],
   "hardware-fittings": [
@@ -76,6 +78,7 @@ export const divisionSubcategorySlugs = {
   ],
   "smart-furniture": [],
   "home-decor": [
+    "decor",
     "wallpaper",
     "pu-stone-panels",
     "glass-mosaic-tiles",

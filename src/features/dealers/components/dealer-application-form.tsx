@@ -70,7 +70,7 @@ export function DealerApplicationForm() {
               required
               name="state"
               defaultValue=""
-              className="min-h-11 rounded-md border border-[color:var(--border)] bg-[color:var(--surface)] px-3 text-[color:var(--foreground-dark)] focus:outline-2 focus:outline-[color:var(--primary)]"
+              className="min-h-12 rounded-md border border-[color:var(--border)] bg-[color:var(--surface)] px-3 text-[color:var(--foreground-dark)] focus:outline-2 focus:outline-[color:var(--primary)]"
             >
               <option value="" disabled>
                 Select state

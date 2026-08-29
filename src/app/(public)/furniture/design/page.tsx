@@ -13,7 +13,7 @@ export default function Page() {
         <p className="text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
           Custom furniture enquiry
         </p>
-        <h1 className="font-display mt-4 text-6xl">Design your furniture.</h1>
+        <h1 className="font-display mt-4 text-[2.5rem] leading-[.94] sm:text-6xl">Design your furniture.</h1>
         <p className="mt-5 text-sm leading-7 text-[color:var(--muted)]">
           Selections are a consultation starting point, not a manufacturing
           order.

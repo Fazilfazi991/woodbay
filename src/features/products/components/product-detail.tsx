@@ -1,22 +1,18 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  ChevronLeft,
-  ChevronRight,
-  MapPin,
-  MessageCircle,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import type { ProductDetail, ProductVariant } from "../types";
-import { isWhatsAppEnquiry, productEnquiryHref } from "../data/enquiry";
+import { productEnquiryHref } from "../data/enquiry";
 import { localProductImage } from "../data/local-images";
 
 export function ProductGallery({ product }: { product: ProductDetail }) {
   const [index, setIndex] = useState(0);
   const fallback = localProductImage(product.slug, product.name);
-  const images = product.images.length > 0 ? product.images : fallback ? [fallback] : [];
+  const images =
+    product.images.length > 0 ? product.images : fallback ? [fallback] : [];
   const image = images[index];
   if (!image)
     return (
@@ -42,9 +38,7 @@ export function ProductGallery({ product }: { product: ProductDetail }) {
             <button
               aria-label="Previous product image"
               onClick={() =>
-                setIndex(
-                  (index - 1 + images.length) % images.length,
-                )
+                setIndex((index - 1 + images.length) % images.length)
               }
               className="absolute top-1/2 left-3 grid size-11 -translate-y-1/2 place-items-center border border-[color:var(--border-gold)] bg-black/50"
             >
@@ -103,7 +97,7 @@ export function ProductSpecifications({
         {entries.map((entry) => (
           <div
             key={entry.label}
-            className="grid grid-cols-[minmax(8rem,.7fr)_1fr] gap-4 py-4 text-sm"
+            className="grid gap-1 py-4 text-sm sm:grid-cols-[minmax(8rem,.7fr)_1fr] sm:gap-4"
           >
             <dt className="font-bold tracking-[.1em] text-[color:var(--gold)] uppercase">
               {entry.label}
@@ -116,7 +110,15 @@ export function ProductSpecifications({
   );
 }
 
-export function ProductVariants({ variants }: { variants: ProductVariant[] }) {
+export function ProductVariants({
+  variants,
+  selectedId,
+  onSelect,
+}: {
+  variants: ProductVariant[];
+  selectedId?: string | null;
+  onSelect?: (variant: ProductVariant) => void;
+}) {
   if (!variants.length) return null;
   return (
     <section
@@ -127,45 +129,79 @@ export function ProductVariants({ variants }: { variants: ProductVariant[] }) {
         Available variants
       </h2>
       <div className="mt-5 divide-y divide-[color:var(--border-dark)] border-y border-[color:var(--border-dark)]">
-        {variants.map((variant) => (
-          <div
-            key={variant.id}
-            className="grid gap-2 py-4 text-sm sm:grid-cols-3"
-          >
-            <p className="font-semibold">{variant.name}</p>
-            <p>
-              {variant.sku && (
-                <>
-                  <span className="mr-2 text-[10px] font-bold tracking-[.1em] text-[color:var(--gold)] uppercase">
-                    Code
-                  </span>
-                  {variant.sku}
-                </>
-              )}
-            </p>
-            <p>
-              {[variant.dimension, variant.finish].filter(Boolean).join(" · ")}
-            </p>
-          </div>
-        ))}
+        {variants.map((variant) => {
+          const Wrapper = onSelect ? "button" : "div";
+          return (
+            <Wrapper
+              key={variant.id}
+              type={onSelect ? "button" : undefined}
+              aria-pressed={onSelect ? selectedId === variant.id : undefined}
+              onClick={onSelect ? () => onSelect(variant) : undefined}
+              className={`grid w-full gap-2 py-4 text-left text-sm sm:grid-cols-3 ${selectedId === variant.id ? "text-[color:var(--foreground-light)]" : "text-[color:var(--muted)]"}`}
+            >
+              <p className="font-semibold">{variant.name}</p>
+              <p>
+                {variant.sku && (
+                  <>
+                    <span className="mr-2 text-[10px] font-bold tracking-[.1em] text-[color:var(--gold)] uppercase">
+                      Code
+                    </span>
+                    {variant.sku}
+                  </>
+                )}
+              </p>
+              <p>
+                {[variant.dimension, variant.finish]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </p>
+            </Wrapper>
+          );
+        })}
       </div>
     </section>
   );
 }
 
-export function ProductActions({ product }: { product: ProductDetail }) {
-  const whatsapp = isWhatsAppEnquiry();
+export function ProductActions({
+  product,
+  variant,
+}: {
+  product: ProductDetail;
+  variant?: ProductVariant | null;
+}) {
+  const enquiry = productEnquiryHref(
+    product,
+    variant
+      ? { variant: variant.name, size: variant.size, finish: variant.finish }
+      : undefined,
+  );
   return (
     <section className="border-y border-[color:var(--border-gold)] py-6">
       <p className="text-xs font-bold tracking-[.14em] text-[color:var(--gold)] uppercase">
         Interested in this product?
       </p>
       <div className="mt-4 grid gap-3 sm:flex sm:flex-row">
-        <a href={productEnquiryHref(product)} target={whatsapp ? "_blank" : undefined} rel={whatsapp ? "noreferrer" : undefined} className="max-sm:block">
-          <Button className="max-sm:w-full">
-            <MessageCircle size={16} /> {whatsapp ? "WhatsApp enquiry" : "Enquire now"}
+        {enquiry ? (
+          <a
+            href={enquiry}
+            target="_blank"
+            rel="noreferrer"
+            className="max-sm:block"
+          >
+            <Button className="max-sm:w-full">
+              <MessageCircle size={16} /> Enquire on WhatsApp
+            </Button>
+          </a>
+        ) : (
+          <Button
+            disabled
+            className="max-sm:w-full"
+            title="WhatsApp enquiries are temporarily unavailable"
+          >
+            <MessageCircle size={16} /> Enquire on WhatsApp
           </Button>
-        </a>
+        )}
         <Link href="/dealers" className="max-sm:block">
           <Button variant="secondary" className="max-sm:w-full">
             <MapPin size={16} /> Find a dealer
@@ -173,5 +209,32 @@ export function ProductActions({ product }: { product: ProductDetail }) {
         </Link>
       </div>
     </section>
+  );
+}
+
+export function ProductOptionsAndActions({
+  product,
+}: {
+  product: ProductDetail;
+}) {
+  const [selected, setSelected] = useState<ProductVariant | null>(null);
+  return (
+    <>
+      <ProductActions product={product} variant={selected} />
+      {product.variants.length > 0 && (
+        <div className="mt-9">
+          <ProductVariants
+            variants={product.variants}
+            selectedId={selected?.id}
+            onSelect={(variant) =>
+              setSelected(selected?.id === variant.id ? null : variant)
+            }
+          />
+          <p className="mt-3 text-xs text-[color:var(--muted)]">
+            Select an option to include it in your WhatsApp enquiry.
+          </p>
+        </div>
+      )}
+    </>
   );
 }

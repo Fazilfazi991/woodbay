@@ -34,7 +34,7 @@ export function DealerLocatorFilters({ options }: { options: Options }) {
           aria-label="State"
           value={searchParams.get("state") ?? ""}
           onChange={(event) => update("state", event.target.value)}
-          className="dealer-locator-select min-h-11 bg-transparent text-sm tracking-normal normal-case"
+          className="dealer-locator-select min-h-12 bg-transparent text-sm tracking-normal normal-case"
         >
           <option value="">All states</option>
           {options.states.map((value) => (
@@ -50,7 +50,7 @@ export function DealerLocatorFilters({ options }: { options: Options }) {
           aria-label="District"
           value={searchParams.get("district") ?? ""}
           onChange={(event) => update("district", event.target.value)}
-          className="dealer-locator-select min-h-11 bg-transparent text-sm tracking-normal normal-case"
+          className="dealer-locator-select min-h-12 bg-transparent text-sm tracking-normal normal-case"
         >
           <option value="">All districts</option>
           {options.districts.map((value) => (
@@ -66,7 +66,7 @@ export function DealerLocatorFilters({ options }: { options: Options }) {
           aria-label="Area"
           value={searchParams.get("area") ?? ""}
           onChange={(event) => update("area", event.target.value)}
-          className="dealer-locator-select min-h-11 bg-transparent text-sm tracking-normal normal-case"
+          className="dealer-locator-select min-h-12 bg-transparent text-sm tracking-normal normal-case"
         >
           <option value="">All areas</option>
           {options.areas.map((value) => (
@@ -83,7 +83,7 @@ export function DealerLocatorFilters({ options }: { options: Options }) {
           value={searchParams.get("q") ?? ""}
           onChange={(event) => update("q", event.target.value)}
           placeholder="Dealer or area"
-          className="min-h-11 border-b border-[color:var(--border-gold)] bg-transparent text-sm tracking-normal normal-case outline-none"
+          className="min-h-12 border-b border-[color:var(--border-gold)] bg-transparent text-sm tracking-normal normal-case outline-none"
         />
       </label>
       {active && (

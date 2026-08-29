@@ -35,7 +35,7 @@ export default function ContactPage() {
       <Section tone="dark" className="pt-14 sm:pt-20">
         <Container className="max-w-4xl">
           <Eyebrow>Woodbay</Eyebrow>
-          <h1 className="font-display mt-4 text-[clamp(3rem,10vw,5.5rem)] leading-[.9]">
+          <h1 className="font-display mt-4 text-[2.5rem] leading-[.94] sm:text-[5.5rem]">
             Start a conversation.
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-7 text-[color:var(--muted)]">

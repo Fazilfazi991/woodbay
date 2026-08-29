@@ -13,7 +13,7 @@ export default function Page() {
         <p className="text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
           Woodbay Furniture
         </p>
-        <h1 className="font-display mt-4 text-6xl">Book a factory visit.</h1>
+        <h1 className="font-display mt-4 text-[2.5rem] leading-[.94] sm:text-6xl">Book a factory visit.</h1>
         <p className="mt-5 text-sm leading-7 text-[color:var(--muted)]">
           This is a request. A Woodbay team member will confirm any visit
           separately.

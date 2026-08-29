@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
@@ -8,6 +8,13 @@ export const metadata: Metadata = {
   title: { default: "WOODBAY", template: "%s | WOODBAY" },
   description: "WOODBAY Decor & Interiors official website.",
   robots: { index: false, follow: false },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#12130f",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
