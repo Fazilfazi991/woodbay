@@ -64,7 +64,7 @@ export async function DealerLocatorPage({
       <Section tone="light">
         <Container>
           <DealerLocatorFilters options={options} />
-          <div className="mt-8 flex items-center justify-between gap-5">
+          <div className="mt-6 flex items-center justify-between gap-5">
             <p role="status" className="text-sm font-semibold">
               {dealerResultText(results.length, filters)}
             </p>

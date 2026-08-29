@@ -99,10 +99,18 @@ export async function getChildCategories(parentId: string) {
 }
 export async function getDivisionCategories(division: ProductDivision) {
   const supabase = await createClient();
+  const allowed = new Set(
+    divisionSubcategorySlugs[
+      division.slug as keyof typeof divisionSubcategorySlugs
+    ],
+  );
+  const requestedSlugs = [
+    ...new Set([...division.sourceCategorySlugs, ...allowed]),
+  ];
   const { data: direct, error } = await supabase
     .from("product_categories")
     .select("id,name,slug,description,parent_id,sort_order,is_active")
-    .in("slug", [...division.sourceCategorySlugs])
+    .in("slug", requestedSlugs)
     .eq("is_active", true)
     .order("sort_order");
   if (error) throw error;
@@ -118,11 +126,6 @@ export async function getDivisionCategories(division: ProductDivision) {
     return [...unique.values()].filter(
       (category) => category.slug === "smart-furniture",
     );
-  const allowed = new Set(
-    divisionSubcategorySlugs[
-      division.slug as keyof typeof divisionSubcategorySlugs
-    ],
-  );
   const eligible = [...unique.values()].filter((category) =>
     allowed.has(category.slug as never),
   );

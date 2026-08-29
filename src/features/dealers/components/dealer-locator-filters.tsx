@@ -26,15 +26,15 @@ export function DealerLocatorFilters({ options }: { options: Options }) {
   return (
     <div
       id="dealer-locator"
-      className="grid gap-3 border border-[color:var(--border-gold)] bg-[color:var(--surface-dark)] p-4 text-[color:var(--foreground-light)] lg:grid-cols-[1fr_1fr_1fr_1.2fr_auto]"
+      className="relative z-[41] grid gap-3.5 border border-[color:var(--border-gold)] bg-[color:var(--surface-elevated)] p-5 text-[color:var(--foreground-dark)] lg:grid-cols-[1fr_1fr_1fr_1.2fr_auto] lg:items-end lg:gap-3"
     >
-      <label className="grid gap-1 text-xs font-bold tracking-[.1em] uppercase">
+      <label className="grid gap-1 text-[10px] font-bold tracking-[.12em] text-[color:var(--muted-dark)] uppercase">
         State
         <select
           aria-label="State"
           value={searchParams.get("state") ?? ""}
           onChange={(event) => update("state", event.target.value)}
-          className="dealer-locator-select min-h-12 bg-transparent text-sm tracking-normal normal-case"
+          className="dealer-locator-select min-h-11 border-b border-[color:var(--border-light)] bg-transparent text-sm tracking-normal text-[color:var(--foreground-dark)] normal-case outline-none focus:border-[color:var(--gold)]"
         >
           <option value="">All states</option>
           {options.states.map((value) => (
@@ -44,13 +44,13 @@ export function DealerLocatorFilters({ options }: { options: Options }) {
           ))}
         </select>
       </label>
-      <label className="grid gap-1 text-xs font-bold tracking-[.1em] uppercase">
+      <label className="grid gap-1 text-[10px] font-bold tracking-[.12em] text-[color:var(--muted-dark)] uppercase">
         District
         <select
           aria-label="District"
           value={searchParams.get("district") ?? ""}
           onChange={(event) => update("district", event.target.value)}
-          className="dealer-locator-select min-h-12 bg-transparent text-sm tracking-normal normal-case"
+          className="dealer-locator-select min-h-11 border-b border-[color:var(--border-light)] bg-transparent text-sm tracking-normal text-[color:var(--foreground-dark)] normal-case outline-none focus:border-[color:var(--gold)]"
         >
           <option value="">All districts</option>
           {options.districts.map((value) => (
@@ -60,13 +60,13 @@ export function DealerLocatorFilters({ options }: { options: Options }) {
           ))}
         </select>
       </label>
-      <label className="grid gap-1 text-xs font-bold tracking-[.1em] uppercase">
+      <label className="grid gap-1 text-[10px] font-bold tracking-[.12em] text-[color:var(--muted-dark)] uppercase">
         Area
         <select
           aria-label="Area"
           value={searchParams.get("area") ?? ""}
           onChange={(event) => update("area", event.target.value)}
-          className="dealer-locator-select min-h-12 bg-transparent text-sm tracking-normal normal-case"
+          className="dealer-locator-select min-h-11 border-b border-[color:var(--border-light)] bg-transparent text-sm tracking-normal text-[color:var(--foreground-dark)] normal-case outline-none focus:border-[color:var(--gold)]"
         >
           <option value="">All areas</option>
           {options.areas.map((value) => (
@@ -76,14 +76,14 @@ export function DealerLocatorFilters({ options }: { options: Options }) {
           ))}
         </select>
       </label>
-      <label className="grid gap-1 text-xs font-bold tracking-[.1em] uppercase">
+      <label className="grid gap-1 text-[10px] font-bold tracking-[.12em] text-[color:var(--muted-dark)] uppercase">
         Search
         <input
           aria-label="Search dealers"
           value={searchParams.get("q") ?? ""}
           onChange={(event) => update("q", event.target.value)}
           placeholder="Dealer or area"
-          className="min-h-12 border-b border-[color:var(--border-gold)] bg-transparent text-sm tracking-normal normal-case outline-none"
+          className="min-h-11 border-b border-[color:var(--border-light)] bg-transparent text-sm tracking-normal text-[color:var(--foreground-dark)] normal-case outline-none placeholder:text-[#79766e] focus:border-[color:var(--gold)]"
         />
       </label>
       {active && (

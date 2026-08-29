@@ -83,7 +83,7 @@ const divisionPresentation = {
     title: "Home Decor",
     mobileTitle: "Home Decor",
     mobileDescription: "Wall and interior finishing solutions.",
-    image: "/images/products/pu-stone-panels.webp",
+    image: "/images/homepage/home-decor-category-v2.png",
     imageClassName: "object-center",
     containImageOnMobile: false,
   },
@@ -146,30 +146,32 @@ function TrustStrip({ light = false }: { light?: boolean }) {
   const icons = [Award, Sparkles, Check, Handshake];
   return (
     <div
-      className={`relative backdrop-blur-sm ${light ? "bg-white/75" : "bg-black/35"}`}
+      className={`relative z-[41] py-4 sm:py-5 lg:py-6 ${light ? "bg-white" : "bg-[#11120e]"}`}
     >
       <Container>
-        <div className="grid grid-cols-2 border-t border-l border-[color:var(--border-gold)] lg:grid-cols-4">
+        <div className="grid grid-cols-2 border border-[color:var(--border-gold)] lg:grid-cols-4">
           {homepage.trust.map((item, index) => {
             const Icon = icons[index];
             return (
               <div
                 key={item.title}
-                className="border-r border-b border-[color:var(--border-gold)] p-4 sm:p-5 lg:px-7 lg:py-6"
+                className={`flex min-h-[4.5rem] items-center gap-3 px-3 py-3 lg:min-h-[6.5rem] lg:items-start lg:px-5 lg:py-5 ${index % 2 === 0 ? "border-r" : ""} ${index < 2 ? "border-b" : ""} ${index < 3 ? "lg:border-r" : "lg:border-r-0"} border-[color:var(--border-gold)] lg:border-b-0`}
               >
                 <Icon
-                  size={19}
+                  size={17}
                   strokeWidth={1.25}
-                  className="text-[color:var(--gold)]"
+                  className="shrink-0 text-[color:var(--gold)] lg:mt-0.5"
                 />
-                <h2 className="mt-3 text-xs font-bold tracking-[.12em] uppercase">
-                  {item.title}
-                </h2>
-                <p
-                  className={`mt-2 hidden text-xs leading-5 sm:block ${light ? "text-[#626262]" : "text-[#bcb6ac]"}`}
-                >
-                  {item.text}
-                </p>
+                <div className="min-w-0">
+                  <h2 className="text-[10px] leading-4 font-bold tracking-[.1em] uppercase sm:text-[11px] lg:text-xs">
+                    {item.title}
+                  </h2>
+                  <p
+                    className={`mt-1.5 hidden text-xs leading-5 lg:block ${light ? "text-[#626262]" : "text-[#bcb6ac]"}`}
+                  >
+                    {item.text}
+                  </p>
+                </div>
               </div>
             );
           })}
