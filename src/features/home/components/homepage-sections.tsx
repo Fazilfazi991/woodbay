@@ -332,26 +332,26 @@ export function SmartSection() {
   const smartFeatures = [
     {
       title: "Smart Furniture",
-      text: "Connected comfort designed to sit naturally within contemporary rooms.",
+      text: "Connected comfort, seamlessly built into everyday furniture.",
       image: "/images/products/smart-wifi-side-table.webp",
       href: "/products/smart-furniture",
     },
     {
       title: "Smart Waterfall Sinks",
-      text: "A focused kitchen system combining preparation, rinsing and considered utility.",
+      text: "Advanced preparation, rinsing and utility in one refined workspace.",
       image: "/images/products/waterfall-sink.webp",
       href: "/products/kitchen-wardrobe-accessories?subcategory=smart-kitchen-waterfall-sinks",
     },
   ] as const;
   return (
-    <Section tone="light">
+    <Section tone="light" className="lg:py-20">
       <Container>
-        <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr]">
-          <div>
+        <div className="grid gap-10 lg:grid-cols-[minmax(17rem,.72fr)_minmax(0,1.28fr)] lg:items-center lg:gap-14 xl:gap-20">
+          <div className="max-w-md lg:pb-8">
             <SectionHeader
               eyebrow="Smart Products"
               title="Innovation, quietly integrated."
-              description="Thoughtful systems that bring more ease and possibility to modern living."
+              description="Technology designed to disappear into the way you live."
             />
             <Link
               href="/products/smart-furniture"
@@ -362,25 +362,33 @@ export function SmartSection() {
               </Button>
             </Link>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {smartFeatures.map((item) => (
+          <div className="grid items-start gap-5 sm:grid-cols-12 sm:gap-6">
+            {smartFeatures.map((item, index) => (
               <Link
                 key={item.title}
                 href={item.href}
-                className="group overflow-hidden border border-[#d7cebf] bg-white"
+                className={`group block ${index === 0 ? "sm:col-span-7" : "sm:col-span-5 sm:mt-20"}`}
               >
-                <div className="relative aspect-[4/3] overflow-hidden">
+                <div
+                  className={`relative overflow-hidden bg-[#ddd6c9] ${index === 0 ? "aspect-[5/4]" : "aspect-[4/3]"}`}
+                >
                   <Image
                     src={item.image}
                     alt={`${item.title} by Woodbay`}
                     fill
-                    sizes="(max-width: 640px) 100vw, 35vw"
+                    sizes={
+                      index === 0
+                        ? "(max-width: 640px) 100vw, 40vw"
+                        : "(max-width: 640px) 100vw, 28vw"
+                    }
                     className="object-cover transition duration-500 group-hover:scale-[1.025]"
                   />
                 </div>
-                <div className="p-6">
+                <div className="border-b border-[#cfc5b4] py-5">
                   <div className="flex items-start justify-between gap-4">
-                    <h3 className="font-display text-3xl leading-none">
+                    <h3
+                      className={`font-display leading-none ${index === 0 ? "text-4xl" : "text-3xl"}`}
+                    >
                       {item.title}
                     </h3>
                     <ArrowRight
@@ -388,7 +396,7 @@ export function SmartSection() {
                       className="shrink-0 text-[color:var(--gold)] transition-transform group-hover:translate-x-1"
                     />
                   </div>
-                  <p className="mt-4 text-sm leading-7 text-[color:var(--muted-dark)]">
+                  <p className="mt-3 max-w-md text-sm leading-6 text-[color:var(--muted-dark)]">
                     {item.text}
                   </p>
                 </div>

@@ -1,65 +1,82 @@
 import Link from "next/link";
-import { ArrowUpRight, Camera, Globe2, PlayCircle } from "lucide-react";
-import { footerNavigation } from "@/config/navigation";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { BrandMark } from "./brand-mark";
 const columns = [
-  ["Products", footerNavigation.products],
-  ["Company", footerNavigation.company],
-  ["Dealers", footerNavigation.dealers],
-  ["Support", footerNavigation.support],
+  [
+    "Products",
+    [
+      { label: "All Products", href: "/products" },
+      {
+        label: "Smart Kitchen & Wardrobe",
+        href: "/products/kitchen-wardrobe-accessories",
+      },
+      {
+        label: "Hardware Fittings & Profiles",
+        href: "/products/hardware-fittings",
+      },
+      { label: "Smart Furniture", href: "/products/smart-furniture" },
+      { label: "Home Decor", href: "/products/home-decor" },
+    ],
+  ],
+  [
+    "Company",
+    [
+      { label: "About WoodBay", href: "/about" },
+      { label: "Projects", href: "/projects" },
+      { label: "Manufacturing", href: "/about" },
+      { label: "Contact", href: "/contact" },
+    ],
+  ],
+  [
+    "Dealers & Support",
+    [
+      { label: "Find a Dealer", href: "/dealers" },
+      { label: "Become a Dealer", href: "/dealers/become-a-dealer" },
+      { label: "Verify Voucher", href: "/redeem" },
+      { label: "Book Factory Visit", href: "/furniture/factory-visit" },
+      { label: "Contact Support", href: "/contact" },
+    ],
+  ],
 ] as const;
-const socialLinks = [
-  { Icon: Globe2, href: siteConfig.social.facebook, label: "Facebook" },
-  { Icon: Camera, href: siteConfig.social.instagram, label: "Instagram" },
-  { Icon: PlayCircle, href: siteConfig.social.youtube, label: "YouTube" },
-].filter((link): link is { Icon: typeof Globe2; href: string; label: string } =>
-  Boolean(link.href),
-);
-const hasContact = Boolean(
-  siteConfig.contact.phone ||
-  siteConfig.contact.email ||
-  siteConfig.contact.factoryAddress,
-);
 export function Footer() {
+  const enquiryHref = siteConfig.whatsappUrl ?? "/contact";
   return (
     <footer className="bg-[color:var(--background-dark)] text-[color:var(--foreground-light)]">
-      <div className="mx-auto max-w-[1440px] px-5 py-16 md:px-8 lg:py-20 xl:px-14">
-        <div
-          className={`grid gap-12 border-b border-[color:var(--border-dark)] pb-14 ${hasContact ? "lg:grid-cols-[1.35fr_2fr_1fr]" : "lg:grid-cols-[1.35fr_2fr]"}`}
-        >
-          <div>
+      <div className="mx-auto max-w-[1440px] px-5 py-12 md:px-8 lg:py-16 xl:px-14">
+        <p className="font-display border-b border-[color:var(--border-dark)] pb-7 text-2xl text-[#ded8cd] sm:text-3xl">
+          Designed in detail. Built for living.
+        </p>
+        <div className="grid gap-10 py-10 md:grid-cols-[minmax(16rem,1.15fr)_2fr] md:gap-12 lg:grid-cols-[minmax(18rem,1.15fr)_2.3fr] lg:gap-20">
+          <div className="max-w-sm">
             <BrandMark />
-            <p className="mt-6 max-w-xs text-sm leading-7 text-[#bdb8af]">
+            <p className="mt-5 text-sm leading-6 text-[#c7c1b7]">
               Precision-crafted accessories and interiors for considered spaces.
             </p>
-            {socialLinks.length > 0 && (
-              <div className="mt-7 flex gap-3">
-                {socialLinks.map(({ Icon, href, label }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    aria-label={label}
-                    className="grid size-10 place-items-center border border-[color:var(--border-dark)] text-[color:var(--gold)] hover:border-[color:var(--gold)]"
-                  >
-                    <Icon size={17} strokeWidth={1.5} />
-                  </a>
-                ))}
-              </div>
-            )}
+            <p className="mt-3 text-[10px] leading-5 tracking-[.11em] text-[#8f8b83] uppercase">
+              Kitchen · Wardrobe · Hardware · Smart Living · Decor
+            </p>
           </div>
-          <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-4">
+          <nav
+            aria-label="Footer"
+            className="grid grid-cols-2 gap-x-6 gap-y-9 sm:grid-cols-[1.25fr_.8fr_1fr] sm:gap-x-10"
+          >
             {columns.map(([title, links]) => (
-              <div key={title}>
+              <div
+                key={title}
+                className={
+                  title === "Dealers & Support" ? "max-sm:col-span-2" : ""
+                }
+              >
                 <h2 className="text-[10px] font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
                   {title}
                 </h2>
-                <ul className="mt-5 space-y-3">
+                <ul className="mt-4 space-y-2.5">
                   {links.map((link) => (
                     <li key={`${link.label}-${link.href}`}>
                       <Link
                         href={link.href}
-                        className="text-sm text-[#c1bbb1] hover:text-[color:var(--gold)]"
+                        className="text-[13px] leading-5 text-[#d0cac0] underline-offset-4 transition-colors hover:text-[color:var(--gold)] hover:underline"
                       >
                         {link.label}
                       </Link>
@@ -68,41 +85,36 @@ export function Footer() {
                 </ul>
               </div>
             ))}
-          </div>
-          {hasContact && (
-            <div>
-              <h2 className="text-[10px] font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
-                Contact
-              </h2>
-              <address className="mt-5 space-y-3 text-sm leading-6 text-[#c1bbb1] not-italic">
-                {siteConfig.contact.phone && (
-                  <a
-                    href={`tel:${siteConfig.contact.phone.replace(/\s/g, "")}`}
-                    className="block hover:text-[color:var(--gold)]"
-                  >
-                    {siteConfig.contact.phone}
-                  </a>
-                )}
-                {siteConfig.contact.email && (
-                  <a
-                    href={`mailto:${siteConfig.contact.email}`}
-                    className="block hover:text-[color:var(--gold)]"
-                  >
-                    {siteConfig.contact.email}
-                  </a>
-                )}
-                {siteConfig.contact.factoryAddress && (
-                  <p>{siteConfig.contact.factoryAddress}</p>
-                )}
-              </address>
-            </div>
-          )}
+          </nav>
         </div>
-        <div className="flex flex-col gap-4 pt-7 text-xs text-[#8d8a82] sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Woodbay. All rights reserved.</p>
-          <Link href="/sitemap.xml" className="inline-flex items-center gap-1">
-            Sitemap <ArrowUpRight size={12} />
-          </Link>
+        <div className="flex flex-col gap-4 border-t border-[color:var(--border-dark)] pt-6 text-xs text-[#96928a] sm:flex-row sm:items-center">
+          <p>© {new Date().getFullYear()} WoodBay Decor & Interiors</p>
+          <div className="flex gap-5 sm:ml-5">
+            <Link href="/privacy" className="hover:text-[color:var(--gold)]">
+              Privacy
+            </Link>
+            <Link href="/terms" className="hover:text-[color:var(--gold)]">
+              Terms
+            </Link>
+            <Link
+              href="/sitemap.xml"
+              className="inline-flex items-center gap-1"
+            >
+              Sitemap <ArrowUpRight size={12} />
+            </Link>
+          </div>
+          <a
+            href={enquiryHref}
+            target={siteConfig.whatsappUrl ? "_blank" : undefined}
+            rel={siteConfig.whatsappUrl ? "noreferrer" : undefined}
+            className="group inline-flex items-center gap-2 font-semibold text-[#d8d2c8] sm:ml-auto"
+          >
+            WhatsApp / Enquire{" "}
+            <ArrowRight
+              size={13}
+              className="text-[color:var(--gold)] transition-transform group-hover:translate-x-1"
+            />
+          </a>
         </div>
       </div>
     </footer>
