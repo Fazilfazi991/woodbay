@@ -58,7 +58,7 @@ export function Header() {
     <header
       className={`sticky top-0 z-50 border-b border-[color:var(--border-dark)] ${isHomeTwo ? "home-two-header bg-[#0e0e0e]" : "bg-[color:var(--background-dark)]"}`}
     >
-      <div className="mx-auto flex h-[4.5rem] max-w-[1440px] items-center px-5 md:px-8 xl:h-20 xl:px-14">
+      <div className="mx-auto flex h-[4.25rem] max-w-[1440px] items-center px-5 md:px-8 xl:h-20 xl:px-14">
         <BrandMark />
         <nav
           ref={navRef}
@@ -121,7 +121,7 @@ export function Header() {
           onClick={() => setDrawer(true)}
           className="ml-auto grid min-h-11 min-w-11 place-items-center text-[color:var(--gold)] xl:hidden"
         >
-          <Menu size={24} strokeWidth={1.5} />
+          <Menu size={27} strokeWidth={1.4} />
         </button>
       </div>
       {drawer && (

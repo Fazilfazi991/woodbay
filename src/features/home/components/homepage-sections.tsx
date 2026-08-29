@@ -143,7 +143,7 @@ export function HeroSection({
           >
             {homepage.hero.description}
           </p>
-          <div className="mt-8 flex justify-center sm:mt-9 sm:justify-start">
+          <div className="mt-8 flex justify-start sm:mt-9">
             <Link href="/products" className="inline-block">
               <Button
                 variant={light ? "primary" : "gold"}
@@ -242,23 +242,19 @@ export function CategoriesSection() {
               <Link
                 key={area.href}
                 href={area.href}
-                className="group block w-[104px] shrink-0 snap-start md:w-auto"
+                className="group block w-32 shrink-0 snap-start md:w-auto"
               >
                 <span className="relative block aspect-square overflow-hidden border border-[#d7cebf] bg-white transition-colors group-hover:border-[color:var(--gold)]">
                   <Image
                     src={area.image}
                     alt={`${area.title} solutions by Woodbay`}
                     fill
-                    sizes="(max-width: 767px) 104px, 12vw"
+                    sizes="(max-width: 767px) 128px, 12vw"
                     className={`${area.imageClassName} transition duration-500 group-hover:scale-[1.025]`}
                   />
                 </span>
-                <span className="mt-2 flex min-h-11 items-start justify-between gap-1 text-[11px] leading-4 font-semibold text-[color:var(--foreground-dark)]">
+                <span className="mt-2 block min-h-11 text-sm leading-5 font-semibold text-[color:var(--foreground-dark)]">
                   {area.title}
-                  <ArrowRight
-                    size={12}
-                    className="mt-0.5 shrink-0 text-[color:var(--gold)] transition-transform group-hover:translate-x-0.5"
-                  />
                 </span>
               </Link>
             ))}
@@ -316,7 +312,7 @@ export function ManufacturingSection({ variant }: { variant?: "home-two" }) {
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div>
             <Eyebrow>Global Manufacturing Excellence</Eyebrow>
-            <h2 className="font-display mt-4 text-5xl leading-[.93] sm:text-6xl">
+            <h2 className="font-display mt-4 text-[2.75rem] leading-[.94] sm:text-6xl">
               Precision Manufacturing.
               <br />
               Trusted Worldwide.
@@ -506,7 +502,7 @@ export function DecorAndFurnitureSection({
       <Section tone="light">
         <Container>
           <div
-            className={`relative overflow-hidden bg-[color:var(--background-deep)] px-6 py-14 text-[color:var(--foreground-light)] sm:px-10 lg:px-16 lg:py-20 ${variant === "home-two" ? "home-two-factory-promise" : ""}`}
+            className={`relative overflow-hidden bg-[color:var(--background-deep)] px-6 py-11 text-[color:var(--foreground-light)] sm:px-10 sm:py-14 lg:px-16 lg:py-20 ${variant === "home-two" ? "home-two-factory-promise" : ""}`}
           >
             <Image
               src="/images/home-2/hero-interiors.png"
@@ -521,7 +517,7 @@ export function DecorAndFurnitureSection({
             />
             <div className="relative z-10 max-w-2xl">
               <Eyebrow>Factory Direct Furniture</Eyebrow>
-              <h2 className="font-display mt-4 text-5xl leading-[.92] sm:text-6xl">
+              <h2 className="font-display mt-4 text-[2.7rem] leading-[.94] sm:text-6xl">
                 Designed Around Your Space.
                 <br />
                 Built Direct from Our Factory.
@@ -530,14 +526,19 @@ export function DecorAndFurnitureSection({
                 Bring your vision closer with premium materials, considered
                 design and direct consultation from the factory.
               </p>
-              <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:items-stretch">
+              <div className="mt-7 flex flex-col items-start gap-2.5 sm:mt-8 sm:flex-row sm:items-stretch sm:gap-3">
                 <Link href="/furniture">
-                  <Button>
+                  <Button className="h-12 min-h-12 px-5 py-0">
                     Explore Furniture <ArrowRight size={15} />
                   </Button>
                 </Link>
                 <Link href="/furniture/factory-visit">
-                  <Button variant="secondary">Book Factory Visit</Button>
+                  <Button
+                    variant="secondary"
+                    className="h-12 min-h-12 px-5 py-0"
+                  >
+                    Book Factory Visit
+                  </Button>
                 </Link>
               </div>
             </div>

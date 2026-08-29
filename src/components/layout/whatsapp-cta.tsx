@@ -15,7 +15,7 @@ function WhatsAppIcon() {
 
 export function WhatsAppCta() {
   const common =
-    "fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 inline-flex size-[3.25rem] items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_8px_24px_rgba(0,0,0,.3)] transition-[transform,background-color,box-shadow] duration-200 hover:scale-[1.04] hover:bg-[#1fbd59] hover:shadow-[0_10px_28px_rgba(0,0,0,.34)] active:scale-[.97] sm:right-[max(1.25rem,env(safe-area-inset-right))] sm:bottom-[max(1.25rem,env(safe-area-inset-bottom))] sm:size-14";
+    "fixed right-[max(1.25rem,env(safe-area-inset-right))] bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-40 inline-flex size-[3.25rem] items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_8px_24px_rgba(0,0,0,.3)] transition-[transform,background-color,box-shadow] duration-200 hover:scale-[1.04] hover:bg-[#1fbd59] hover:shadow-[0_10px_28px_rgba(0,0,0,.34)] active:scale-[.97] sm:size-14";
 
   if (!siteConfig.whatsappUrl) {
     return (

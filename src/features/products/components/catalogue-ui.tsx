@@ -16,7 +16,7 @@ export function ProductCard({ product }: { product: CatalogueProduct }) {
     <article className="group flex h-full min-w-0 flex-col overflow-hidden rounded-[10px] border border-[#d8d0c3] bg-[#fbf8f1] text-[color:var(--foreground-dark)] transition-colors duration-300 hover:border-[color:var(--gold)]">
       <Link
         href={productDetailPath(product)}
-        className="relative block aspect-[4/3] overflow-hidden bg-[color:var(--surface-muted)]"
+        className="relative block aspect-[10/9] overflow-hidden bg-[color:var(--surface-muted)] sm:aspect-[4/3]"
       >
         {image ? (
           <Image
@@ -39,7 +39,7 @@ export function ProductCard({ product }: { product: CatalogueProduct }) {
           </div>
         )}
       </Link>
-      <div className="flex flex-1 flex-col p-3.5 sm:p-5">
+      <div className="flex flex-1 flex-col p-3 sm:p-5">
         <p className="line-clamp-1 text-[10px] font-semibold tracking-[.1em] text-[color:var(--gold)] uppercase sm:text-[11px] sm:tracking-[.12em]">
           {product.category?.name ?? "Woodbay Collection"}
         </p>
