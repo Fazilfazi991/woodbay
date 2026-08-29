@@ -61,7 +61,7 @@ export async function DealerLocatorPage({
           </div>
         </Container>
       </section>
-      <Section tone="light">
+      <Section tone="light" className="!pb-8 sm:!pb-12 lg:!pb-16">
         <Container>
           <DealerLocatorFilters options={options} />
           <div className="mt-6 flex items-center justify-between gap-5">
@@ -90,27 +90,31 @@ export async function DealerLocatorPage({
           )}
         </Container>
       </Section>
-      <Section tone="light">
+      <Section tone="light" className="!pt-0">
         <Container>
-          <div className="grid gap-5 border-y border-[#d7cebf] py-10 lg:grid-cols-2">
-            <div>
+          <div className="border-y border-[#d7cebf] py-10">
+            <div className="max-w-2xl">
               <p className="text-xs font-bold tracking-[.14em] text-[color:var(--gold)] uppercase">
                 Dealer partnership
               </p>
               <h2 className="font-display mt-3 text-4xl">
                 Interested in joining the network?
               </h2>
-            </div>
-            <div className="flex flex-wrap items-center gap-3 lg:justify-end">
-              <Link href="/dealers/become-a-dealer">
-                <Button variant="light">Become a dealer</Button>
-              </Link>
               <Link
                 href="/furniture/outlets"
-                className="text-xs font-bold tracking-[.1em] uppercase"
+                className="mt-7 inline-block max-sm:block"
               >
-                Furniture outlet enquiry{" "}
-                <ArrowRight className="inline" size={14} />
+                <Button variant="gold" className="max-sm:w-full">
+                  Furniture outlet enquiry <ArrowRight size={15} />
+                </Button>
+              </Link>
+              <Link
+                href="/dealers/become-a-dealer"
+                className="mt-3 inline-block max-sm:block sm:ml-3"
+              >
+                <Button variant="light" className="max-sm:w-full">
+                  Become a dealer
+                </Button>
               </Link>
             </div>
           </div>
@@ -127,7 +131,7 @@ export async function DealerLocatorPage({
 
 function EmptyDealerState({ hasDealers }: { hasDealers: boolean }) {
   return (
-    <div className="mt-8 grid place-items-center border border-[#d7cebf] p-10 text-center">
+    <div className="mt-8 grid max-w-2xl place-items-center border border-[#d7cebf] p-6 text-center sm:p-8">
       <MapPin size={25} className="text-[color:var(--gold)]" />
       <h2 className="font-display mt-5 text-4xl">
         {hasDealers

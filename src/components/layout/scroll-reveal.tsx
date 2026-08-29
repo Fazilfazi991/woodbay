@@ -23,9 +23,9 @@ export function ScrollReveal({ children }: { children: React.ReactNode }) {
       { threshold: 0.12 },
     );
 
-    sections.forEach((section, index) => {
+    sections.forEach((section) => {
       section.classList.add("scroll-reveal");
-      section.dataset.revealDirection = index % 2 === 0 ? "up" : "down";
+      section.dataset.revealDirection = "up";
       observer.observe(section);
     });
 

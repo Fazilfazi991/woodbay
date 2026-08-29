@@ -235,9 +235,6 @@ a {
 .scroll-reveal[data-reveal-direction="up"] {
   transform: translateY(28px);
 }
-.scroll-reveal[data-reveal-direction="down"] {
-  transform: translateY(-28px);
-}
 .scroll-reveal.scroll-reveal--visible {
   opacity: 1;
   transform: translateY(0);
@@ -252,8 +249,7 @@ a {
     scroll-behavior: auto;
   }
   .scroll-reveal,
-  .scroll-reveal[data-reveal-direction="up"],
-  .scroll-reveal[data-reveal-direction="down"] {
+  .scroll-reveal[data-reveal-direction="up"] {
     opacity: 1;
     transform: none;
     transition: none;

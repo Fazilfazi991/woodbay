@@ -7,7 +7,6 @@ import {
   Gem,
   Lightbulb,
   MapPin,
-  PackageCheck,
   ShieldCheck,
 } from "lucide-react";
 import { about } from "@/config/about";
@@ -28,7 +27,6 @@ export function AboutHero() {
       title={"Where Design Meets\nPrecision."}
       description="Woodbay creates premium kitchen accessories, wardrobe solutions, furniture, smart products and decor-led interior solutions for modern spaces."
       image={about.assets.hero}
-      breadcrumb={[{ label: "Home", href: "/" }, { label: "About" }]}
     />
   );
 }
@@ -183,28 +181,19 @@ export function DivisionsAndFurniture() {
             <Link
               key={division.title}
               href={division.href}
-              className="group bg-[color:var(--surface-light)] p-6 hover:bg-white"
+              className="group bg-[color:var(--surface-light)] p-6 transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[color:var(--gold)]"
             >
-              <PackageCheck
-                size={22}
-                strokeWidth={1.2}
-                className="text-[color:var(--gold)]"
-              />
-              <h3 className="font-display mt-14 text-3xl leading-none">
+              <h3 className="font-display text-3xl leading-none">
                 {division.title}
               </h3>
               <p className="mt-4 text-sm leading-6 text-[color:var(--muted-dark)]">
                 {division.description}
               </p>
-              <ArrowRight
-                size={17}
-                className="mt-7 text-[color:var(--gold)] transition-transform group-hover:translate-x-1"
-              />
             </Link>
           ))}
         </div>
-        <div className="mt-14 grid gap-7 bg-[color:var(--background-deep)] p-7 text-[color:var(--foreground-light)] lg:grid-cols-[1fr_.8fr] lg:p-10">
-          <div>
+        <div className="mt-14 bg-[color:var(--background-deep)] p-7 text-[color:var(--foreground-light)] lg:p-10">
+          <div className="max-w-2xl">
             <Eyebrow>Factory Direct Furniture</Eyebrow>
             <h2 className="font-display mt-4 text-4xl leading-none">
               Furniture made around the way you live.
@@ -213,9 +202,7 @@ export function DivisionsAndFurniture() {
               Woodbay’s furniture offering connects wardrobes, bedrooms and
               modular interiors with direct consultation and considered design.
             </p>
-          </div>
-          <div className="flex items-center">
-            <Link href="/furniture">
+            <Link href="/furniture" className="mt-7 inline-block">
               <Button>
                 Explore Furniture <ArrowRight size={15} />
               </Button>

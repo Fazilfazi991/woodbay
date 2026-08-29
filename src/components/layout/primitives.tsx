@@ -34,7 +34,7 @@ export function Section({
         : "woodbay-light-section bg-[color:var(--surface-light)] text-[color:var(--foreground-dark)]";
   return (
     <section
-      className={`py-12 sm:py-16 md:py-20 lg:py-28 ${surface} ${className}`}
+      className={`py-12 sm:py-16 md:py-20 lg:py-24 ${surface} ${className}`}
     >
       {children}
     </section>
@@ -272,7 +272,7 @@ export function PageHero({
       <div className="absolute inset-0 z-10 bg-black/50" />
       <Container className="relative z-20 py-12 sm:py-20 md:py-28 lg:py-36">
         {breadcrumb && <Breadcrumb items={breadcrumb} />}
-        <div className="mt-8 max-w-3xl sm:mt-14">
+        <div className={`${breadcrumb ? "mt-8 sm:mt-14" : ""} max-w-3xl`}>
           {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
           <h1 className="font-display mt-4 text-[2.5rem] leading-[.94] whitespace-pre-line sm:text-[4.5rem]">
             {title}
@@ -299,17 +299,30 @@ export function CTASection({
   title,
   description,
   action,
+  eyebrow = "Woodbay",
+  compact = false,
 }: {
   title: string;
   description: string;
   action: { label: string; href: string };
+  eyebrow?: string | null;
+  compact?: boolean;
 }) {
   return (
-    <Section tone="dark">
+    <Section
+      tone="dark"
+      className={compact ? "!py-10 sm:!py-14 lg:!py-16" : ""}
+    >
       <Container>
-        <div className="border-y border-[color:var(--border-gold)] py-12 text-center">
-          <Eyebrow>Woodbay</Eyebrow>
-          <h2 className="font-display mt-4 text-4xl sm:text-5xl">{title}</h2>
+        <div
+          className={`border-y border-[color:var(--border-gold)] text-center ${compact ? "py-9 sm:py-10" : "py-12"}`}
+        >
+          {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+          <h2
+            className={`font-display text-4xl sm:text-5xl ${eyebrow ? "mt-4" : ""}`}
+          >
+            {title}
+          </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-[color:var(--muted)]">
             {description}
           </p>

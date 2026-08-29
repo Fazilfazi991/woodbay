@@ -1,11 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { Container, Eyebrow, Section, SectionHeader } from "@/components/layout/primitives";
+import {
+  Container,
+  Eyebrow,
+  Section,
+  SectionHeader,
+} from "@/components/layout/primitives";
 import { getPublishedProjects } from "@/features/projects/data";
 
-function projectImage(project: Awaited<ReturnType<typeof getPublishedProjects>>[number]) {
-  const gallery = [...(project.project_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
+function projectImage(
+  project: Awaited<ReturnType<typeof getPublishedProjects>>[number],
+) {
+  const gallery = [...(project.project_images ?? [])].sort(
+    (a, b) => a.sort_order - b.sort_order,
+  );
   const src = project.featured_image || gallery[0]?.storage_key;
   return src && (src.startsWith("http") || src.startsWith("/")) ? src : null;
 }
@@ -21,7 +30,7 @@ export default async function ProjectsPage() {
   }
 
   return (
-    <Section tone="dark" className="pt-12">
+    <Section tone="dark" className="!py-12 sm:!py-16 lg:!py-20">
       <Container>
         <SectionHeader
           as="h1"
@@ -31,11 +40,11 @@ export default async function ProjectsPage() {
         />
 
         {unavailable ? (
-          <p className="mt-10 border border-[color:var(--border-dark)] p-6 text-sm text-[color:var(--muted)]">
+          <p className="mt-8 max-w-2xl border border-[color:var(--border-dark)] p-5 text-sm text-[color:var(--muted)]">
             Projects are temporarily unavailable. Please try again shortly.
           </p>
         ) : projects.length === 0 ? (
-          <p className="mt-10 border border-[color:var(--border-dark)] p-6 text-sm text-[color:var(--muted)]">
+          <p className="mt-8 max-w-2xl border border-[color:var(--border-dark)] p-5 text-sm text-[color:var(--muted)]">
             No projects are available yet.
           </p>
         ) : (
@@ -68,7 +77,9 @@ export default async function ProjectsPage() {
                       {project.category}
                       {project.location ? ` · ${project.location}` : ""}
                     </p>
-                    <h2 className="font-display mt-3 text-4xl leading-none">{project.title}</h2>
+                    <h2 className="font-display mt-3 text-4xl leading-none">
+                      {project.title}
+                    </h2>
                     {project.description && (
                       <p className="mt-4 line-clamp-2 text-sm leading-6 text-[color:var(--muted)]">
                         {project.description}

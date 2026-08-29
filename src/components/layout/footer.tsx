@@ -43,7 +43,7 @@ const columns = [
 export function Footer() {
   return (
     <footer className="bg-[color:var(--background-dark)] text-[color:var(--foreground-light)]">
-      <div className="mx-auto max-w-[1440px] px-5 py-7 sm:py-12 md:px-8 lg:py-16 xl:px-14">
+      <div className="mx-auto max-w-[1440px] px-5 py-7 sm:py-10 md:px-8 lg:py-12 xl:px-14">
         <p className="font-display hidden border-b border-[color:var(--border-dark)] pb-7 text-3xl text-[#ded8cd] sm:block">
           Designed in detail. Built for living.
         </p>

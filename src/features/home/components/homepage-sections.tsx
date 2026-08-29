@@ -541,7 +541,7 @@ export async function ProjectsSection() {
   return (
     <Section tone="muted">
       <Container>
-        <div className="flex items-end justify-between gap-6">
+        <div className="max-w-2xl">
           <SectionHeader
             eyebrow="Our Projects"
             title="Spaces made personal."
@@ -549,18 +549,18 @@ export async function ProjectsSection() {
           />
           <Link
             href="/projects"
-            className="hidden shrink-0 items-center gap-2 text-xs font-bold tracking-[.12em] text-[color:var(--foreground-dark)] uppercase hover:text-[color:var(--gold)] sm:inline-flex"
+            className="mt-7 inline-flex min-h-11 items-center gap-2 text-xs font-bold tracking-[.12em] text-[color:var(--foreground-dark)] uppercase hover:text-[color:var(--gold)]"
           >
             View All Projects <ArrowRight size={15} />
           </Link>
         </div>
         {unavailable ? (
-          <p className="mt-12 border border-[color:var(--border-light)] bg-[color:var(--surface-elevated)] p-6 text-sm text-[color:var(--muted-dark)]">
+          <p className="mt-8 max-w-2xl border border-[color:var(--border-light)] bg-[color:var(--surface-elevated)] p-5 text-sm text-[color:var(--muted-dark)]">
             Project highlights are temporarily unavailable. Please check back
             shortly.
           </p>
         ) : projects.length === 0 ? (
-          <p className="mt-12 border border-[color:var(--border-light)] bg-[color:var(--surface-elevated)] p-6 text-sm text-[color:var(--muted-dark)]">
+          <p className="mt-8 max-w-2xl border border-[color:var(--border-light)] bg-[color:var(--surface-elevated)] p-5 text-sm text-[color:var(--muted-dark)]">
             New Woodbay project highlights will appear here soon.
           </p>
         ) : (
@@ -611,10 +611,10 @@ export async function ProjectsSection() {
 export function DealerAndCatalogueSection() {
   return (
     <>
-      <Section tone="light" className="!py-8 sm:!py-16 md:!py-20 lg:!py-28">
+      <Section tone="light" className="!py-8 sm:!py-16 md:!py-20 lg:!py-24">
         <Container>
-          <div className="grid gap-7 border-y border-[#cfc5b4] py-8 sm:gap-10 sm:py-12 lg:grid-cols-[1.2fr_.8fr] lg:items-center">
-            <div>
+          <div className="border-y border-[#cfc5b4] py-8 sm:py-12">
+            <div className="max-w-2xl">
               <Eyebrow>Woodbay Dealer Network</Eyebrow>
               <h2 className="font-display mt-4 text-[2.6rem] leading-none sm:text-5xl">
                 Find Woodbay Near You
@@ -623,29 +623,29 @@ export function DealerAndCatalogueSection() {
                 Discover authorised Woodbay accessories dealers in your area, or
                 join our growing dealer network.
               </p>
-            </div>
-            <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-[auto_auto] lg:justify-self-end">
-              <Link href="/dealers" className="min-w-0">
-                <Button
-                  variant="gold"
-                  aria-label="Find a dealer"
-                  className="h-13 w-full !gap-1.5 !px-2 py-0 !text-[10px] !tracking-[.04em] whitespace-nowrap min-[360px]:!text-[12px] min-[390px]:!text-[13px] sm:h-14 sm:!gap-2 sm:!px-6 sm:!text-[11px] sm:!tracking-[.14em]"
-                >
-                  <MapPin size={14} className="hidden sm:block" />
-                  <span className="sm:hidden">Find Dealer</span>
-                  <span className="hidden sm:inline">Find a Dealer</span>
-                </Button>
-              </Link>
-              <Link href="/dealers/become-a-dealer" className="min-w-0">
-                <Button
-                  variant="light"
-                  aria-label="Become a dealer"
-                  className="h-13 w-full !px-2 py-0 !text-[10px] !tracking-[.04em] whitespace-nowrap min-[360px]:!text-[12px] min-[390px]:!text-[13px] sm:h-14 sm:!px-6 sm:!text-[11px] sm:!tracking-[.14em]"
-                >
-                  <span className="sm:hidden">Become Dealer</span>
-                  <span className="hidden sm:inline">Become a Dealer</span>
-                </Button>
-              </Link>
+              <div className="mt-7 grid max-w-xl grid-cols-2 gap-2.5 sm:flex">
+                <Link href="/dealers" className="min-w-0">
+                  <Button
+                    variant="gold"
+                    aria-label="Find a dealer"
+                    className="h-13 w-full !gap-1.5 !px-2 py-0 !text-[10px] !tracking-[.04em] whitespace-nowrap min-[360px]:!text-[12px] min-[390px]:!text-[13px] sm:h-14 sm:!gap-2 sm:!px-6 sm:!text-[11px] sm:!tracking-[.14em]"
+                  >
+                    <MapPin size={14} className="hidden sm:block" />
+                    <span className="sm:hidden">Find Dealer</span>
+                    <span className="hidden sm:inline">Find a Dealer</span>
+                  </Button>
+                </Link>
+                <Link href="/dealers/become-a-dealer" className="min-w-0">
+                  <Button
+                    variant="light"
+                    aria-label="Become a dealer"
+                    className="h-13 w-full !px-2 py-0 !text-[10px] !tracking-[.04em] whitespace-nowrap min-[360px]:!text-[12px] min-[390px]:!text-[13px] sm:h-14 sm:!px-6 sm:!text-[11px] sm:!tracking-[.14em]"
+                  >
+                    <span className="sm:hidden">Become Dealer</span>
+                    <span className="hidden sm:inline">Become a Dealer</span>
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </Container>
@@ -659,6 +659,8 @@ export function FinalHomeCta() {
       title="Let’s Build Better Spaces Together."
       description="Talk to Woodbay about your next interior, factory visit or accessories dealer opportunity."
       action={{ label: "Contact Woodbay", href: "/contact" }}
+      eyebrow={null}
+      compact
     />
   );
 }
