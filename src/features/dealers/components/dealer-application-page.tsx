@@ -9,38 +9,56 @@ export function DealerApplicationPage() {
   return (
     <>
       <section className="bg-[color:var(--background-deep)] text-[color:var(--foreground-light)]">
-        <Container className="py-20 sm:py-28">
+        <Container className="py-14 sm:py-28">
           <p className="text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
             {dealer.hero.eyebrow}
           </p>
-          <h1 className="font-display mt-5 max-w-3xl text-[2.5rem] leading-[.94] sm:text-8xl">
+          <h1 className="font-display mt-4 max-w-3xl text-[2.35rem] leading-[.98] sm:mt-5 sm:text-8xl sm:leading-[.94]">
             {dealer.hero.title}
           </h1>
-          <p className="mt-7 max-w-2xl text-base leading-7 text-[color:var(--muted)]">
+          <p className="mt-5 max-w-2xl text-[15px] leading-6 text-[color:var(--muted)] sm:mt-7 sm:text-base sm:leading-7">
             {dealer.hero.description}
           </p>
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <a href="#application">
-              <Button>Apply to become a dealer</Button>
+          <div className="mt-7 grid grid-cols-2 gap-2.5 sm:mt-9 sm:flex sm:flex-row sm:gap-3">
+            <a href="#application" className="min-w-0">
+              <Button
+                aria-label="Apply to become a dealer"
+                className="h-13 w-full !px-2 py-0 !text-[10px] !tracking-[.02em] whitespace-nowrap min-[360px]:!text-[12px] min-[390px]:!text-[13px] sm:h-auto sm:w-auto sm:!px-6 sm:py-3 sm:!text-[11px] sm:!tracking-[.14em]"
+              >
+                <span className="sm:hidden">Become Dealer</span>
+                <span className="hidden sm:inline">
+                  Apply to become a dealer
+                </span>
+              </Button>
             </a>
-            <Link href="/products">
-              <Button variant="secondary">
-                Explore products <ArrowRight size={16} />
+            <Link href="/products" className="min-w-0">
+              <Button
+                variant="secondary"
+                className="h-13 w-full gap-1.5 !px-2 py-0 !text-[10px] !tracking-[.02em] whitespace-nowrap min-[360px]:!text-[12px] min-[390px]:!text-[13px] sm:h-auto sm:w-auto sm:gap-2 sm:!px-6 sm:py-3 sm:!text-[11px] sm:!tracking-[.14em]"
+              >
+                Explore products
+                <ArrowRight className="hidden size-4 sm:block" />
               </Button>
             </Link>
           </div>
         </Container>
       </section>
-      <Section tone="light">
+      <Section tone="light" className="!py-0 sm:!py-16 md:!py-20 lg:!py-28">
         <Container>
-          <div className="grid gap-px bg-[#d7cebf] sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid divide-y divide-[#d7cebf] border-y border-[#d7cebf] sm:grid-cols-2 sm:gap-px sm:divide-y-0 sm:border-y-0 sm:bg-[#d7cebf] lg:grid-cols-3">
             {dealer.benefits.map((benefit) => (
               <article
                 key={benefit}
-                className="bg-[color:var(--surface-light)] p-6"
+                className="flex min-h-24 items-center gap-4 bg-[color:var(--surface-light)] py-6 sm:block sm:min-h-0 sm:p-6"
               >
-                <Check size={19} className="text-[color:var(--gold)]" />
-                <h2 className="font-display mt-12 text-3xl">{benefit}</h2>
+                <Check
+                  size={22}
+                  strokeWidth={1.5}
+                  className="shrink-0 text-[color:var(--gold)]"
+                />
+                <h2 className="font-display text-[1.65rem] leading-[1.05] sm:mt-12 sm:text-3xl">
+                  {benefit}
+                </h2>
               </article>
             ))}
           </div>
@@ -51,7 +69,7 @@ export function DealerApplicationPage() {
           <p className="text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
             Who this is for
           </p>
-          <h2 className="font-display mt-3 text-5xl">
+          <h2 className="font-display mt-3 text-4xl sm:text-5xl">
             A product range for considered businesses.
           </h2>
           <div className="mt-9 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -72,14 +90,14 @@ export function DealerApplicationPage() {
             <p className="text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
               Dealer application
             </p>
-            <h2 className="font-display mt-3 text-5xl">
+            <h2 className="font-display mt-3 text-4xl sm:text-5xl">
               Tell us about your business.
             </h2>
             <p className="mt-5 text-sm leading-7 text-[color:var(--muted)]">
               Submitting an application does not create a dealer account or
               confirm approval.
             </p>
-            <div className="mt-10">
+            <div className="mt-8 sm:mt-10">
               <DealerApplicationForm />
             </div>
           </Container>
@@ -92,7 +110,7 @@ export function DealerApplicationPage() {
               <p className="text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
                 What happens next
               </p>
-              <h2 className="font-display mt-3 text-5xl">
+              <h2 className="font-display mt-3 text-4xl sm:text-5xl">
                 A clear, considered start.
               </h2>
             </div>
