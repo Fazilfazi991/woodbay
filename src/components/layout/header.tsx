@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { ArrowRight, ChevronDown, Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { primaryNavigation } from "@/config/navigation";
@@ -55,13 +55,15 @@ export function Header() {
     };
   }, [drawer]);
   return (
-    <header className={`sticky top-0 z-50 border-b border-[color:var(--border-dark)] ${isHomeTwo ? "home-two-header bg-[#0e0e0e]" : "bg-[color:var(--background-dark)]"}`}>
+    <header
+      className={`sticky top-0 z-50 border-b border-[color:var(--border-dark)] ${isHomeTwo ? "home-two-header bg-[#0e0e0e]" : "bg-[color:var(--background-dark)]"}`}
+    >
       <div className="mx-auto flex h-[4.5rem] max-w-[1440px] items-center px-5 md:px-8 xl:h-20 xl:px-14">
         <BrandMark />
         <nav
           ref={navRef}
           aria-label="Primary navigation"
-          className="ml-auto mr-6 hidden items-center gap-1 xl:flex"
+          className="mr-6 ml-auto hidden items-center gap-1 xl:flex"
         >
           {headerNavigation.map((item) =>
             item.children ? (
@@ -111,13 +113,6 @@ export function Header() {
             ),
           )}
         </nav>
-        <Link
-          href="/furniture/factory-visit"
-          className={`factory-visit-link hidden min-h-11 items-center gap-2 rounded-[3px] border border-[color:var(--gold)] px-5 text-[11px] leading-none font-medium tracking-[.12em] uppercase transition-[background-color,border-color,color] duration-250 ease-out xl:inline-flex ${isHomeTwo ? "home-two-factory-link" : ""}`}
-        >
-          Book Factory Visit
-          <ArrowRight size={13} strokeWidth={1.5} />
-        </Link>
         <button
           type="button"
           aria-label="Open menu"
@@ -161,14 +156,6 @@ export function Header() {
               />
             ))}
           </nav>
-          <Link
-            href="/furniture/factory-visit"
-            onClick={() => setDrawer(false)}
-            className="factory-visit-link mt-10 flex min-h-12 items-center justify-center gap-2 rounded-[3px] border border-[color:var(--gold)] px-5 text-[11px] leading-none font-medium tracking-[.14em] uppercase transition-[background-color,border-color,color] duration-250 ease-out"
-          >
-            Book Factory Visit
-            <ArrowRight size={14} strokeWidth={1.5} />
-          </Link>
         </div>
       )}
     </header>

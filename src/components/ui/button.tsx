@@ -1,8 +1,9 @@
 import type { ButtonHTMLAttributes } from "react";
-export type ButtonVariant = "primary" | "secondary" | "light" | "text";
+export type ButtonVariant = "primary" | "gold" | "secondary" | "light" | "text";
 const styles: Record<ButtonVariant, string> = {
   primary:
     "border border-[color:var(--background-dark)] bg-[color:var(--background-dark)] text-[color:var(--foreground-light)] hover:border-[color:var(--gold)] hover:bg-[color:var(--gold)] hover:text-[color:var(--background-dark)]",
+  gold: "border border-[color:var(--gold)] bg-[color:var(--gold)] text-[color:var(--background-dark)] hover:border-[color:var(--gold-hover)] hover:bg-[color:var(--gold-hover)]",
   secondary:
     "border border-[color:var(--gold)] bg-transparent text-[color:var(--foreground-light)] hover:bg-[color:var(--gold)] hover:text-[color:var(--background-dark)]",
   light:

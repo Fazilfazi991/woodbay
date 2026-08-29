@@ -57,19 +57,35 @@ const solutionLinks = [
 const divisionPresentation = {
   "kitchen-wardrobe-accessories": {
     title: "Smart Kitchen & Wardrobe Solutions",
+    mobileTitle: "Smart Kitchen & Wardrobe",
+    mobileDescription: "Pantry, pullout and wardrobe solutions.",
     image: "/images/products/satin-pantry.webp",
+    imageClassName: "object-[center_48%]",
+    containImageOnMobile: false,
   },
   "hardware-fittings": {
     title: "Hardware Fittings & Aluminium Profiles",
+    mobileTitle: "Hardware & Profiles",
+    mobileDescription: "Fittings, hinges and aluminium systems.",
     image: "/images/products/full-ss-3d-304-hydraulic-hinge.webp",
+    imageClassName: "object-center",
+    containImageOnMobile: true,
   },
   "smart-furniture": {
     title: "Smart Furniture",
+    mobileTitle: "Smart Furniture",
+    mobileDescription: "Connected furniture for modern living.",
     image: "/images/products/extendable-study-table-box-desk.webp",
+    imageClassName: "object-center",
+    containImageOnMobile: false,
   },
   "home-decor": {
     title: "Home Decor",
+    mobileTitle: "Home Decor",
+    mobileDescription: "Wall and interior finishing solutions.",
     image: "/images/products/pu-stone-panels.webp",
+    imageClassName: "object-center",
+    containImageOnMobile: false,
   },
 } as const;
 
@@ -107,7 +123,10 @@ export function HeroSection({
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <Link href="/products">
-              <Button className={light ? "home-two-button" : ""}>
+              <Button
+                variant={light ? "primary" : "gold"}
+                className={light ? "home-two-button" : ""}
+              >
                 Explore Products <ArrowRight size={15} />
               </Button>
             </Link>
@@ -127,14 +146,17 @@ function TrustStrip({ light = false }: { light?: boolean }) {
   const icons = [Award, Sparkles, Check, Handshake];
   return (
     <div
-      className={`relative border-t border-[color:var(--border-gold)] backdrop-blur-sm ${light ? "bg-white/75" : "bg-black/35"}`}
+      className={`relative backdrop-blur-sm ${light ? "bg-white/75" : "bg-black/35"}`}
     >
       <Container>
-        <div className="grid grid-cols-2 divide-x divide-y divide-[color:var(--border-gold)] lg:grid-cols-4 lg:divide-y-0">
+        <div className="grid grid-cols-2 border-t border-l border-[color:var(--border-gold)] lg:grid-cols-4">
           {homepage.trust.map((item, index) => {
             const Icon = icons[index];
             return (
-              <div key={item.title} className="p-4 sm:p-5 lg:px-7 lg:py-6">
+              <div
+                key={item.title}
+                className="border-r border-b border-[color:var(--border-gold)] p-4 sm:p-5 lg:px-7 lg:py-6"
+              >
                 <Icon
                   size={19}
                   strokeWidth={1.25}
@@ -164,16 +186,16 @@ export function CategoriesSection() {
           <SectionHeader
             eyebrow="Our Products"
             title="Designed for Modern Living"
-            description="Intelligent systems and elevated finishes for every room in the home."
+            description="Considered solutions for kitchens, wardrobes and contemporary interiors."
           />
           <Link
             href="/products"
-            className="inline-flex items-center gap-2 text-xs font-bold tracking-[.14em] text-[color:var(--foreground-dark)] uppercase hover:text-[color:var(--gold)]"
+            className="inline-flex min-h-11 w-fit items-center gap-2 border border-[color:var(--foreground-dark)] px-4 text-xs font-bold tracking-[.12em] text-[color:var(--foreground-dark)] uppercase transition-colors hover:border-[color:var(--gold)] hover:text-[color:var(--gold)]"
           >
             View All Products <ArrowRight size={15} />
           </Link>
         </div>
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:mt-12 sm:gap-4 lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-1 gap-4 sm:mt-12 sm:grid-cols-2 lg:grid-cols-4">
           {productDivisions.map((category) => {
             const presentation =
               divisionPresentation[
@@ -183,9 +205,13 @@ export function CategoriesSection() {
               <ProductCategoryCard
                 key={category.slug}
                 title={presentation.title}
+                mobileTitle={presentation.mobileTitle}
                 href={`/products/${category.slug}`}
                 description={category.description}
+                mobileDescription={presentation.mobileDescription}
                 image={presentation.image}
+                imageClassName={presentation.imageClassName}
+                containImageOnMobile={presentation.containImageOnMobile}
                 tone="light"
               />
             );

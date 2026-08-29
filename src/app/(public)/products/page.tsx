@@ -9,9 +9,7 @@ import {
   Section,
   SectionHeader,
 } from "@/components/layout/primitives";
-import {
-  getFeaturedProducts,
-} from "@/features/products/data/catalogue";
+import { getFeaturedProducts } from "@/features/products/data/catalogue";
 import { ProductCard } from "@/features/products/components/catalogue-ui";
 import type { CatalogueProduct } from "@/features/products/types";
 import { productDivisions } from "@/features/products/data/taxonomy";
@@ -33,7 +31,7 @@ export default async function ProductsPage() {
     <>
       <PageHero
         eyebrow="Woodbay Collections"
-        title="Products Designed\nfor Better Living."
+        title="Products Designed for Better Living."
         description="Explore Woodbay’s premium kitchen, wardrobe, smart and decor-led product collections."
         image={image}
         breadcrumb={[{ label: "Home", href: "/" }, { label: "Products" }]}
