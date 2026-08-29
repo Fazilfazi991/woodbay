@@ -76,7 +76,7 @@ export async function FurniturePage() {
           </div>
         </Container>
       </Section>
-      <Section tone="dark">
+      <Section tone="muted">
         <Container>
           <p className="text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
             Furniture categories
@@ -184,7 +184,7 @@ export async function FurniturePage() {
           </div>
         </Container>
       </Section>
-      <Section tone="dark">
+      <Section tone="light">
         <Container>
           <p className="text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
             Design process

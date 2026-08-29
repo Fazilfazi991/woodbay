@@ -1,24 +1,27 @@
 @import "tailwindcss";
 
 :root {
-  --background-dark: #111210;
-  --background-deep: #191a17;
-  --surface-dark: #22231f;
-  --surface-light: #f3efe7;
-  --foreground-light: #f7f3eb;
-  --foreground-dark: #191a17;
-  --muted: #a5a39d;
-  --muted-dark: #686761;
-  --gold: #b99658;
-  --gold-hover: #d0ae6a;
-  --border-dark: #383932;
-  --border-gold: rgba(185, 150, 88, 0.54);
+  --background-dark: #12130f;
+  --background-deep: #1b1c17;
+  --surface-dark: #24251f;
+  --surface-light: #f5f1e8;
+  --surface-muted: #ece7dc;
+  --surface-elevated: #fffdf8;
+  --foreground-light: #fbf8f0;
+  --foreground-dark: #1b1c18;
+  --muted: #b9b5ab;
+  --muted-dark: #65635d;
+  --gold: #c6a04f;
+  --gold-hover: #d9b65f;
+  --border-dark: #3b3c34;
+  --border-light: #d8d0c2;
+  --border-gold: rgba(198, 160, 79, 0.52);
   --destructive: #a63d36;
   --success: #2f7350;
   --background: var(--surface-light);
   --foreground: var(--foreground-dark);
-  --surface: #fff;
-  --border: #d8d2c6;
+  --surface: var(--surface-elevated);
+  --border: var(--border-light);
   --primary: #24553a;
   --decor-list-text: #d8d2c7;
   --furniture-copy: #d6d0c4;
@@ -34,6 +37,7 @@ body {
   background: var(--surface-light);
   color: var(--foreground-dark);
   font-family: var(--font-body), Arial, sans-serif;
+  text-rendering: optimizeLegibility;
 }
 button,
 input,
@@ -44,6 +48,21 @@ select {
 a {
   color: inherit;
   text-decoration: none;
+}
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+::-webkit-scrollbar {
+  width: 11px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface-light);
+}
+::-webkit-scrollbar-thumb {
+  border: 3px solid var(--surface-light);
+  border-radius: 999px;
+  background: var(--background-deep);
 }
 .desktop-nav-link {
   color: #d7d2c8;
@@ -155,6 +174,21 @@ a {
 .woodbay-button:hover > svg,
 .factory-visit-link:hover > svg {
   transform: translateX(4px);
+}
+.woodbay-dark-section .woodbay-button--primary {
+  border-color: var(--gold);
+  background: var(--gold);
+  color: var(--background-dark);
+}
+.woodbay-dark-section .woodbay-button--primary:hover {
+  border-color: var(--gold);
+  background: transparent;
+  color: var(--gold);
+}
+.woodbay-light-section {
+  --muted: var(--muted-dark);
+  --border-dark: var(--border-light);
+  --surface-dark: var(--surface-elevated);
 }
 ::selection {
   background: var(--gold);

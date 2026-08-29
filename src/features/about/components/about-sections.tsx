@@ -62,7 +62,7 @@ export function BrandIntroduction() {
 export function BrandValues() {
   const icons = [Gem, Lightbulb, ShieldCheck, Compass];
   return (
-    <Section tone="dark">
+    <Section tone="muted">
       <Container>
         <SectionHeader
           eyebrow="What we stand for"
@@ -143,7 +143,7 @@ export function FounderSection() {
 }
 export function VisionMission() {
   return (
-    <Section tone="dark">
+    <Section tone="light">
       <Container>
         <div className="grid border-y border-[color:var(--border-gold)] lg:grid-cols-2">
           <article className="py-10 lg:pr-12">
@@ -296,7 +296,7 @@ export function JourneyAndWhy() {
           </div>
         </Container>
       </Section>
-      <Section tone="dark">
+      <Section tone="muted">
         <Container>
           <div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr]">
             <SectionHeader

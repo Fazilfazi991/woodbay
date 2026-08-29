@@ -83,7 +83,7 @@ export function HeroSection({
       <Container className="flex min-h-[72svh] flex-col justify-center py-12 sm:min-h-[calc(88svh-5rem)] sm:py-16 lg:min-h-[calc(92vh-5rem)] lg:py-24">
         <div className="max-w-2xl">
           <Eyebrow>{homepage.hero.eyebrow}</Eyebrow>
-          <h1 className="font-display mt-5 text-5xl leading-[.92] whitespace-pre-line sm:text-6xl lg:text-8xl">
+          <h1 className="font-display mt-5 text-[2.35rem] leading-[.96] whitespace-pre-line sm:text-6xl lg:text-[5.75rem]">
             {homepage.hero.title}
           </h1>
           <p
@@ -193,7 +193,7 @@ export async function FeaturedProductsSection() {
     /* safe empty state below */
   }
   return (
-    <Section tone="dark">
+    <Section tone="muted">
       <Container>
         <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <SectionHeader
@@ -203,7 +203,7 @@ export async function FeaturedProductsSection() {
           />
           <Link
             href="/products"
-            className="inline-flex items-center gap-2 text-xs font-bold tracking-[.14em] text-[color:var(--gold)] uppercase"
+            className="inline-flex items-center gap-2 text-xs font-bold tracking-[.14em] text-[color:var(--foreground-dark)] uppercase hover:text-[color:var(--gold)]"
           >
             View all products <ArrowRight size={15} />
           </Link>
@@ -215,7 +215,7 @@ export async function FeaturedProductsSection() {
             ))}
           </div>
         ) : (
-          <p className="mt-8 border border-[color:var(--border-gold)] p-6 text-sm text-[color:var(--muted)]">
+          <p className="mt-8 border border-[color:var(--border-light)] bg-[color:var(--surface-elevated)] p-6 text-sm text-[color:var(--muted-dark)]">
             Featured catalogue products will appear here as they are published.
           </p>
         )}
@@ -355,7 +355,7 @@ export function DecorAndFurnitureSection({
 }) {
   return (
     <>
-      <Section tone="dark">
+      <Section tone="light">
         <Container>
           <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
             <div className="relative aspect-[4/3] overflow-hidden border border-[color:var(--border-gold)]">
@@ -373,7 +373,7 @@ export function DecorAndFurnitureSection({
                 title="Elevate your space with premium decor solutions."
                 description="A carefully curated direction for surfaces, lighting and material-led visual character."
               />
-              <div className="mt-8 grid grid-cols-2 gap-y-3 text-sm text-[color:var(--decor-list-text)]">
+              <div className="mt-8 grid grid-cols-2 gap-y-3 text-sm text-[color:var(--muted-dark)]">
                 {homepage.decor.map((item) => (
                   <span className="flex items-center gap-2" key={item}>
                     <span className="size-1 bg-[color:var(--gold)]" />
@@ -382,7 +382,7 @@ export function DecorAndFurnitureSection({
                 ))}
               </div>
               <Link href="/products/home-decor" className="mt-9 inline-block">
-                <Button variant="secondary">
+                <Button variant="light">
                   Explore Decor <ArrowRight size={15} />
                 </Button>
               </Link>
@@ -458,7 +458,7 @@ export async function ProjectsSection() {
   }
 
   return (
-    <Section tone="dark">
+    <Section tone="muted">
       <Container>
         <div className="flex items-end justify-between gap-6">
           <SectionHeader
@@ -468,18 +468,18 @@ export async function ProjectsSection() {
           />
           <Link
             href="/projects"
-            className="hidden shrink-0 items-center gap-2 text-xs font-bold tracking-[.12em] text-[color:var(--gold)] uppercase sm:inline-flex"
+            className="hidden shrink-0 items-center gap-2 text-xs font-bold tracking-[.12em] text-[color:var(--foreground-dark)] uppercase hover:text-[color:var(--gold)] sm:inline-flex"
           >
             View All Projects <ArrowRight size={15} />
           </Link>
         </div>
         {unavailable ? (
-          <p className="mt-12 border border-[color:var(--border-gold)] p-6 text-sm text-[color:var(--muted)]">
+          <p className="mt-12 border border-[color:var(--border-light)] bg-[color:var(--surface-elevated)] p-6 text-sm text-[color:var(--muted-dark)]">
             Project highlights are temporarily unavailable. Please check back
             shortly.
           </p>
         ) : projects.length === 0 ? (
-          <p className="mt-12 border border-[color:var(--border-gold)] p-6 text-sm text-[color:var(--muted)]">
+          <p className="mt-12 border border-[color:var(--border-light)] bg-[color:var(--surface-elevated)] p-6 text-sm text-[color:var(--muted-dark)]">
             New Woodbay project highlights will appear here soon.
           </p>
         ) : (
@@ -514,7 +514,7 @@ export async function ProjectsSection() {
                     <p className="mb-2 text-[10px] font-bold tracking-[.14em] text-[color:var(--gold)] uppercase">
                       {project.category}
                     </p>
-                    <h3 className="font-display text-3xl">{project.title}</h3>
+                    <h3 className="font-display text-3xl text-white">{project.title}</h3>
                   </div>
                 </Link>
               );
