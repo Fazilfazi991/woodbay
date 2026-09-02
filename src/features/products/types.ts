@@ -31,6 +31,7 @@ export type CatalogueProduct = {
   whatsapp_enabled?: boolean;
   category?: Pick<CatalogueCategory, "name" | "slug"> | null;
   images: CatalogueImage[];
+  variants?: Pick<ProductVariant, "id">[];
 };
 export type ProductVariant = {
   id: string;

@@ -11,15 +11,17 @@ const styles: Record<ButtonVariant, string> = {
   text: "px-0 text-[color:var(--gold)] hover:text-[color:var(--gold-hover)]",
 };
 
+export function buttonClassName(
+  variant: ButtonVariant = "primary",
+  className = "",
+) {
+  return `woodbay-button woodbay-button--${variant} group inline-flex min-h-12 items-center justify-center gap-2 rounded-[3px] px-6 py-3 text-[11px] leading-none font-medium tracking-[.14em] uppercase transition-[background-color,border-color,color] duration-250 ease-out focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--gold)] disabled:pointer-events-none disabled:opacity-45 ${styles[variant]} ${className}`;
+}
+
 export function Button({
   className = "",
   variant = "primary",
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant }) {
-  return (
-    <button
-      className={`woodbay-button woodbay-button--${variant} group inline-flex min-h-12 items-center justify-center gap-2 rounded-[3px] px-6 py-3 text-[11px] leading-none font-medium tracking-[.14em] uppercase transition-[background-color,border-color,color] duration-250 ease-out focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--gold)] disabled:pointer-events-none disabled:opacity-45 ${styles[variant]} ${className}`}
-      {...props}
-    />
-  );
+  return <button className={buttonClassName(variant, className)} {...props} />;
 }

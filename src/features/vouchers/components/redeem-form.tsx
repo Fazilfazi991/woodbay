@@ -5,6 +5,8 @@ import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { redeemVoucher } from "../actions/redeem";
+import type { VoucherOption } from "../options";
+import { SearchableVoucherField } from "./searchable-voucher-field";
 const initialState = { ok: false, result: null, message: "" };
 function Field({
   label,
@@ -20,9 +22,12 @@ function Field({
     </label>
   );
 }
-export function RedeemForm({ initialCode }: { initialCode: string }) {
+export function RedeemForm({ initialCode, products, dealers }: { initialCode: string; products: VoucherOption[]; dealers: VoucherOption[] }) {
   const [state, action, pending] = useActionState(redeemVoucher, initialState);
   const [startedAt] = useState(() => Date.now());
+  const [customerName, setCustomerName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   if (state.ok)
     return (
       <div
@@ -42,8 +47,7 @@ export function RedeemForm({ initialCode }: { initialCode: string }) {
           Voucher successfully redeemed.
         </h2>
         <p className="mt-4 text-sm leading-7 text-[color:var(--muted-dark)]">
-          Your voucher {state.maskedCode} has been recorded. Keep your product
-          details for future support.
+          Your voucher {state.maskedCode} has been registered successfully. Keep these details for future support.
         </p>
         {state.product && (
           <div className="mt-7 border-t border-[#d7cebf] pt-5">
@@ -58,9 +62,8 @@ export function RedeemForm({ initialCode }: { initialCode: string }) {
             </Link>
           </div>
         )}
-        <Link href="/redeem" className="mt-8 inline-block">
-          <Button variant="light">Verify another voucher</Button>
-        </Link>
+        {state.dealer && <div className="mt-5"><p className="text-xs font-bold tracking-[.12em] text-[color:var(--muted-dark)] uppercase">Dealer</p><p className="mt-2 font-semibold">{state.dealer.name}</p></div>}
+        <div className="mt-8 flex flex-wrap gap-3"><Link href="/"><Button>Back to home</Button></Link><Link href="/products"><Button variant="light">Explore products</Button></Link></div>
       </div>
     );
   return (
@@ -83,31 +86,22 @@ export function RedeemForm({ initialCode }: { initialCode: string }) {
           spellCheck={false}
         />
       </Field>
+      <SearchableVoucherField label="Dealer" name="dealer_slug" options={dealers} placeholder="Search by dealer or location" />
+      <SearchableVoucherField label="Product" name="product_slug" options={products} placeholder="Search by product or category" />
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Customer Name">
-          <Input required name="customer_name" autoComplete="name" />
+          <Input required name="customer_name" autoComplete="name" value={customerName} onChange={(event) => setCustomerName(event.target.value)} />
         </Field>
         <Field label="Contact Number">
-          <Input required name="phone" inputMode="tel" autoComplete="tel" />
-        </Field>
-        <Field label="Location">
-          <Input required name="location" autoComplete="address-level3" />
-        </Field>
-        <Field label="District">
-          <Input required name="district" autoComplete="address-level2" />
+          <Input required name="phone" inputMode="tel" autoComplete="tel" value={phone} onChange={(event) => setPhone(event.target.value)} />
         </Field>
       </div>
-      <Field label="Dealer Name">
-        <Input required name="dealer_name" autoComplete="organization" />
-      </Field>
-      <Field label="Distributor Name (Optional)">
-        <Input name="distributor_name" autoComplete="organization" />
-      </Field>
+      <Field label="Address / Location"><textarea required name="address" maxLength={240} autoComplete="street-address" rows={3} value={address} onChange={(event) => setAddress(event.target.value)} className="w-full resize-y rounded-md border border-[color:var(--border)] bg-[color:var(--surface)] px-3 py-3 text-base focus:outline-2 focus:outline-[color:var(--primary)]" /></Field>
       {state.message && (
         <p
           role="alert"
           aria-live="assertive"
-          className="flex gap-2 border-l-2 border-red-700 bg-red-50 px-4 py-3 text-sm leading-6 text-red-900"
+          className="flex gap-2 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-900"
         >
           <ShieldAlert
             size={18}
@@ -118,7 +112,7 @@ export function RedeemForm({ initialCode }: { initialCode: string }) {
         </p>
       )}
       <Button type="submit" disabled={pending} className="w-full sm:w-auto">
-        {pending ? "Verifying…" : "Verify & redeem voucher"}
+        {pending ? "Registering…" : "Register voucher"}
       </Button>
     </form>
   );

@@ -270,6 +270,15 @@ a {
   animation: mobile-menu-in 240ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+@media (max-width: 639px) {
+  body:has(.cart-page) .whatsapp-floating {
+    display: none;
+  }
+  body:has(.redeem-page) .floating-actions {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mobile-menu-panel {
     animation: none;

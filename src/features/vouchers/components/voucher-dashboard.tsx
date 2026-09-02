@@ -10,12 +10,17 @@ import {
   type VoucherRow,
 } from "@/features/vouchers/admin";
 import { effectiveVoucherStatus } from "@/features/vouchers/admin-utils";
+import type { VoucherOption } from "@/features/vouchers/options";
 
 type Props = {
   data: { rows: VoucherRow[]; count: number; filters: { page: number } };
   search: string;
   status: string;
   exportUrl: string;
+  products: VoucherOption[];
+  dealers: VoucherOption[];
+  productFilter: string;
+  dealerFilter: string;
 };
 
 const initialGenerationState: GenerationActionState = {};
@@ -64,7 +69,7 @@ function VoucherActions({ voucher }: { voucher: VoucherRow }) {
   );
 }
 
-function CreateVoucherModal({ onClose }: { onClose: () => void }) {
+function CreateVoucherModal({ onClose, products, dealers }: { onClose: () => void; products: VoucherOption[]; dealers: VoucherOption[] }) {
   const [state, formAction, pending] = useActionState(generateVouchers, initialGenerationState);
   const [idempotency] = useState(() => crypto.randomUUID());
 
@@ -99,6 +104,8 @@ function CreateVoucherModal({ onClose }: { onClose: () => void }) {
               <input name="quantity" type="number" min="1" max="100" defaultValue="1" required className="min-h-11 w-full border border-[color:var(--border-dark)] bg-transparent px-3" />
               <span className="mt-1 block text-xs text-[color:var(--muted)]">Up to 100 vouchers at a time.</span>
             </label>
+            <label className="block text-sm"><span className="mb-2 block">Product <span className="text-[color:var(--muted)]">(optional assignment)</span></span><select name="product_id" className="min-h-11 w-full border border-[color:var(--border-dark)] bg-transparent px-3"><option value="">Customer selects at registration</option>{products.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select></label>
+            <label className="block text-sm"><span className="mb-2 block">Dealer <span className="text-[color:var(--muted)]">(optional assignment)</span></span><select name="dealer_id" className="min-h-11 w-full border border-[color:var(--border-dark)] bg-transparent px-3"><option value="">Customer selects at registration</option>{dealers.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select></label>
             <label className="block text-sm">
               <span className="mb-2 block">Expiry date <span className="text-[color:var(--muted)]">(optional)</span></span>
               <input name="expiry" type="date" className="min-h-11 w-full border border-[color:var(--border-dark)] bg-transparent px-3" />
@@ -116,9 +123,9 @@ function CreateVoucherModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-export function VoucherDashboard({ data, search, status, exportUrl }: Props) {
+export function VoucherDashboard({ data, search, status, productFilter, dealerFilter, exportUrl, products, dealers }: Props) {
   const [createOpen, setCreateOpen] = useState(false);
-  const query = (page: number) => `?q=${encodeURIComponent(search)}&status=${encodeURIComponent(status)}&page=${page}`;
+  const query = (page: number) => `?q=${encodeURIComponent(search)}&status=${encodeURIComponent(status)}&product=${encodeURIComponent(productFilter)}&dealer=${encodeURIComponent(dealerFilter)}&page=${page}`;
   return (
     <main className="mx-auto max-w-6xl p-4 sm:p-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -141,6 +148,8 @@ export function VoucherDashboard({ data, search, status, exportUrl }: Props) {
           <option value="disabled">Disabled</option>
           <option value="expired">Expired</option>
         </select>
+        <select name="product" defaultValue={productFilter} aria-label="Filter by product" className="min-h-11 border border-[color:var(--border-dark)] bg-transparent px-3 sm:max-w-52"><option value="">All products</option>{products.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select>
+        <select name="dealer" defaultValue={dealerFilter} aria-label="Filter by dealer" className="min-h-11 border border-[color:var(--border-dark)] bg-transparent px-3 sm:max-w-52"><option value="">All dealers</option>{dealers.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select>
         <Button type="submit" variant="light">Search</Button>
       </form>
 
@@ -152,6 +161,8 @@ export function VoucherDashboard({ data, search, status, exportUrl }: Props) {
               <span className="text-sm text-[color:var(--gold)]">{statusLabel(voucher)}</span>
             </div>
             <p className="mt-3 text-sm text-[color:var(--muted)]">Created {dateLabel(voucher.createdAt)}</p>
+            <p className="mt-2 text-sm">{voucher.product?.name ?? "Unassigned product"} · {voucher.dealer?.businessName ?? "Unassigned dealer"}</p>
+            {voucher.customerName && <p className="mt-1 text-sm text-[color:var(--muted)]">Registered to {voucher.customerName}</p>}
             <p className="text-sm text-[color:var(--muted)]">Expires {dateLabel(voucher.expiresAt)}</p>
             <div className="mt-4"><VoucherActions voucher={voucher} /></div>
           </article>
@@ -161,16 +172,16 @@ export function VoucherDashboard({ data, search, status, exportUrl }: Props) {
 
       <div className="mt-8 hidden md:block">
         <table className="w-full text-left text-sm">
-          <thead><tr className="border-b border-[color:var(--border-dark)] text-xs uppercase tracking-[.12em] text-[color:var(--muted)]"><th className="py-3">Code</th><th className="py-3">Status</th><th className="py-3">Created</th><th className="py-3">Expiry</th><th className="py-3">Redeemed</th><th className="py-3">Action</th></tr></thead>
+          <thead><tr className="border-b border-[color:var(--border-dark)] text-xs uppercase tracking-[.12em] text-[color:var(--muted)]"><th className="py-3">Code</th><th className="py-3">Status</th><th className="py-3">Product</th><th className="py-3">Dealer / registration</th><th className="py-3">Created</th><th className="py-3">Redeemed</th><th className="py-3">Action</th></tr></thead>
           <tbody>
-            {data.rows.map((voucher) => <tr key={voucher.id} className="border-b border-[color:var(--border-dark)]"><td className="py-4 font-mono"><Link href={`/admin/vouchers/${voucher.id}`}>{voucher.code}</Link></td><td className="py-4">{statusLabel(voucher)}</td><td className="py-4">{dateLabel(voucher.createdAt)}</td><td className="py-4">{dateLabel(voucher.expiresAt)}</td><td className="py-4">{dateLabel(voucher.redeemedAt)}</td><td className="py-4"><VoucherActions voucher={voucher} /></td></tr>)}
+            {data.rows.map((voucher) => <tr key={voucher.id} className="border-b border-[color:var(--border-dark)] align-top"><td className="py-4 font-mono"><Link href={`/admin/vouchers/${voucher.id}`}>{voucher.code}</Link></td><td className="py-4">{statusLabel(voucher)}</td><td className="max-w-40 py-4">{voucher.product?.name ?? "—"}</td><td className="max-w-48 py-4"><span className="block">{voucher.dealer?.businessName ?? "—"}</span>{voucher.customerName && <span className="mt-1 block text-xs text-[color:var(--muted)]">{voucher.customerName}</span>}</td><td className="py-4">{dateLabel(voucher.createdAt)}</td><td className="py-4">{dateLabel(voucher.redeemedAt)}</td><td className="py-4"><VoucherActions voucher={voucher} /></td></tr>)}
           </tbody>
         </table>
         {data.rows.length === 0 && <p className="py-12 text-center text-sm text-[color:var(--muted)]">No vouchers found.</p>}
       </div>
 
       {data.count > 20 && <nav className="mt-6 flex items-center justify-between text-sm"><Link href={query(Math.max(1, data.filters.page - 1))} aria-disabled={data.filters.page === 1} className="text-[color:var(--gold)] aria-disabled:pointer-events-none aria-disabled:opacity-40">Previous</Link><span className="text-[color:var(--muted)]">Page {data.filters.page}</span><Link href={query(data.filters.page + 1)} className="text-[color:var(--gold)]">Next</Link></nav>}
-      {createOpen && <CreateVoucherModal onClose={() => setCreateOpen(false)} />}
+      {createOpen && <CreateVoucherModal onClose={() => setCreateOpen(false)} products={products} dealers={dealers} />}
     </main>
   );
 }

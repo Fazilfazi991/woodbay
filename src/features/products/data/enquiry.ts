@@ -12,6 +12,7 @@ export type ProductEnquirySelection = {
   size?: string | null;
   finish?: string | null;
   model?: string | null;
+  link?: string | null;
 };
 
 export function buildWhatsAppEnquiryUrl(
@@ -29,7 +30,10 @@ export function buildWhatsAppEnquiryUrl(
   const categoryContext = product.category?.name
     ? ` from ${product.category.name}`
     : "";
-  const message = `Hi WoodBay, I’m interested in ${productContext}${categoryContext}. Please share more details.`;
+  const introduction = `Hi WoodBay, I’m interested in ${productContext}${categoryContext}.`;
+  const message = selection.link
+    ? `${introduction}\nProduct: ${selection.link}\nPlease share more details.`
+    : `${introduction} Please share more details.`;
   const separator = whatsappUrl.includes("?") ? "&" : "?";
   return `${whatsappUrl}${separator}text=${encodeURIComponent(message)}`;
 }

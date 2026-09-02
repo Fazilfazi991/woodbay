@@ -1,19 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Eye, MessageCircle, Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal } from "lucide-react";
 import { primaryImage, productDetailPath } from "../data/catalogue";
 import type { CatalogueCategory, CatalogueProduct } from "../types";
 import { Button } from "@/components/ui/button";
-import { productEnquiryHref } from "../data/enquiry";
+import { AddToCartButton } from "@/features/cart/product-cart";
+import { toCartProduct } from "@/features/cart/adapters";
 export { CategoryChips } from "./category-chips";
 export function ProductCard({ product }: { product: CatalogueProduct }) {
   const image = primaryImage(product);
-  const enquiry = productEnquiryHref(product);
   const isolatedHardware = /hinge|profile/i.test(
     `${product.name} ${product.category?.name ?? ""}`,
   );
   return (
-    <article className="group flex h-full min-w-0 flex-col overflow-hidden rounded-[10px] border border-[#d8d0c3] bg-[#fbf8f1] text-[color:var(--foreground-dark)] transition-colors duration-300 hover:border-[color:var(--gold)]">
+    <article className="product-card group flex h-full min-w-0 flex-col overflow-hidden rounded-[10px] border border-[#d8d0c3] bg-[#fbf8f1] text-[color:var(--foreground-dark)] transition-colors duration-300 hover:border-[color:var(--gold)]">
       <Link
         href={productDetailPath(product)}
         className="relative block aspect-[10/9] overflow-hidden bg-[color:var(--surface-muted)] sm:aspect-[4/3]"
@@ -55,30 +55,22 @@ export function ProductCard({ product }: { product: CatalogueProduct }) {
             Code: {product.product_code}
           </p>
         )}
-        <div className="mt-auto grid grid-cols-2 gap-1.5 pt-3.5 sm:gap-2 sm:pt-4">
+        <div className="mt-auto flex items-center justify-between gap-2 pt-3.5 sm:pt-4">
           <Link
             href={productDetailPath(product)}
-            className="inline-flex h-10 min-w-0 items-center justify-center gap-1 rounded-full border border-[#3f403b] px-1.5 text-[10px] font-semibold whitespace-nowrap transition-colors hover:bg-[color:var(--foreground-dark)] hover:text-[color:var(--foreground-light)] sm:gap-1.5 sm:px-2 sm:text-xs"
+            className="inline-flex h-10 min-w-0 items-center text-[10px] font-semibold whitespace-nowrap underline decoration-[#8d897f] underline-offset-4 transition-colors hover:text-[#8a681f] sm:text-xs"
           >
-            <Eye size={13} strokeWidth={1.6} /> View
+            View details
           </Link>
-          {enquiry ? (
-            <a
-              href={enquiry}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex h-10 min-w-0 items-center justify-center gap-1 rounded-full border border-[color:var(--gold)] px-1.5 text-[10px] font-semibold whitespace-nowrap text-[#9a7628] transition-colors hover:bg-[color:var(--gold)] hover:text-[#171711] sm:gap-1.5 sm:px-2 sm:text-xs"
+          {product.variants?.length ? (
+            <Link
+              href={productDetailPath(product)}
+              className="inline-flex h-10 min-w-0 items-center justify-center rounded-[3px] border border-[color:var(--gold)] px-2 text-[10px] font-semibold whitespace-nowrap text-[#8a681f] transition-colors hover:bg-[color:var(--gold)] hover:text-[#171711] sm:px-3 sm:text-xs"
             >
-              <MessageCircle size={13} /> Enquire
-            </a>
+              Choose options
+            </Link>
           ) : (
-            <span
-              aria-disabled="true"
-              title="WhatsApp enquiries are temporarily unavailable"
-              className="inline-flex h-10 min-w-0 cursor-not-allowed items-center justify-center gap-1 rounded-full border border-[color:var(--gold)]/40 px-1.5 text-[10px] font-semibold whitespace-nowrap text-[#9a7628]/55 sm:gap-1.5 sm:px-2 sm:text-xs"
-            >
-              <MessageCircle size={13} /> Enquire
-            </span>
+            <AddToCartButton product={toCartProduct(product)} compact />
           )}
         </div>
       </div>

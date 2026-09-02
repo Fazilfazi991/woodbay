@@ -23,18 +23,17 @@ describe("voucher redemption validation", () => {
     expect(voucherCodeSchema.safeParse("WB 123").success).toBe(false);
     expect(voucherCodeSchema.safeParse("W".repeat(33)).success).toBe(false);
   });
-  it("requires the required customer details while permitting no distributor", () => {
+  it("requires relational product and dealer selections", () => {
     const result = voucherRedemptionSchema.parse({
       code: "wbqa0001",
       customer_name: "Test Customer",
       phone: "+91 90000 00000",
-      location: "Kochi",
-      district: "Ernakulam",
-      dealer_name: "QA Dealer",
-      distributor_name: "",
+      address: "Kochi",
+      dealer_slug: "qa-dealer",
+      product_slug: "qa-product",
     });
     expect(result.code).toBe("WBQA0001");
-    expect(result.distributor_name).toBeNull();
+    expect(result.dealer_slug).toBe("qa-dealer");
   });
 });
 describe("safe public voucher helpers", () => {
@@ -47,5 +46,7 @@ describe("safe public voucher helpers", () => {
     expect(voucherResultMessage("invalid")).toMatch(/Invalid voucher code/);
     expect(voucherResultMessage("already_redeemed")).not.toMatch(/customer/i);
     expect(voucherResultMessage("disabled")).toMatch(/contact Woodbay support/);
+    expect(voucherResultMessage("expired")).toMatch(/expired/);
+    expect(voucherResultMessage("details_mismatch")).not.toMatch(/correct|assigned/i);
   });
 });

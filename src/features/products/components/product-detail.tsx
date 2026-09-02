@@ -1,13 +1,22 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, MapPin, MessageCircle } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  MessageCircle,
+} from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { buttonClassName } from "@/components/ui/button";
 import type { ProductDetail, ProductVariant } from "../types";
 import { productEnquiryHref } from "../data/enquiry";
 import { localProductImage } from "../data/local-images";
 import type { ProductSpecificationEntry } from "../data/catalogue";
+import { AddToCartButton } from "@/features/cart/product-cart";
+import { toCartProduct, toCartVariant } from "@/features/cart/adapters";
+import { siteConfig } from "@/config/site";
 
 export function ProductGallery({ product }: { product: ProductDetail }) {
   const [index, setIndex] = useState(0);
@@ -145,7 +154,7 @@ export function ProductVariants({
   return (
     <section
       aria-labelledby="variants-heading"
-      className="border-t border-[color:var(--border-dark)] pt-8"
+      className="product-variants border-t border-[color:var(--border-dark)] pt-5"
     >
       <h2 id="variants-heading" className="font-display text-3xl">
         Available variants
@@ -159,9 +168,18 @@ export function ProductVariants({
               type={onSelect ? "button" : undefined}
               aria-pressed={onSelect ? selectedId === variant.id : undefined}
               onClick={onSelect ? () => onSelect(variant) : undefined}
-              className={`grid w-full gap-2 py-4 text-left text-sm sm:grid-cols-3 ${selectedId === variant.id ? "text-[color:var(--foreground-light)]" : "text-[color:var(--muted)]"}`}
+              className={`grid w-full gap-2 py-4 text-left text-sm transition-colors sm:grid-cols-3 ${selectedId === variant.id ? "bg-white/[.035] text-[color:var(--foreground-light)]" : "text-[color:var(--muted)] hover:bg-white/[.02] hover:text-[color:var(--foreground-light)]"}`}
             >
-              <p className="font-semibold">{variant.name}</p>
+              <p className="flex items-center gap-2 font-semibold">
+                <span
+                  className={`grid size-5 shrink-0 place-items-center rounded-full border ${selectedId === variant.id ? "border-[color:var(--gold)] bg-[color:var(--gold)] text-[color:var(--background-dark)]" : "border-[color:var(--border-dark)]"}`}
+                >
+                  {selectedId === variant.id && (
+                    <Check size={12} strokeWidth={2.2} />
+                  )}
+                </span>
+                {variant.name}
+              </p>
               <p>
                 {variant.sku && (
                   <>
@@ -192,44 +210,66 @@ export function ProductActions({
   product: ProductDetail;
   variant?: ProductVariant | null;
 }) {
+  const productPath = toCartProduct(product).detailPath;
   const enquiry = productEnquiryHref(
     product,
     variant
-      ? { variant: variant.name, size: variant.size, finish: variant.finish }
-      : undefined,
+      ? {
+          variant: variant.name,
+          size: variant.size,
+          finish: variant.finish,
+          link: new URL(productPath, siteConfig.url).toString(),
+        }
+      : { link: new URL(productPath, siteConfig.url).toString() },
   );
   return (
-    <section className="border-y border-[color:var(--border-gold)] py-6">
-      <p className="text-xs font-bold tracking-[.14em] text-[color:var(--gold)] uppercase">
-        Interested in this product?
-      </p>
-      <div className="mt-4 grid gap-3 sm:flex sm:flex-row">
+    <section className="product-actions border-t border-[color:var(--border-gold)] pt-5">
+      <div className="grid grid-cols-[1.2fr_.8fr] gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-2.5">
+        <AddToCartButton
+          product={toCartProduct(product)}
+          variant={variant ? toCartVariant(variant) : null}
+          disabled={product.variants.length > 0 && !variant}
+          className="col-span-2 min-h-11 px-4 max-sm:w-full sm:col-span-1"
+        />
+        <Link
+          href={`/contact?subject=${encodeURIComponent(`Product enquiry: ${product.name}`)}&message=${encodeURIComponent(`Hello WoodBay, I would like to enquire about ${product.name}${variant ? ` — ${variant.name}` : ""}. Please share further details.`)}`}
+          className={buttonClassName(
+            "secondary",
+            "min-h-11 px-3 tracking-[.1em] max-sm:w-full sm:px-4 sm:tracking-[.14em]",
+          )}
+        >
+          Send enquiry <ArrowRight size={14} />
+        </Link>
         {enquiry ? (
           <a
             href={enquiry}
             target="_blank"
             rel="noreferrer"
-            className="max-sm:block"
+            className={buttonClassName(
+              "text",
+              "min-h-11 px-2 max-sm:w-full sm:px-3",
+            )}
           >
-            <Button className="max-sm:w-full">
-              <MessageCircle size={16} /> Enquire on WhatsApp
-            </Button>
+            <MessageCircle size={15} /> WhatsApp
           </a>
         ) : (
-          <Button
-            disabled
-            className="max-sm:w-full"
+          <span
+            aria-disabled="true"
             title="WhatsApp enquiries are temporarily unavailable"
+            className={buttonClassName(
+              "text",
+              "min-h-11 cursor-not-allowed px-2 opacity-45 max-sm:w-full sm:px-3",
+            )}
           >
-            <MessageCircle size={16} /> Enquire on WhatsApp
-          </Button>
+            <MessageCircle size={15} /> WhatsApp
+          </span>
         )}
-        <Link href="/dealers" className="max-sm:block">
-          <Button variant="secondary" className="max-sm:w-full">
-            <MapPin size={16} /> Find a dealer
-          </Button>
-        </Link>
       </div>
+      {product.variants.length > 0 && !variant && (
+        <p className="mt-3 text-xs text-[color:var(--muted)]">
+          Select an option first to add this product to your cart.
+        </p>
+      )}
     </section>
   );
 }
@@ -241,10 +281,9 @@ export function ProductOptionsAndActions({
 }) {
   const [selected, setSelected] = useState<ProductVariant | null>(null);
   return (
-    <>
-      <ProductActions product={product} variant={selected} />
+    <div className="grid gap-6">
       {product.variants.length > 0 && (
-        <div className="mt-9">
+        <div>
           <ProductVariants
             variants={product.variants}
             selectedId={selected?.id}
@@ -252,11 +291,9 @@ export function ProductOptionsAndActions({
               setSelected(selected?.id === variant.id ? null : variant)
             }
           />
-          <p className="mt-3 text-xs text-[color:var(--muted)]">
-            Select an option to include it in your WhatsApp enquiry.
-          </p>
         </div>
       )}
-    </>
+      <ProductActions product={product} variant={selected} />
+    </div>
   );
 }

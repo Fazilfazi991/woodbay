@@ -3,11 +3,12 @@ import Link from "next/link";
 import {
   ArrowRight,
   Award,
+  BadgeCheck,
   Check,
-  CirclePlay,
   Handshake,
   MapPin,
   Sparkles,
+  Store,
 } from "lucide-react";
 import { homepage } from "@/config/homepage";
 import {
@@ -24,58 +25,6 @@ import { productDivisions } from "@/features/products/data/taxonomy";
 import { getHomepageCatalogueProducts } from "@/features/products/data/catalogue";
 import { ProductCard } from "@/features/products/components/catalogue-ui";
 import type { CatalogueProduct } from "@/features/products/types";
-import { SolutionCarousel } from "./solution-carousel";
-
-const solutionLinks = [
-  {
-    title: "Pantry",
-    href: "/products/kitchen-wardrobe-accessories?subcategory=pantry-solutions",
-    image: "/images/categories/pantry-solutions.png",
-    imageClassName: "object-cover object-center",
-  },
-  {
-    title: "Pull-Outs",
-    href: "/products/kitchen-wardrobe-accessories?subcategory=pullout-solutions",
-    image: "/images/categories/pullout-solutions.png",
-    imageClassName: "object-cover object-center",
-  },
-  {
-    title: "Wardrobe",
-    href: "/products/kitchen-wardrobe-accessories?subcategory=wardrobe-series",
-    image: "/images/categories/wardrobe-accessories.png",
-    imageClassName: "object-cover object-center",
-  },
-  {
-    title: "Hardware",
-    href: "/products/hardware-fittings?subcategory=cabinet-hinges",
-    image: "/images/products/full-ss-3d-304-hydraulic-hinge.webp",
-    imageClassName: "object-contain object-center p-2",
-  },
-  {
-    title: "Profiles",
-    href: "/products/hardware-fittings?subcategory=aluminium-profiles",
-    image: "/images/products/j-gola.webp",
-    imageClassName: "object-contain object-center p-2",
-  },
-  {
-    title: "Wallpaper",
-    href: "/products/home-decor?subcategory=wallpaper",
-    image: "/images/products/wallpaper.webp",
-    imageClassName: "object-cover object-center",
-  },
-  {
-    title: "Smart Furniture",
-    href: "/products/smart-furniture",
-    image: "/images/products/smart-wifi-side-table.webp",
-    imageClassName: "object-cover object-center",
-  },
-  {
-    title: "Smart Sinks",
-    href: "/products/kitchen-wardrobe-accessories?subcategory=smart-kitchen-waterfall-sinks",
-    image: "/images/products/waterfall-sink.webp",
-    imageClassName: "object-cover object-center",
-  },
-] as const;
 
 const divisionPresentation = {
   "kitchen-wardrobe-accessories": {
@@ -202,7 +151,7 @@ export function CategoriesSection() {
   return (
     <Section
       tone="light"
-      className="home-product-discovery-section !pb-4 sm:!pb-16 md:!pb-20 lg:!pb-28"
+      className="home-product-discovery-section !py-14 sm:!py-20 lg:!py-24"
     >
       <Container>
         <div>
@@ -212,7 +161,7 @@ export function CategoriesSection() {
             description="Considered solutions for kitchens, wardrobes and contemporary interiors."
           />
         </div>
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:mt-12 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-9 grid grid-cols-1 gap-4 sm:mt-11 sm:grid-cols-2 lg:grid-cols-4">
           {productDivisions.map((category) => {
             const presentation =
               divisionPresentation[
@@ -234,7 +183,12 @@ export function CategoriesSection() {
             );
           })}
         </div>
-        <SolutionCarousel solutions={solutionLinks} />
+        <Link
+          href="/products"
+          className="mt-8 inline-flex min-h-11 items-center gap-2 border-b border-[color:var(--foreground-dark)] text-xs font-bold tracking-[.12em] uppercase transition-colors hover:border-[color:var(--gold)] hover:text-[color:var(--gold)] sm:mt-10"
+        >
+          Explore the full range <ArrowRight size={15} />
+        </Link>
       </Container>
     </Section>
   );
@@ -249,7 +203,7 @@ export async function FeaturedProductsSection() {
   return (
     <Section
       tone="muted"
-      className="home-product-discovery-section !pt-5 sm:!pt-16 md:!pt-20 lg:!pt-28"
+      className="home-product-discovery-section !py-14 sm:!py-20 lg:!py-24"
     >
       <Container>
         <div>
@@ -261,7 +215,7 @@ export async function FeaturedProductsSection() {
         </div>
         {products.length > 0 ? (
           <div className="mt-8 grid grid-cols-2 gap-x-2.5 gap-y-4 sm:mt-12 sm:gap-4 lg:grid-cols-4">
-            {products.map((product) => (
+            {products.slice(0, 4).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
@@ -284,13 +238,12 @@ export function ManufacturingSection({ variant }: { variant?: "home-two" }) {
   return (
     <Section
       tone="dark"
-      className={`border-t border-[color:var(--border-dark)] ${variant === "home-two" ? "home-two-manufacturing" : ""}`}
+      className={`border-t border-[color:var(--border-dark)] !py-14 sm:!py-20 lg:!py-24 ${variant === "home-two" ? "home-two-manufacturing" : ""}`}
     >
       <Container>
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div>
-            <Eyebrow>Global Manufacturing Excellence</Eyebrow>
-            <h2 className="font-display mt-4 text-[2.75rem] leading-[.94] sm:text-6xl">
+            <h2 className="font-display text-[2.75rem] leading-[.94] sm:text-6xl">
               Precision Manufacturing.
               <br />
               Trusted Worldwide.
@@ -327,14 +280,10 @@ export function ManufacturingSection({ variant }: { variant?: "home-two" }) {
                 sizes="(max-width: 1024px) 100vw, 600px"
                 className="object-cover"
               />
-              <div className="absolute inset-0 grid place-items-center bg-black/20">
-                <span
-                  aria-label="Factory tour preview"
-                  className="grid size-16 place-items-center rounded-full border border-[color:var(--gold)] bg-black/30 text-[color:var(--gold)]"
-                >
-                  <CirclePlay size={30} strokeWidth={1.2} />
-                </span>
-              </div>
+              <div
+                className="absolute inset-0 bg-black/10"
+                aria-hidden="true"
+              />
             </div>
             <div className="mt-3 grid grid-cols-2 gap-3 text-[10px] font-bold tracking-[.1em] text-[color:var(--muted)] uppercase sm:grid-cols-4">
               {[
@@ -609,48 +558,76 @@ export async function ProjectsSection() {
   );
 }
 export function DealerAndCatalogueSection() {
+  return <ConversionGatewaySection />;
+}
+
+export function ConversionGatewaySection() {
   return (
-    <>
-      <Section tone="light" className="!py-8 sm:!py-16 md:!py-20 lg:!py-24">
-        <Container>
-          <div className="border-y border-[#cfc5b4] py-8 sm:py-12">
-            <div className="max-w-2xl">
-              <Eyebrow>Woodbay Dealer Network</Eyebrow>
-              <h2 className="font-display mt-4 text-[2.6rem] leading-none sm:text-5xl">
-                Find Woodbay Near You
-              </h2>
-              <p className="mt-5 max-w-xl text-sm leading-7 text-[color:var(--muted-dark)]">
-                Discover authorised Woodbay accessories dealers in your area, or
-                join our growing dealer network.
-              </p>
-              <div className="mt-7 grid max-w-xl grid-cols-2 gap-2.5 sm:flex">
-                <Link href="/dealers" className="min-w-0">
-                  <Button
-                    variant="gold"
-                    aria-label="Find a dealer"
-                    className="h-13 w-full !gap-1.5 !px-2 py-0 !text-[10px] !tracking-[.04em] whitespace-nowrap min-[360px]:!text-[12px] min-[390px]:!text-[13px] sm:h-14 sm:!gap-2 sm:!px-6 sm:!text-[11px] sm:!tracking-[.14em]"
-                  >
-                    <MapPin size={14} className="hidden sm:block" />
-                    <span className="sm:hidden">Find Dealer</span>
-                    <span className="hidden sm:inline">Find a Dealer</span>
-                  </Button>
-                </Link>
-                <Link href="/dealers/become-a-dealer" className="min-w-0">
-                  <Button
-                    variant="light"
-                    aria-label="Become a dealer"
-                    className="h-13 w-full !px-2 py-0 !text-[10px] !tracking-[.04em] whitespace-nowrap min-[360px]:!text-[12px] min-[390px]:!text-[13px] sm:h-14 sm:!px-6 sm:!text-[11px] sm:!tracking-[.14em]"
-                  >
-                    <span className="sm:hidden">Become Dealer</span>
-                    <span className="hidden sm:inline">Become a Dealer</span>
-                  </Button>
-                </Link>
-              </div>
+    <Section tone="light" className="!py-14 sm:!py-20 lg:!py-24">
+      <Container>
+        <div className="mb-9 max-w-2xl sm:mb-11">
+          <h2 className="font-display max-w-[16ch] text-4xl leading-[1.02] sm:text-5xl">
+            Your next step with Woodbay.
+          </h2>
+          <p className="mt-4 max-w-xl text-sm leading-7 text-[color:var(--muted-dark)]">
+            Find local product support, explore a business partnership, or
+            verify an existing Woodbay voucher.
+          </p>
+        </div>
+        <div className="grid border-y border-[color:var(--border-light)] lg:grid-cols-[1.15fr_.85fr]">
+          <article className="py-8 lg:border-r lg:border-[color:var(--border-light)] lg:py-12 lg:pr-12">
+            <Store
+              size={23}
+              strokeWidth={1.35}
+              className="text-[color:var(--gold)]"
+              aria-hidden="true"
+            />
+            <h3 className="font-display mt-5 text-4xl leading-none">
+              Work with Woodbay.
+            </h3>
+            <p className="mt-4 max-w-lg text-sm leading-7 text-[color:var(--muted-dark)]">
+              Connect customers with Woodbay’s kitchen, wardrobe, hardware and
+              interior solutions through a professional dealer partnership.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Link href="/dealers/become-a-dealer">
+                <Button variant="gold">
+                  Become a Dealer <ArrowRight size={15} />
+                </Button>
+              </Link>
+              <Link href="/dealers">
+                <Button variant="light">
+                  <MapPin size={15} /> Find a Dealer
+                </Button>
+              </Link>
             </div>
-          </div>
-        </Container>
-      </Section>
-    </>
+          </article>
+          <article className="border-t border-[color:var(--border-light)] py-8 max-sm:pr-14 lg:border-t-0 lg:py-12 lg:pl-12">
+            <BadgeCheck
+              size={23}
+              strokeWidth={1.35}
+              className="text-[color:var(--gold)]"
+              aria-hidden="true"
+            />
+            <h3 className="font-display mt-5 text-4xl leading-none">
+              Verify your voucher.
+            </h3>
+            <p className="mt-4 max-w-md text-sm leading-7 text-[color:var(--muted-dark)]">
+              Use the existing Woodbay verification route to check and submit
+              your voucher details securely.
+            </p>
+            <Link href="/redeem" className="mt-7 inline-block">
+              <Button
+                variant="light"
+                className="!px-4 !text-[10px] !tracking-[.1em] sm:!px-6 sm:!text-[11px] sm:!tracking-[.14em]"
+              >
+                Verify Voucher <ArrowRight size={15} />
+              </Button>
+            </Link>
+          </article>
+        </div>
+      </Container>
+    </Section>
   );
 }
 export function FinalHomeCta() {

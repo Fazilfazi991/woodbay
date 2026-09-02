@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Container, Section } from "@/components/layout/primitives";
 import {
-  ProductActions,
   ProductGallery,
   ProductOptionsAndActions,
   ProductSpecifications,
@@ -111,7 +110,7 @@ export default async function ProductPage({ params }: RouteProps) {
               {product.name}
             </span>
           </nav>
-          <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
+          <div className="product-detail-primary grid gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,.92fr)] lg:gap-14 xl:gap-16">
             <ProductGallery product={product} />
             <div>
               <p className="text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
@@ -128,15 +127,15 @@ export default async function ProductPage({ params }: RouteProps) {
                   </span>
                 </p>
               )}
-              <p className="mt-6 max-w-xl text-base leading-7 text-[color:var(--muted)]">
+              <p className="mt-5 max-w-[64ch] text-base leading-7 text-[color:var(--muted)]">
                 {product.short_description ??
                   product.description ??
                   content.overview}
               </p>
-              <div className="mt-9">
+              <div className="mt-6">
                 <ProductOptionsAndActions product={product} />
               </div>
-              <div className="mt-9">
+              <div className="mt-8">
                 <ProductSpecifications
                   entries={productSpecifications(product)}
                 />
@@ -160,23 +159,6 @@ export default async function ProductPage({ params }: RouteProps) {
           </Container>
         </Section>
       )}
-      <Section tone="dark" className="pt-0">
-        <Container>
-          <div className="grid gap-6 border-y border-[color:var(--border-gold)] py-10 lg:grid-cols-[1fr_auto] lg:items-center lg:gap-12">
-            <div>
-              <h2 className="font-display text-4xl sm:text-5xl">
-                Need help choosing the right model?
-              </h2>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-[color:var(--muted)]">
-                Share this product with WoodBay for guidance on available
-                options, compatibility and the most suitable selection for your
-                project.
-              </p>
-            </div>
-            <ProductActions product={product} />
-          </div>
-        </Container>
-      </Section>
     </>
   );
 }

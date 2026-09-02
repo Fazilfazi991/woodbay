@@ -14,6 +14,7 @@ type RedemptionState = {
   message: string;
   maskedCode?: string;
   product?: { name: string; slug: string };
+  dealer?: { name: string; slug: string };
 };
 function isSafeSubmission(formData: FormData) {
   return (
@@ -54,10 +55,9 @@ export async function redeemVoucher(
       p_code: parsed.data.code,
       p_customer_name: parsed.data.customer_name,
       p_phone: parsed.data.phone,
-      p_location: parsed.data.location,
-      p_district: parsed.data.district,
-      p_dealer_name: parsed.data.dealer_name,
-      p_distributor_name: parsed.data.distributor_name,
+      p_address: parsed.data.address,
+      p_dealer_slug: parsed.data.dealer_slug,
+      p_product_slug: parsed.data.product_slug,
       p_rate_limit_key: await rateLimitKey(),
     });
     if (error || !data?.[0])
@@ -70,6 +70,8 @@ export async function redeemVoucher(
       result: VoucherResult;
       product_name: string | null;
       product_slug: string | null;
+      dealer_name: string | null;
+      dealer_slug: string | null;
     };
     if (row.result !== "success")
       return {
@@ -85,6 +87,10 @@ export async function redeemVoucher(
       product:
         row.product_name && row.product_slug
           ? { name: row.product_name, slug: row.product_slug }
+          : undefined,
+      dealer:
+        row.dealer_name && row.dealer_slug
+          ? { name: row.dealer_name, slug: row.dealer_slug }
           : undefined,
     };
   } catch {

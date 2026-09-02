@@ -6,8 +6,8 @@ export function BrandMark() {
       <Image
         src="/images/woodbay-logo.png"
         alt="Woodbay Decor & Interiors"
-        width={256}
-        height={64}
+        width={1280}
+        height={341}
         unoptimized
         priority
         sizes="(max-width: 640px) 168px, 240px"

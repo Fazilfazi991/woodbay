@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { BadgeCheck } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
 function WhatsAppIcon() {
@@ -15,29 +17,67 @@ function WhatsAppIcon() {
 
 export function WhatsAppCta() {
   const common =
-    "fixed right-[max(1.25rem,env(safe-area-inset-right))] bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-40 inline-flex size-[3.25rem] items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_8px_24px_rgba(0,0,0,.3)] transition-[transform,background-color,box-shadow] duration-200 hover:scale-[1.04] hover:bg-[#1fbd59] hover:shadow-[0_10px_28px_rgba(0,0,0,.34)] active:scale-[.97] sm:size-14";
+    "whatsapp-floating inline-flex size-[3.25rem] items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_8px_24px_rgba(0,0,0,.3)] transition-[transform,background-color,box-shadow] duration-200 hover:scale-[1.04] hover:bg-[#1fbd59] hover:shadow-[0_10px_28px_rgba(0,0,0,.34)] active:scale-[.97] sm:size-14";
+
+  const voucher = (
+    <Link
+      href="/redeem"
+      className="inline-flex h-[4.25rem] w-[3.25rem] flex-col items-center justify-center gap-0.5 rounded-[14px] border border-[color:var(--gold)] bg-[#24251f] px-1 text-[8px] leading-[1.05] font-bold tracking-[.02em] !text-[#fbf8f0] uppercase shadow-[0_8px_24px_rgba(0,0,0,.24)] transition-colors hover:bg-[color:var(--gold)] hover:!text-[#171711] lg:h-11 lg:w-auto lg:flex-row lg:gap-2 lg:rounded-full lg:px-3.5 lg:text-[11px] lg:leading-normal lg:tracking-[.08em]"
+      aria-label="Verify a Woodbay voucher"
+    >
+      <BadgeCheck size={17} strokeWidth={1.6} />
+      <span className="text-center lg:hidden">
+        Verify
+        <br />
+        Voucher
+      </span>
+      <span className="hidden lg:inline">Verify Voucher</span>
+    </Link>
+  );
 
   if (!siteConfig.whatsappUrl) {
     return (
-      <span
-        className={`${common} cursor-not-allowed opacity-70`}
-        aria-label="WhatsApp enquiries are temporarily unavailable"
-        title="WhatsApp contact number will be announced"
-      >
-        <WhatsAppIcon />
-      </span>
+      <FloatingActions voucher={voucher}>
+        <span
+          className={`${common} cursor-not-allowed opacity-70`}
+          aria-label="WhatsApp enquiries are temporarily unavailable"
+          title="WhatsApp contact number will be announced"
+        >
+          <WhatsAppIcon />
+        </span>
+      </FloatingActions>
     );
   }
 
   return (
-    <a
-      href={`${siteConfig.whatsappUrl}${siteConfig.whatsappUrl.includes("?") ? "&" : "?"}text=${encodeURIComponent("Hi WoodBay, I’d like to know more about your products.")}`}
-      target="_blank"
-      rel="noreferrer"
-      className={common}
-      aria-label="Enquire on WhatsApp"
+    <FloatingActions voucher={voucher}>
+      <a
+        href={`${siteConfig.whatsappUrl}${siteConfig.whatsappUrl.includes("?") ? "&" : "?"}text=${encodeURIComponent("Hi WoodBay, I’d like to know more about your products.")}`}
+        target="_blank"
+        rel="noreferrer"
+        className={common}
+        aria-label="Enquire on WhatsApp"
+      >
+        <WhatsAppIcon />
+      </a>
+    </FloatingActions>
+  );
+}
+
+function FloatingActions({
+  voucher,
+  children,
+}: {
+  voucher: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <aside
+      aria-label="Quick actions"
+      className="floating-actions fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 flex flex-col items-end gap-2.5 sm:right-[max(1.25rem,env(safe-area-inset-right))] sm:bottom-[max(1.25rem,env(safe-area-inset-bottom))]"
     >
-      <WhatsAppIcon />
-    </a>
+      {voucher}
+      {children}
+    </aside>
   );
 }

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { primaryNavigation } from "@/config/navigation";
 import { BrandMark } from "./brand-mark";
+import { CartLink } from "@/features/cart/cart-link";
 
 const headerNavigation = primaryNavigation;
 const desktopNavLabelClass = "desktop-nav-link";
@@ -113,13 +114,19 @@ export function Header() {
             ),
           )}
         </nav>
+        <div className="ml-1 hidden xl:block">
+          <CartLink />
+        </div>
+        <div className="ml-auto xl:hidden">
+          <CartLink />
+        </div>
         <button
           type="button"
           aria-label="Open menu"
           aria-expanded={drawer}
           aria-controls="mobile-menu"
           onClick={() => setDrawer(true)}
-          className="ml-auto grid min-h-11 min-w-11 place-items-center text-[color:var(--gold)] xl:hidden"
+          className="ml-1 grid min-h-11 min-w-11 place-items-center text-[color:var(--gold)] xl:hidden"
         >
           <Menu size={27} strokeWidth={1.4} />
         </button>
@@ -156,6 +163,7 @@ export function Header() {
                 onNavigate={() => setDrawer(false)}
               />
             ))}
+            <CartLink mobile onNavigate={() => setDrawer(false)} />
           </nav>
         </div>
       )}

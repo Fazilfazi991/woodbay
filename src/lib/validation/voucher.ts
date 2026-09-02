@@ -21,14 +21,9 @@ export const voucherRedemptionSchema = z.object({
   code: voucherCodeSchema,
   customer_name: requiredText("name", 120),
   phone: phoneSchema,
-  location: requiredText("location", 160),
-  district: requiredText("district", 120),
-  dealer_name: requiredText("dealer name", 160),
-  distributor_name: z
-    .string()
-    .trim()
-    .max(160, "Distributor name is too long.")
-    .transform((value) => value || null),
+  address: requiredText("address or location", 240),
+  dealer_slug: z.string().trim().min(1, "Choose a dealer from the list.").max(160),
+  product_slug: z.string().trim().min(1, "Choose a product from the list.").max(160),
 });
 export type VoucherRedemption = z.infer<typeof voucherRedemptionSchema>;
 export type VoucherResult =
@@ -36,6 +31,9 @@ export type VoucherResult =
   | "invalid"
   | "already_redeemed"
   | "disabled"
+  | "expired"
+  | "details_mismatch"
+  | "selection_unavailable"
   | "rate_limited"
   | "error";
 export function canRedeemVoucher(status: VoucherStatus) {
@@ -62,6 +60,12 @@ export function voucherResultMessage(result: VoucherResult) {
       return "This voucher has already been redeemed.";
     case "disabled":
       return "This voucher cannot currently be redeemed. Please contact Woodbay support.";
+    case "expired":
+      return "This voucher has expired and can no longer be redeemed.";
+    case "details_mismatch":
+      return "The selected product or dealer does not match this voucher. Check your details and try again.";
+    case "selection_unavailable":
+      return "That product or dealer is no longer available. Choose another listed option or contact Woodbay.";
     case "rate_limited":
       return "Too many attempts. Please wait a while before trying again.";
     default:

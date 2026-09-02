@@ -5,7 +5,7 @@ export const siteConfig = {
   url:
     suppliedUrl && /^https?:\/\//.test(suppliedUrl)
       ? suppliedUrl
-      : "http://localhost:3000",
+      : "https://woodbay.vercel.app",
   // Keep unverified business details out of the public experience.
   contact: {
     phone: null as string | null,

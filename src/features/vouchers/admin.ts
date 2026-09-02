@@ -12,11 +12,15 @@ const filtersSchema = z.object({
     .optional()
     .default("all"),
   page: z.coerce.number().int().min(1).default(1),
+  product: z.string().uuid().or(z.literal("")).optional().default(""),
+  dealer: z.string().uuid().or(z.literal("")).optional().default(""),
 });
 const generationSchema = z.object({
   quantity: z.coerce.number().int().min(1).max(100),
   expiry: z.string().optional(),
   idempotency: z.string().uuid(),
+  product_id: z.string().uuid().or(z.literal("")).transform((value) => value || null),
+  dealer_id: z.string().uuid().or(z.literal("")).transform((value) => value || null),
 });
 export type GenerationActionState = {
   error?: string;
@@ -35,6 +39,9 @@ export type VoucherRow = {
   expiresAt: string | null;
   redeemedAt: string | null;
   createdBy: { fullName: string } | null;
+  product: { name: string } | null;
+  dealer: { businessName: string } | null;
+  customerName: string | null;
 };
 type RawVoucherRow = {
   id: string;
@@ -46,6 +53,9 @@ type RawVoucherRow = {
   expires_at: string | null;
   redeemed_at: string | null;
   admin_profiles: { full_name: string } | { full_name: string }[] | null;
+  products: { name: string } | { name: string }[] | null;
+  dealers: { business_name: string } | { business_name: string }[] | null;
+  voucher_redemptions: { customer_name: string } | { customer_name: string }[] | null;
 };
 async function admin() {
   const actor = await getActiveAdmin();
@@ -60,7 +70,7 @@ export async function listVouchers(input: unknown) {
   let query = db
     .from("voucher_codes")
     .select(
-      "id,code,batch_reference,value_benefit,status,created_at,expires_at,redeemed_at,admin_profiles!voucher_codes_created_by_fkey(full_name)",
+      "id,code,batch_reference,value_benefit,status,created_at,expires_at,redeemed_at,admin_profiles!voucher_codes_created_by_fkey(full_name),products(name),dealers(business_name),voucher_redemptions(customer_name)",
       { count: "exact" },
     )
     .order("created_at", { ascending: false })
@@ -72,12 +82,17 @@ export async function listVouchers(input: unknown) {
     query = query
       .eq("status", "available")
       .lt("expires_at", new Date().toISOString().slice(0, 10));
+  if (f.product) query = query.eq("product_id", f.product);
+  if (f.dealer) query = query.eq("dealer_id", f.dealer);
   const { data, count, error } = await query;
   if (error) throw new Error("Unable to load vouchers.");
   const rows = (data ?? []).map((raw: RawVoucherRow): VoucherRow => {
     const profile = Array.isArray(raw.admin_profiles)
       ? (raw.admin_profiles[0] ?? null)
       : raw.admin_profiles;
+    const product = Array.isArray(raw.products) ? raw.products[0] : raw.products;
+    const dealer = Array.isArray(raw.dealers) ? raw.dealers[0] : raw.dealers;
+    const redemption = Array.isArray(raw.voucher_redemptions) ? raw.voucher_redemptions[0] : raw.voucher_redemptions;
     return {
       id: raw.id,
       code: raw.code,
@@ -88,6 +103,9 @@ export async function listVouchers(input: unknown) {
       expiresAt: raw.expires_at,
       redeemedAt: raw.redeemed_at,
       createdBy: profile ? { fullName: profile.full_name } : null,
+      product: product ? { name: product.name } : null,
+      dealer: dealer ? { businessName: dealer.business_name } : null,
+      customerName: redemption?.customer_name ?? null,
     };
   });
   return { rows, count: count ?? 0, filters: f };
@@ -110,6 +128,8 @@ export async function generateVouchers(
     p_expires_at: data.expiry || null,
     p_admin_note: "",
     p_idempotency_key: data.idempotency,
+    p_product_id: data.product_id,
+    p_dealer_id: data.dealer_id,
   });
   if (error) return { error: "Voucher generation failed. Please try again." };
   const batch = batchResult?.[0] as { batch_id?: string } | undefined;
@@ -156,7 +176,7 @@ export async function getVoucherDetail(id: string) {
     db
       .from("voucher_codes")
       .select(
-        "id,code,batch_reference,value_benefit,status,created_at,expires_at,redeemed_at,admin_note,admin_profiles!voucher_codes_created_by_fkey(full_name),voucher_redemptions(customer_name,location,district,dealer_name,redeemed_at)",
+        "id,code,batch_reference,value_benefit,status,created_at,expires_at,redeemed_at,admin_note,admin_profiles!voucher_codes_created_by_fkey(full_name),products(name,slug),dealers(business_name,slug),voucher_redemptions(customer_name,phone,location,district,dealer_name,redeemed_at,products(name,slug),dealers(business_name,slug))",
       )
       .eq("id", voucherId)
       .maybeSingle(),
@@ -178,7 +198,7 @@ export async function exportVouchers(input: unknown) {
   let query = db
     .from("voucher_codes")
     .select(
-      "id,code,batch_reference,value_benefit,status,created_at,expires_at,redeemed_at,admin_profiles!voucher_codes_created_by_fkey(full_name)",
+      "id,code,batch_reference,value_benefit,status,created_at,expires_at,redeemed_at,admin_profiles!voucher_codes_created_by_fkey(full_name),products(name),dealers(business_name),voucher_redemptions(customer_name)",
     )
     .order("created_at", { ascending: false });
   if (filters.q) query = query.ilike("code", `%${filters.q.toUpperCase()}%`);
@@ -188,12 +208,17 @@ export async function exportVouchers(input: unknown) {
     query = query
       .eq("status", "available")
       .lt("expires_at", new Date().toISOString().slice(0, 10));
+  if (filters.product) query = query.eq("product_id", filters.product);
+  if (filters.dealer) query = query.eq("dealer_id", filters.dealer);
   const { data, error } = await query;
   if (error) throw new Error("Unable to export vouchers.");
   const rows = (data ?? []).map((raw: RawVoucherRow): VoucherRow => {
     const profile = Array.isArray(raw.admin_profiles)
       ? (raw.admin_profiles[0] ?? null)
       : raw.admin_profiles;
+    const product = Array.isArray(raw.products) ? raw.products[0] : raw.products;
+    const dealer = Array.isArray(raw.dealers) ? raw.dealers[0] : raw.dealers;
+    const redemption = Array.isArray(raw.voucher_redemptions) ? raw.voucher_redemptions[0] : raw.voucher_redemptions;
     return {
       id: raw.id,
       code: raw.code,
@@ -204,16 +229,22 @@ export async function exportVouchers(input: unknown) {
       expiresAt: raw.expires_at,
       redeemedAt: raw.redeemed_at,
       createdBy: profile ? { fullName: profile.full_name } : null,
+      product: product ? { name: product.name } : null,
+      dealer: dealer ? { businessName: dealer.business_name } : null,
+      customerName: redemption?.customer_name ?? null,
     };
   });
   const header =
-    "Voucher Code,Campaign,Value,Status,Created,Expiry,Redeemed,Created By";
+    "Voucher Code,Status,Product,Dealer,Customer,Campaign,Value,Created,Expiry,Redeemed,Created By";
   const lines = rows.map((r) =>
     [
       r.code,
+      r.status,
+      r.product?.name,
+      r.dealer?.businessName,
+      r.customerName,
       r.batchReference,
       r.valueBenefit,
-      r.status,
       r.createdAt,
       r.expiresAt,
       r.redeemedAt,

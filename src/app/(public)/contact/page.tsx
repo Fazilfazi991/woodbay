@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Building2, Ruler, Store } from "lucide-react";
 import { Container, Eyebrow, Section } from "@/components/layout/primitives";
 import { Button } from "@/components/ui/button";
+import { ContactEnquiryForm } from "@/features/contact/contact-enquiry-form";
 
 const contactPaths = [
   {
@@ -29,7 +30,12 @@ const contactPaths = [
   },
 ] as const;
 
-export default function ContactPage() {
+export default async function ContactPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ subject?: string; message?: string }>;
+}) {
+  const { subject, message } = await searchParams;
   return (
     <>
       <Section tone="dark" className="pt-14 sm:pt-20">
@@ -46,6 +52,18 @@ export default function ContactPage() {
       </Section>
       <Section tone="light">
         <Container>
+          <div className="mb-12 grid gap-7 lg:grid-cols-[.7fr_1.3fr] lg:items-start">
+            <div>
+              <h2 className="font-display text-4xl leading-none sm:text-5xl">
+                Send an enquiry.
+              </h2>
+              <p className="mt-4 max-w-md text-sm leading-7 text-[color:var(--muted-dark)]">
+                Share your selected products or a general requirement. The
+                WoodBay team will follow up with availability and details.
+              </p>
+            </div>
+            <ContactEnquiryForm subject={subject} message={message} />
+          </div>
           <div className="grid gap-4 md:grid-cols-3">
             {contactPaths.map(({ Icon, title, description, href, label }) => (
               <article

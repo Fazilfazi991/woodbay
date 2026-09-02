@@ -5,6 +5,7 @@ import type {
   CatalogueParams,
   CatalogueProduct,
   ProductDetail,
+  ProductVariant,
 } from "../types";
 import type { ProductDivision } from "./taxonomy";
 import { divisionSlugForCategory, divisionSubcategorySlugs } from "./taxonomy";
@@ -209,7 +210,7 @@ export async function getDivisionProducts(
   let query = supabase
     .from("products")
     .select(
-      "id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary)",
+      "id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary),product_variants(id)",
       { count: "exact" },
     )
     .in(
@@ -236,6 +237,7 @@ export async function getDivisionProducts(
       ? (product.product_categories[0] ?? null)
       : product.product_categories,
     images: product.product_images ?? [],
+    variants: product.product_variants ?? [],
   })) as CatalogueProduct[];
   return {
     products,
@@ -257,7 +259,7 @@ export async function getProducts(
   let query = supabase
     .from("products")
     .select(
-      "id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary)",
+      "id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary),product_variants(id)",
       { count: "exact" },
     )
     .in("category_id", categoryIds)
@@ -279,6 +281,7 @@ export async function getProducts(
       ? (product.product_categories[0] ?? null)
       : product.product_categories,
     images: product.product_images ?? [],
+    variants: product.product_variants ?? [],
   })) as CatalogueProduct[];
   return {
     products,
@@ -291,7 +294,7 @@ export async function getFeaturedProducts(limit = 4) {
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary)",
+      "id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary),product_variants(id)",
     )
     .eq("status", "published")
     .eq("is_featured", true)
@@ -304,6 +307,7 @@ export async function getFeaturedProducts(limit = 4) {
       ? (product.product_categories[0] ?? null)
       : product.product_categories,
     images: product.product_images ?? [],
+    variants: product.product_variants ?? [],
   })) as CatalogueProduct[];
 }
 
@@ -322,7 +326,7 @@ export async function getHomepageCatalogueProducts() {
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary)",
+      "id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary),product_variants(id)",
     )
     .eq("status", "published")
     .in("slug", slugs);
@@ -335,6 +339,7 @@ export async function getHomepageCatalogueProducts() {
         ? (product.product_categories[0] ?? null)
         : product.product_categories,
       images: product.product_images ?? [],
+      variants: product.product_variants ?? [],
     }))
     .sort(
       (a, b) =>
@@ -413,12 +418,13 @@ async function getCategoryById(id: string) {
 export async function getRelatedProducts(product: ProductDetail, limit = 4) {
   const supabase = await createClient();
   const select =
-    "id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary)";
+    "id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary),product_variants(id)";
   const map = (items: unknown[]) =>
     items.map((item) => {
       const row = item as {
         product_categories: CatalogueProduct["category"];
         product_images: CatalogueProduct["images"];
+        product_variants: Pick<ProductVariant, "id">[];
       } & CatalogueProduct;
       return {
         ...row,
@@ -426,6 +432,7 @@ export async function getRelatedProducts(product: ProductDetail, limit = 4) {
           ? (row.product_categories[0] ?? null)
           : row.product_categories,
         images: row.product_images ?? [],
+        variants: row.product_variants ?? [],
       };
     }) as CatalogueProduct[];
   const { data: direct, error } = await supabase
