@@ -18,6 +18,7 @@ import type {
   CatalogueCategory,
   CatalogueProduct,
 } from "@/features/products/types";
+import { divisionSeo, pageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 type Props = {
@@ -26,9 +27,9 @@ type Props = {
 };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const division = getProductDivision((await params).categorySlug);
-  return division
-    ? { title: `${division.name} | Woodbay`, description: division.description }
-    : {};
+  if (!division) return {};
+  const seo = divisionSeo[division.slug];
+  return pageMetadata({ title: seo.title, description: seo.description, path: `/products/${division.slug}`, image: division.image });
 }
 export default async function CategoryPage({ params, searchParams }: Props) {
   const division = getProductDivision((await params).categorySlug);
@@ -62,7 +63,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
             {division.name}
           </h1>
           <p className="mt-5 max-w-2xl text-sm leading-7 text-[color:var(--muted)]">
-            {division.description}
+            {divisionSeo[division.slug].intro}
           </p>
         </Container>
       </section>
@@ -112,6 +113,21 @@ export default async function CategoryPage({ params, searchParams }: Props) {
             subcategory={parsed.subcategory}
             sort={parsed.sort}
           />
+        </Container>
+      </Section>
+      <Section tone="light">
+        <Container className="grid gap-8 lg:grid-cols-[1fr_.8fr]">
+          <div>
+            <h2 className="font-display text-4xl sm:text-5xl">Choosing products for your Kollam project</h2>
+            <p className="mt-5 max-w-[70ch] text-sm leading-7 text-[color:var(--muted-dark)]">Use the category filters to narrow the catalogue, then review the product page for recorded dimensions, finishes and model details. Woodbay can help with product enquiries and dealer availability; final compatibility should be confirmed before cabinet fabrication or installation.</p>
+          </div>
+          <div>
+            <h2 className="font-display text-3xl">Common questions</h2>
+            <h3 className="mt-5 font-semibold">Can I confirm availability online?</h3>
+            <p className="mt-2 text-sm leading-7 text-[color:var(--muted-dark)]">The catalogue shows published products. Send an enquiry for current availability and the appropriate option for your project.</p>
+            <h3 className="mt-5 font-semibold">How do I choose a compatible model?</h3>
+            <p className="mt-2 text-sm leading-7 text-[color:var(--muted-dark)]">Share the product name or code together with relevant cabinet or room dimensions. Compatibility is confirmed separately.</p>
+          </div>
         </Container>
       </Section>
       <CTASection

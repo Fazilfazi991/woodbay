@@ -5,6 +5,7 @@ import { CartPage } from "@/features/cart/cart-page";
 export const metadata: Metadata = {
   title: "Cart | WoodBay",
   description: "Review products saved for a WoodBay enquiry.",
+  robots: { index: false, follow: true },
 };
 
 export default function CartRoute() {

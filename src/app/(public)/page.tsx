@@ -6,11 +6,12 @@ import {
   ManufacturingSection,
 } from "@/features/home/components/homepage-sections";
 import { HomeTwoHero } from "@/features/home/components/home-two-hero";
-export const metadata: Metadata = {
-  title: "Kitchen, Wardrobe, Furniture & Interior Solutions",
-  description:
-    "Woodbay offers premium kitchen accessories, wardrobe accessories, interior products, furniture and considered solutions for modern spaces.",
-};
+import { pageMetadata } from "@/lib/seo";
+export const metadata: Metadata = pageMetadata({
+  title: "Kitchen, Wardrobe & Interior Products in Kollam",
+  description: "Explore Woodbay kitchen and wardrobe accessories, hardware fittings, smart furniture and home decor products in Kollam, Kerala.",
+  path: "/",
+});
 export default function HomePage() {
   return (
     <>

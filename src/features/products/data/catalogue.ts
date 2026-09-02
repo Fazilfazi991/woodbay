@@ -311,6 +311,28 @@ export async function getFeaturedProducts(limit = 4) {
   })) as CatalogueProduct[];
 }
 
+export async function getSitemapCatalogueEntries() {
+  const supabase = await createClient();
+  const [{ data: products, error: productError }, { data: categories, error: categoryError }] = await Promise.all([
+    supabase.from("products").select("slug,created_at,category_id,product_categories(slug,parent_id)").eq("status", "published"),
+    supabase.from("product_categories").select("id,slug,parent_id").eq("is_active", true),
+  ]);
+  if (productError) throw productError;
+  if (categoryError) throw categoryError;
+  const categoryById = new Map((categories ?? []).map((category) => [category.id, category]));
+  const populated = new Set((products ?? []).map((product) => product.category_id));
+  const categoryEntries = (categories ?? []).filter((category) => category.parent_id && populated.has(category.id)).map((category) => {
+    const parent = categoryById.get(category.parent_id!);
+    return parent ? { url: `/products/${divisionSlugForCategory(category.slug)}/${category.slug}`, changeFrequency: "weekly" as const, priority: .7 } : null;
+  }).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
+  const productEntries = (products ?? []).flatMap((product) => {
+    const relation = Array.isArray(product.product_categories) ? product.product_categories[0] : product.product_categories;
+    if (!relation) return [];
+    return [{ url: `/products/${divisionSlugForCategory(relation.slug)}/${relation.slug}/${product.slug}`, lastModified: product.created_at, changeFrequency: "monthly" as const, priority: .6 }];
+  });
+  return [...categoryEntries, ...productEntries];
+}
+
 export async function getHomepageCatalogueProducts() {
   const slugs = [
     "glass-pantry",

@@ -13,12 +13,13 @@ import { getFeaturedProducts } from "@/features/products/data/catalogue";
 import { ProductCard } from "@/features/products/components/catalogue-ui";
 import type { CatalogueProduct } from "@/features/products/types";
 import { productDivisions } from "@/features/products/data/taxonomy";
+import { pageMetadata } from "@/lib/seo";
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = {
-  title: "Products | Woodbay",
-  description:
-    "Explore Woodbay kitchen accessories, wardrobe solutions, decor products and smart products.",
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Interior Products & Furniture Accessories in Kollam",
+  description: "Browse Woodbay kitchen and wardrobe accessories, hardware fittings, aluminium profiles, smart furniture and home decor products in Kollam.",
+  path: "/products",
+});
 const image = "/images/preview/woodbay-kitchen-preview.png";
 export default async function ProductsPage() {
   let featured: CatalogueProduct[] = [];

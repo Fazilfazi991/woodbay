@@ -18,33 +18,21 @@ import {
   parseCatalogueParams,
 } from "@/features/products/data/catalogue";
 import type { CatalogueProduct } from "@/features/products/types";
-const wallpaperSections = [
-  "Wallpaper Collections",
-  "Living Room Wallpapers",
-  "Bedroom Wallpapers",
-  "Office / Commercial Wallpapers",
-  "Modern / Premium Designs",
-  "Textured Wallpapers",
-  "Wall Decor Solutions",
-  "Installation / Enquiry",
-  "FAQs",
-  "Service / Location Content",
-];
+import { pageMetadata } from "@/lib/seo";
 export const dynamic = "force-dynamic";
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ categorySlug: string; subcategorySlug: string }>;
 }): Promise<Metadata> {
-  const { subcategorySlug } = await params;
+  const { categorySlug, subcategorySlug } = await params;
   const category = await getCategoryBySlug(subcategorySlug);
   return category
-    ? {
-        title: `${category.name} | Woodbay`,
-        description:
-          category.description ??
-          `Explore Woodbay ${category.name.toLowerCase()}.`,
-      }
+    ? pageMetadata({
+        title: `${category.name} in Kollam`,
+        description: category.description ? `${category.description} Explore Woodbay options in Kollam, Kerala.` : `Explore Woodbay ${category.name.toLowerCase()} in Kollam, Kerala. Review product details and enquire for availability.`,
+        path: `/products/${categorySlug}/${subcategorySlug}`,
+      })
     : {};
 }
 export default async function SubcategoryPage({
@@ -132,29 +120,12 @@ export default async function SubcategoryPage({
       </Section>
       {category.slug === "wallpaper" && (
         <Section tone="light">
-          <Container>
-            <p className="text-xs font-bold tracking-[.16em] text-[color:var(--gold)] uppercase">
-              Wallpaper content architecture
-            </p>
-            <h2 className="font-display mt-3 max-w-3xl text-5xl">
-              A dedicated place for wallpaper discovery.
-            </h2>
+          <Container className="grid gap-8 lg:grid-cols-[1fr_.8fr]">
+            <div><h2 className="font-display max-w-3xl text-5xl">Wallpaper for homes and interiors in Kollam</h2>
             <p className="mt-5 max-w-2xl text-sm leading-7 text-[color:var(--muted-dark)]">
-              This landing structure is ready for approved Woodbay collection
-              content, installation information, FAQs and relevant Kollam
-              service information. No unapproved ranking or business claims are
-              included.
+              Explore Woodbay wallpaper for living rooms, bedrooms and commercial interiors. Pattern, texture and colour should be reviewed alongside room lighting and adjacent finishes; enquire with the product name for current options and installation guidance.
             </p>
-            <div className="mt-10 grid grid-cols-2 gap-px bg-[#d7cebf] md:grid-cols-3">
-              {wallpaperSections.map((title) => (
-                <section
-                  key={title}
-                  className="min-h-32 bg-[color:var(--surface-light)] p-5"
-                >
-                  <h3 className="font-display text-2xl">{title}</h3>
-                </section>
-              ))}
-            </div>
+            </div><div><h2 className="font-display text-3xl">Wallpaper questions</h2><h3 className="mt-5 font-semibold">Can I choose from the website image alone?</h3><p className="mt-2 text-sm leading-7 text-[color:var(--muted-dark)]">Screens can display colour and texture differently. Review the available product information and request guidance before final selection.</p><h3 className="mt-5 font-semibold">What should I share in an enquiry?</h3><p className="mt-2 text-sm leading-7 text-[color:var(--muted-dark)]">Share the product name, room type and approximate wall dimensions so the team can respond with relevant next steps.</p></div>
           </Container>
         </Section>
       )}

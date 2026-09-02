@@ -16,6 +16,14 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [{ protocol: "https", hostname: "**.supabase.co" }],
   },
+  async redirects() {
+    return [
+      { source: "/products/kitchen-accessories", destination: "/products/kitchen-wardrobe-accessories", permanent: true },
+      { source: "/products/wardrobe-accessories", destination: "/products/kitchen-wardrobe-accessories", permanent: true },
+      { source: "/products/decor", destination: "/products/home-decor", permanent: true },
+      { source: "/products/smart-products", destination: "/products/smart-furniture", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

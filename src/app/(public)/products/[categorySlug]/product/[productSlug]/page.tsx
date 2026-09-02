@@ -12,9 +12,11 @@ import { ProductEditorial } from "@/features/products/components/product-editori
 import {
   getProductBySlug,
   getRelatedProducts,
+  productDetailPath,
   productSpecifications,
 } from "@/features/products/data/catalogue";
 import { getProductContent } from "@/features/products/data/content";
+import { absoluteUrl, jsonLd, pageMetadata, productSeoText } from "@/lib/seo";
 export const dynamic = "force-dynamic";
 type RouteProps = {
   params: Promise<{ categorySlug: string; productSlug: string }>;
@@ -30,28 +32,12 @@ export async function generateMetadata({
       product.category?.slug !== categorySlug)
   )
     return {};
-  const title =
-    product.seo_title ??
-    `${product.name} | Woodbay ${product.parentCategory?.name ?? "Products"}`;
-  const description =
-    product.seo_description ??
-    product.short_description ??
-    `Explore ${product.name} by Woodbay.`;
-  const canonical = `/products/${categorySlug}/product/${product.slug}`;
+  const { title, description } = productSeoText(product);
+  const canonical = productDetailPath(product);
   const image =
     product.images[0]?.storage_key ??
     "/images/preview/woodbay-kitchen-preview.png";
-  return {
-    title,
-    description,
-    alternates: { canonical },
-    openGraph: {
-      title,
-      description,
-      url: canonical,
-      images: [{ url: image, alt: `${product.name} by Woodbay` }],
-    },
-  };
+  return pageMetadata({ title, description, path: canonical, image });
 }
 export default async function ProductPage({ params }: RouteProps) {
   const { categorySlug, productSlug } = await params;
@@ -65,6 +51,14 @@ export default async function ProductPage({ params }: RouteProps) {
   const related = await getRelatedProducts(product);
   const category = product.category;
   const content = getProductContent(product);
+  const canonical = productDetailPath(product);
+  const breadcrumbItems = [
+    { name: "Home", item: absoluteUrl("/") },
+    { name: "Products", item: absoluteUrl("/products") },
+    { name: product.parentCategory?.name ?? "Products", item: absoluteUrl(`/products/${product.parentCategory?.slug ?? categorySlug}`) },
+    ...(category?.parent_id ? [{ name: category.name, item: absoluteUrl(`/products/${product.parentCategory?.slug}/${category.slug}`) }] : []),
+    { name: product.name, item: absoluteUrl(canonical) },
+  ];
   const schema = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -74,14 +68,20 @@ export default async function ProductPage({ params }: RouteProps) {
     sku: product.product_code ?? undefined,
     category: category?.name,
     brand: { "@type": "Brand", name: "Woodbay" },
-    image: product.images.map((image) => image.storage_key),
+    url: absoluteUrl(canonical),
+    image: product.images.map((image) => absoluteUrl(image.storage_key)),
   };
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(schema) }}
       />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: breadcrumbItems.map((item, index) => ({ "@type": "ListItem", position: index + 1, ...item })),
+      }) }} />
       <Section tone="dark" className="pt-10">
         <Container>
           <nav

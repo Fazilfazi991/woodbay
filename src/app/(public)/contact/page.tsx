@@ -3,6 +3,14 @@ import { ArrowRight, Building2, Ruler, Store } from "lucide-react";
 import { Container, Eyebrow, Section } from "@/components/layout/primitives";
 import { Button } from "@/components/ui/button";
 import { ContactEnquiryForm } from "@/features/contact/contact-enquiry-form";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Contact Woodbay in Kollam",
+  description: "Contact Woodbay about kitchen and wardrobe accessories, hardware fittings, smart furniture, home decor products, factory visits or dealer opportunities.",
+  path: "/contact",
+});
 
 const contactPaths = [
   {

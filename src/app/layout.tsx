@@ -5,9 +5,11 @@ import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
-  title: { default: "WOODBAY", template: "%s | WOODBAY" },
-  description: "WOODBAY Decor & Interiors official website.",
-  robots: { index: false, follow: false },
+  title: { default: "Woodbay Decor & Interiors | Kollam", template: "%s | Woodbay" },
+  description: "Woodbay kitchen and wardrobe accessories, hardware fittings, smart furniture and home decor products in Kollam, Kerala.",
+  applicationName: "Woodbay Decor & Interiors",
+  category: "Home and interior products",
+  robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {

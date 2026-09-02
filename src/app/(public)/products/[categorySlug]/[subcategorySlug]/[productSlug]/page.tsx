@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import ProductPage from "../../product/[productSlug]/page";
+export { generateMetadata } from "../../product/[productSlug]/page";
 import { getCategoryBySlug, getProductBySlug } from "@/features/products/data/catalogue";
 import { getProductDivision } from "@/features/products/data/taxonomy";
 
