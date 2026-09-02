@@ -3,6 +3,10 @@
 import { useId, useState } from "react";
 import type { VoucherOption } from "../options";
 
+export function shouldPreventSearchFieldSubmit(key: string) {
+  return key === "Enter";
+}
+
 export function SearchableVoucherField({
   label,
   name,
@@ -25,6 +29,9 @@ export function SearchableVoucherField({
         list={listId}
         value={value}
         onChange={(event) => setValue(event.target.value)}
+        onKeyDown={(event) => {
+          if (shouldPreventSearchFieldSubmit(event.key)) event.preventDefault();
+        }}
         placeholder={placeholder}
         autoComplete="off"
         className="min-h-12 w-full rounded-md border border-[color:var(--border)] bg-[color:var(--surface)] px-3 py-2 text-base focus:outline-2 focus:outline-[color:var(--primary)]"
