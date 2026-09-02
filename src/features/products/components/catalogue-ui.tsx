@@ -4,8 +4,6 @@ import { Search, SlidersHorizontal } from "lucide-react";
 import { primaryImage, productDetailPath } from "../data/catalogue";
 import type { CatalogueCategory, CatalogueProduct } from "../types";
 import { Button } from "@/components/ui/button";
-import { AddToCartButton } from "@/features/cart/product-cart";
-import { toCartProduct } from "@/features/cart/adapters";
 export { CategoryChips } from "./category-chips";
 export function ProductCard({ product }: { product: CatalogueProduct }) {
   const image = primaryImage(product);
@@ -55,23 +53,13 @@ export function ProductCard({ product }: { product: CatalogueProduct }) {
             Code: {product.product_code}
           </p>
         )}
-        <div className="mt-auto flex items-center justify-between gap-2 pt-3.5 sm:pt-4">
+        <div className="mt-auto pt-3.5 sm:pt-4">
           <Link
             href={productDetailPath(product)}
-            className="inline-flex h-10 min-w-0 items-center text-[10px] font-semibold whitespace-nowrap underline decoration-[#8d897f] underline-offset-4 transition-colors hover:text-[#8a681f] sm:text-xs"
+            className="inline-flex min-h-11 items-center text-[11px] font-semibold whitespace-nowrap underline decoration-[#8d897f] underline-offset-4 transition-colors hover:text-[#8a681f] sm:text-xs"
           >
             View details
           </Link>
-          {product.variants?.length ? (
-            <Link
-              href={productDetailPath(product)}
-              className="inline-flex h-10 min-w-0 items-center justify-center rounded-[3px] border border-[color:var(--gold)] px-2 text-[10px] font-semibold whitespace-nowrap text-[#8a681f] transition-colors hover:bg-[color:var(--gold)] hover:text-[#171711] sm:px-3 sm:text-xs"
-            >
-              Choose options
-            </Link>
-          ) : (
-            <AddToCartButton product={toCartProduct(product)} compact />
-          )}
         </div>
       </div>
     </article>

@@ -21,7 +21,10 @@ export async function submitDealerApplication(
   }
 
   const result = dealerApplicationSchema.safeParse(
-    Object.fromEntries(formData),
+    {
+      ...Object.fromEntries(formData),
+      product_interests: formData.getAll("product_interests"),
+    },
   );
   if (!result.success) {
     return {
@@ -35,6 +38,9 @@ export async function submitDealerApplication(
   const { error } = await supabase
     .from("dealer_applications")
     .insert(result.data);
+  if (error?.code === "23505") {
+    return { ok: true, message: "Application Received" };
+  }
   return error
     ? {
         ok: false,
@@ -42,7 +48,6 @@ export async function submitDealerApplication(
       }
     : {
         ok: true,
-        message:
-          "Dealer application received. The Woodbay team will review your information and contact you.",
+        message: "Application Received",
       };
 }
