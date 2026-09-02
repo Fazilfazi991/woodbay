@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
 import ProductPage from "../../product/[productSlug]/page";
 export { generateMetadata } from "../../product/[productSlug]/page";
-import { getCategoryBySlug, getProductBySlug } from "@/features/products/data/catalogue";
+import { getCategoryBySlug, getProductBySlug, getPublishedProductRouteParams } from "@/features/products/data/catalogue";
 import { getProductDivision } from "@/features/products/data/taxonomy";
 
 type Props = { params: Promise<{ categorySlug: string; subcategorySlug: string; productSlug: string }> };
-export const dynamic = "force-dynamic";
+export const dynamicParams = false;
+export async function generateStaticParams() { return getPublishedProductRouteParams(); }
 export default async function CatalogueProductPage({ params }: Props) {
   const { categorySlug, subcategorySlug, productSlug } = await params;
   const [division, category, product] = await Promise.all([Promise.resolve(getProductDivision(categorySlug)), getCategoryBySlug(subcategorySlug), getProductBySlug(productSlug)]);

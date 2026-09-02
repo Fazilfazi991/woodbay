@@ -46,7 +46,7 @@ const forbidden = uniqueUrls.filter((url) => !url.startsWith(origin) || /localho
 const failures = results.filter((row) => row.status !== 200 || /noindex/i.test(row.robots) || row.canonical !== row.url || row.h1s.length !== 1);
 const invalidSchemas = results.flatMap((row) => row.schemas.filter((schema) => schema.invalid).map(() => row.url));
 const schemaTypes = Object.fromEntries(results.map((row) => [row.url, row.schemas.map((schema) => schema["@type"]).filter(Boolean)]).filter(([, types]) => types.length));
-const linkedUrls = new Set(results.flatMap((row) => row.links).flatMap((href) => {
+const linkedUrls = new Set(results.flatMap((row) => row.links.flatMap((href) => {
   try {
     const url = new URL(href, row.url);
     if (url.origin !== origin) return [];
@@ -54,7 +54,7 @@ const linkedUrls = new Set(results.flatMap((row) => row.links).flatMap((href) =>
     url.search = "";
     return [url.toString().replace(/\/$/, "") || origin];
   } catch { return []; }
-}));
+})));
 const productUrls = uniqueUrls.filter((url) => pathname(url).split("/").filter(Boolean).length >= 4 && pathname(url).startsWith("/products/"));
 const orphanedProducts = productUrls.filter((url) => !linkedUrls.has(url));
 const linkTargets = [...linkedUrls].filter((url) => !uniqueUrls.includes(url));

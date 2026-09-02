@@ -10,6 +10,8 @@ import type {
 import type { ProductDivision } from "./taxonomy";
 import { divisionSlugForCategory, divisionSubcategorySlugs } from "./taxonomy";
 import { localProductImage } from "./local-images";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import { getSupabasePublicEnv } from "@/lib/env";
 export const PAGE_SIZE = 12;
 export function parseCatalogueParams(
   input: Record<string, string | string[] | undefined>,
@@ -331,6 +333,18 @@ export async function getSitemapCatalogueEntries() {
     return [{ url: `/products/${divisionSlugForCategory(relation.slug)}/${relation.slug}/${product.slug}`, lastModified: product.created_at, changeFrequency: "monthly" as const, priority: .6 }];
   });
   return [...categoryEntries, ...productEntries];
+}
+
+export async function getPublishedProductRouteParams() {
+  const { url, key } = getSupabasePublicEnv();
+  const supabase = createSupabaseClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+  const { data, error } = await supabase.from("products").select("slug,product_categories(slug)").eq("status", "published");
+  if (error) throw error;
+  return (data ?? []).flatMap((product) => {
+    const category = Array.isArray(product.product_categories) ? product.product_categories[0] : product.product_categories;
+    if (!category) return [];
+    return [{ categorySlug: divisionSlugForCategory(category.slug), subcategorySlug: category.slug, productSlug: product.slug }];
+  });
 }
 
 export async function getHomepageCatalogueProducts() {

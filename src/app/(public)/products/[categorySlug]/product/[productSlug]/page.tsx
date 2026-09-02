@@ -12,12 +12,16 @@ import { ProductEditorial } from "@/features/products/components/product-editori
 import {
   getProductBySlug,
   getRelatedProducts,
+  getPublishedProductRouteParams,
   productDetailPath,
   productSpecifications,
 } from "@/features/products/data/catalogue";
 import { getProductContent } from "@/features/products/data/content";
 import { absoluteUrl, jsonLd, pageMetadata, productSeoText } from "@/lib/seo";
-export const dynamic = "force-dynamic";
+export const dynamicParams = false;
+export async function generateStaticParams() {
+  return (await getPublishedProductRouteParams()).map(({ categorySlug, productSlug }) => ({ categorySlug, productSlug }));
+}
 type RouteProps = {
   params: Promise<{ categorySlug: string; productSlug: string }>;
 };
