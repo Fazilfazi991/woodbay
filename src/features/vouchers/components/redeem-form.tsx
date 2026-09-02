@@ -8,6 +8,9 @@ import { redeemVoucher } from "../actions/redeem";
 import type { VoucherOption } from "../options";
 import { SearchableVoucherField } from "./searchable-voucher-field";
 const initialState = { ok: false, result: null, message: "" };
+export function isSearchFieldImplicitSubmit(submitter: HTMLElement | null, activeElement: Element | null) {
+  return !submitter && Boolean(activeElement?.matches("input[list]"));
+}
 function Field({
   label,
   children,
@@ -67,7 +70,19 @@ export function RedeemForm({ initialCode, products, dealers }: { initialCode: st
       </div>
     );
   return (
-    <form action={action} className="grid gap-5" noValidate>
+    <form
+      action={action}
+      className="grid gap-5"
+      noValidate
+      onSubmit={(event) => {
+        const submitEvent = event.nativeEvent as SubmitEvent;
+        const activeElement = event.currentTarget.ownerDocument.activeElement;
+
+        if (isSearchFieldImplicitSubmit(submitEvent.submitter, activeElement)) {
+          event.preventDefault();
+        }
+      }}
+    >
       <input
         name="website"
         tabIndex={-1}
