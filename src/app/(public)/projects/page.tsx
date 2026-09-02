@@ -8,6 +8,10 @@ import {
   SectionHeader,
 } from "@/components/layout/primitives";
 import { getPublishedProjects } from "@/features/projects/data";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = pageMetadata({ title: "Woodbay Interior Projects", description: "Explore published Woodbay kitchen, wardrobe, furniture and interior project work.", path: "/projects" });
 
 function projectImage(
   project: Awaited<ReturnType<typeof getPublishedProjects>>[number],

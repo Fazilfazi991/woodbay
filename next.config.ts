@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  // Keep canonical, robots and database-backed metadata in the initial HTML for
+  // every crawler and return true HTTP 404 responses before streaming begins.
+  htmlLimitedBots: /.*/,
   async headers() {
     return [{
       source: "/(.*)",

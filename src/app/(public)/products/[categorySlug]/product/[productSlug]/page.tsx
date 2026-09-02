@@ -31,7 +31,7 @@ export async function generateMetadata({
     (product.parentCategory?.slug !== categorySlug &&
       product.category?.slug !== categorySlug)
   )
-    return {};
+    notFound();
   const { title, description } = productSeoText(product);
   const canonical = productDetailPath(product);
   const image =
@@ -69,7 +69,7 @@ export default async function ProductPage({ params }: RouteProps) {
     category: category?.name,
     brand: { "@type": "Brand", name: "Woodbay" },
     url: absoluteUrl(canonical),
-    image: product.images.map((image) => absoluteUrl(image.storage_key)),
+    ...(product.images.length ? { image: product.images.map((image) => absoluteUrl(image.storage_key)) } : {}),
   };
   return (
     <>

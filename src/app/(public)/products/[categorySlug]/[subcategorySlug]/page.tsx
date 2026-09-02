@@ -27,13 +27,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { categorySlug, subcategorySlug } = await params;
   const category = await getCategoryBySlug(subcategorySlug);
-  return category
-    ? pageMetadata({
+  if (!category) notFound();
+  return pageMetadata({
         title: `${category.name} in Kollam`,
         description: category.description ? `${category.description} Explore Woodbay options in Kollam, Kerala.` : `Explore Woodbay ${category.name.toLowerCase()} in Kollam, Kerala. Review product details and enquire for availability.`,
         path: `/products/${categorySlug}/${subcategorySlug}`,
-      })
-    : {};
+      });
 }
 export default async function SubcategoryPage({
   params,

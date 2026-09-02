@@ -27,7 +27,7 @@ type Props = {
 };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const division = getProductDivision((await params).categorySlug);
-  if (!division) return {};
+  if (!division) notFound();
   const seo = divisionSeo[division.slug];
   return pageMetadata({ title: seo.title, description: seo.description, path: `/products/${division.slug}`, image: division.image });
 }

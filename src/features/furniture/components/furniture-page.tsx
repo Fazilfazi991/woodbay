@@ -121,7 +121,7 @@ export async function FurniturePage() {
                 products for more considered everyday living.
               </p>
               <Link
-                href="/products/smart-products"
+                href="/products/smart-furniture"
                 className="mt-7 inline-block"
               >
                 <Button variant="light">Explore smart products</Button>

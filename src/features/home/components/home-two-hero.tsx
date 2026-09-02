@@ -69,7 +69,7 @@ export function HomeTwoHero() {
             alt={index === activeSlide ? slide.alt : ""}
             fill
             preload={index === 0}
-            loading={index === 0 ? undefined : "eager"}
+            loading={index === 0 ? undefined : "lazy"}
             sizes="100vw"
             className={`object-cover ${index === 1 ? "object-center" : "object-[62%_center]"}`}
           />
@@ -86,9 +86,11 @@ export function HomeTwoHero() {
             key={slide.title}
             className={`max-w-2xl transition-all duration-700 ${index === activeSlide ? "translate-y-0 opacity-100" : "pointer-events-none absolute translate-y-3 opacity-0"}`}
           >
-            <h1 className="font-display max-w-[11ch] text-[2.75rem] leading-[.94] tracking-[-.02em] whitespace-pre-line sm:text-6xl lg:text-[5.25rem]">
-              {slide.title}
-            </h1>
+            {index === 0 ? (
+              <h1 className="font-display max-w-[11ch] text-[2.75rem] leading-[.94] tracking-[-.02em] whitespace-pre-line sm:text-6xl lg:text-[5.25rem]">{slide.title}</h1>
+            ) : (
+              <h2 className="font-display max-w-[11ch] text-[2.75rem] leading-[.94] tracking-[-.02em] whitespace-pre-line sm:text-6xl lg:text-[5.25rem]">{slide.title}</h2>
+            )}
             <p className="mt-6 max-w-lg text-[15px] leading-7 text-[#d7d1c6] sm:text-base">
               {slide.description}
             </p>

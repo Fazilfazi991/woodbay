@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/features/legal/components/legal-page";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Website Terms | Woodbay",
-  description: "Terms governing use of the Woodbay website and enquiries.",
-};
+export const metadata: Metadata = pageMetadata({ title: "Website Terms", description: "Terms governing use of the Woodbay website, catalogue information and enquiry services.", path: "/terms" });
 
 const sections = [
   {
