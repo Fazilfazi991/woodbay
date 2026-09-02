@@ -16,7 +16,7 @@ export function DealerReviewActions({ id, status, dealerId }: { id: string; stat
         <input type="hidden" name="id" value={id} />
         <label className="grid gap-1 text-sm font-medium">
           Application status
-          <select name="status" defaultValue={status} className="min-h-11 border px-3">
+          <select key={status} name="status" defaultValue={status} className="min-h-11 border px-3">
             {statuses.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
           </select>
         </label>
