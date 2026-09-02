@@ -96,11 +96,13 @@ export async function updateDealer(formData: FormData) {
   const values = z.object({
     id: idSchema, business_name: z.string().trim().min(2).max(160), contact_person: z.string().trim().max(120).optional(),
     phone: z.string().trim().min(7).max(20), email: z.string().trim().email().or(z.literal("")), state: z.string().trim().min(2).max(120),
-    district: z.string().trim().min(2).max(120), area: z.string().trim().max(160).optional(), address: z.string().trim().min(2).max(500), google_maps_url:httpUrl, payment_qr_image:httpUrl, latitude:z.coerce.number().min(-90).max(90).optional(),longitude:z.coerce.number().min(-180).max(180).optional(),
+    district: z.string().trim().min(2).max(120), area: z.string().trim().max(160).optional(), address: z.string().trim().min(2).max(500), google_maps_url:httpUrl,
+    latitude:z.preprocess((value) => value === "" ? undefined : value, z.coerce.number().min(-90).max(90).optional()),
+    longitude:z.preprocess((value) => value === "" ? undefined : value, z.coerce.number().min(-180).max(180).optional()),
     status: z.enum(["pending", "active", "inactive"]), is_visible: z.boolean(),
   }).parse({ ...Object.fromEntries(formData), is_visible: formData.get("is_visible") === "on" });
   const { id, ...dealer } = values;
-  const { error } = await createAdminClient().from("dealers").update({ ...dealer, email: dealer.email || null, contact_person: dealer.contact_person || null, area: dealer.area || null, google_maps_url:dealer.google_maps_url||null,payment_qr_image:dealer.payment_qr_image||null,latitude:Number.isFinite(dealer.latitude)?dealer.latitude:null,longitude:Number.isFinite(dealer.longitude)?dealer.longitude:null }).eq("id", id);
+  const { error } = await createAdminClient().from("dealers").update({ ...dealer, email: dealer.email || null, contact_person: dealer.contact_person || null, area: dealer.area || null, google_maps_url:dealer.google_maps_url||null,latitude:Number.isFinite(dealer.latitude)?dealer.latitude:null,longitude:Number.isFinite(dealer.longitude)?dealer.longitude:null }).eq("id", id);
   if (error) throw new Error("Unable to update dealer.");
   const { data: application } = await createAdminClient().from("dealer_applications").select("id").eq("dealer_id", id).maybeSingle();
   if (application) await createAdminClient().from("dealer_application_audit_events").insert({ application_id: application.id, actor_user_id: admin.userId, action: "dealer_updated", metadata: { dealer_id: id } });
