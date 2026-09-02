@@ -19,8 +19,16 @@ const generationSchema = z.object({
   quantity: z.coerce.number().int().min(1).max(100),
   expiry: z.string().optional(),
   idempotency: z.string().uuid(),
-  product_id: z.string().uuid().or(z.literal("")).transform((value) => value || null),
-  dealer_id: z.string().uuid().or(z.literal("")).transform((value) => value || null),
+  product_id: z
+    .string()
+    .uuid()
+    .or(z.literal(""))
+    .transform((value) => value || null),
+  dealer_id: z
+    .string()
+    .uuid()
+    .or(z.literal(""))
+    .transform((value) => value || null),
 });
 export type GenerationActionState = {
   error?: string;
@@ -55,7 +63,8 @@ type RawVoucherRow = {
   admin_profiles: { full_name: string } | { full_name: string }[] | null;
   products: { name: string } | { name: string }[] | null;
   dealers: { business_name: string } | { business_name: string }[] | null;
-  voucher_redemptions: { customer_name: string } | { customer_name: string }[] | null;
+  voucher_redemptions:
+    { customer_name: string } | { customer_name: string }[] | null;
 };
 async function admin() {
   const actor = await getActiveAdmin();
@@ -90,9 +99,13 @@ export async function listVouchers(input: unknown) {
     const profile = Array.isArray(raw.admin_profiles)
       ? (raw.admin_profiles[0] ?? null)
       : raw.admin_profiles;
-    const product = Array.isArray(raw.products) ? raw.products[0] : raw.products;
+    const product = Array.isArray(raw.products)
+      ? raw.products[0]
+      : raw.products;
     const dealer = Array.isArray(raw.dealers) ? raw.dealers[0] : raw.dealers;
-    const redemption = Array.isArray(raw.voucher_redemptions) ? raw.voucher_redemptions[0] : raw.voucher_redemptions;
+    const redemption = Array.isArray(raw.voucher_redemptions)
+      ? raw.voucher_redemptions[0]
+      : raw.voucher_redemptions;
     return {
       id: raw.id,
       code: raw.code,
@@ -109,6 +122,46 @@ export async function listVouchers(input: unknown) {
     };
   });
   return { rows, count: count ?? 0, filters: f };
+}
+
+export async function getVoucherSummary() {
+  await admin();
+  const db = createAdminClient();
+  const now = new Date().toISOString().slice(0, 10);
+  const [total, available, redeemed, disabled, expired] = await Promise.all([
+    db.from("voucher_codes").select("id", { count: "exact", head: true }),
+    db
+      .from("voucher_codes")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "available")
+      .or(`expires_at.is.null,expires_at.gte.${now}`),
+    db
+      .from("voucher_codes")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "redeemed"),
+    db
+      .from("voucher_codes")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "disabled"),
+    db
+      .from("voucher_codes")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "available")
+      .lt("expires_at", now),
+  ]);
+  if (
+    [total, available, redeemed, disabled, expired].some(
+      (result) => result.error,
+    )
+  )
+    throw new Error("Unable to load voucher summary.");
+  return {
+    total: total.count ?? 0,
+    available: available.count ?? 0,
+    redeemed: redeemed.count ?? 0,
+    disabled: disabled.count ?? 0,
+    expired: expired.count ?? 0,
+  };
 }
 export async function generateVouchers(
   _: GenerationActionState,
@@ -133,13 +186,17 @@ export async function generateVouchers(
   });
   if (error) return { error: "Voucher generation failed. Please try again." };
   const batch = batchResult?.[0] as { batch_id?: string } | undefined;
-  if (!batch?.batch_id) return { error: "Voucher generation did not return a batch." };
+  if (!batch?.batch_id)
+    return { error: "Voucher generation did not return a batch." };
   const { data: vouchers, error: voucherError } = await db
     .from("voucher_codes")
     .select("id,code")
     .eq("batch_id", batch.batch_id)
     .order("created_at", { ascending: true });
-  if (voucherError) return { error: "Voucher generation completed, but the codes could not be loaded." };
+  if (voucherError)
+    return {
+      error: "Voucher generation completed, but the codes could not be loaded.",
+    };
   revalidatePath("/admin/vouchers");
   return {
     codes: (vouchers ?? []).map((voucher) => voucher.code),
@@ -216,9 +273,13 @@ export async function exportVouchers(input: unknown) {
     const profile = Array.isArray(raw.admin_profiles)
       ? (raw.admin_profiles[0] ?? null)
       : raw.admin_profiles;
-    const product = Array.isArray(raw.products) ? raw.products[0] : raw.products;
+    const product = Array.isArray(raw.products)
+      ? raw.products[0]
+      : raw.products;
     const dealer = Array.isArray(raw.dealers) ? raw.dealers[0] : raw.dealers;
-    const redemption = Array.isArray(raw.voucher_redemptions) ? raw.voucher_redemptions[0] : raw.voucher_redemptions;
+    const redemption = Array.isArray(raw.voucher_redemptions)
+      ? raw.voucher_redemptions[0]
+      : raw.voucher_redemptions;
     return {
       id: raw.id,
       code: raw.code,
