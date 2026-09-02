@@ -4,9 +4,11 @@ import { notFound, redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/ui/form-error";
 import {
+  archiveProductVariant,
   getAdminProduct,
   listAdminCategories,
   removeProductImage,
+  saveProductVariant,
   setPrimaryProductImage,
   updateProduct,
   uploadProductImages,
@@ -23,6 +25,7 @@ export default async function ProductEditPage({
     saved?: string;
     created?: string;
     images?: string;
+    variants?: string;
   }>;
 }) {
   if (!(await getActiveAdmin())) redirect("/admin/login");
@@ -49,7 +52,7 @@ export default async function ProductEditPage({
         <h1 className="text-3xl font-semibold">Edit product</h1>
         <p className="text-muted-foreground mt-1">{product.name}</p>
       </div>
-      {(query.saved || query.created || query.images) && (
+      {(query.saved || query.created || query.images || query.variants) && (
         <p
           role="status"
           className="mt-5 border border-[color:var(--gold)] p-3 text-sm"
@@ -222,6 +225,43 @@ export default async function ProductEditPage({
         <Button className="w-fit">Save changes</Button>
       </form>
       <section className="mt-8 border p-5 sm:p-7">
+        <h2 className="text-xl font-medium">Variants</h2>
+        <p className="text-muted-foreground mt-1 text-sm">
+          Add only catalogue-confirmed sizes, finishes, colours, materials or models.
+        </p>
+        <div className="mt-5 grid gap-5">
+          {product.product_variants
+            .filter((variant) => variant.is_active)
+            .sort((a, b) => a.sort_order - b.sort_order)
+            .map((variant) => (
+              <form
+                action={saveProductVariant}
+                key={variant.id}
+                className="grid gap-3 border p-4 sm:grid-cols-2"
+              >
+                <input type="hidden" name="product_id" value={product.id} />
+                <input type="hidden" name="variant_id" value={variant.id} />
+                <VariantFields variant={variant} />
+                <div className="flex flex-wrap gap-3 sm:col-span-2">
+                  <Button>Save variant</Button>
+                  <button
+                    formAction={archiveProductVariant}
+                    className="min-h-11 px-3 text-sm underline underline-offset-4"
+                  >
+                    Archive variant
+                  </button>
+                </div>
+              </form>
+            ))}
+          <form action={saveProductVariant} className="grid gap-3 border p-4 sm:grid-cols-2">
+            <input type="hidden" name="product_id" value={product.id} />
+            <h3 className="font-medium sm:col-span-2">Add variant</h3>
+            <VariantFields />
+            <Button className="w-fit sm:col-span-2">Add variant</Button>
+          </form>
+        </div>
+      </section>
+      <section className="mt-8 border p-5 sm:p-7">
         <h2 className="text-xl font-medium">Media</h2>
         <p className="text-muted-foreground mt-1 text-sm">
           Upload JPG, PNG, WebP or AVIF files up to 10 MB each.
@@ -301,5 +341,55 @@ export default async function ProductEditPage({
         </div>
       </section>
     </main>
+  );
+}
+
+type AdminVariant = {
+  name: string;
+  sku: string | null;
+  dimension: string | null;
+  size: string | null;
+  finish: string | null;
+  colour: string | null;
+  material: string | null;
+  packing_information: string | null;
+  sort_order: number;
+};
+
+function VariantFields({ variant }: { variant?: AdminVariant }) {
+  const fields = [
+    ["name", "Name", variant?.name ?? "", true],
+    ["sku", "SKU / model", variant?.sku ?? "", false],
+    ["dimension", "Dimension", variant?.dimension ?? "", false],
+    ["size", "Size", variant?.size ?? "", false],
+    ["finish", "Finish", variant?.finish ?? "", false],
+    ["colour", "Colour", variant?.colour ?? "", false],
+    ["material", "Material", variant?.material ?? "", false],
+    ["packing_information", "Packing information", variant?.packing_information ?? "", false],
+  ] as const;
+  return (
+    <>
+      {fields.map(([name, label, value, required]) => (
+        <label key={name}>
+          {label}
+          <input
+            name={name}
+            defaultValue={value}
+            required={required}
+            className="mt-1 min-h-11 w-full border px-3"
+          />
+        </label>
+      ))}
+      <label>
+        Sort order
+        <input
+          name="sort_order"
+          type="number"
+          min="0"
+          defaultValue={variant?.sort_order ?? 0}
+          className="mt-1 min-h-11 w-full border px-3"
+        />
+      </label>
+    </>
   );
 }

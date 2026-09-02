@@ -13,7 +13,7 @@ export const primaryNavigation: readonly NavigationItem[] = [
     children: [
       { label: "All Products", href: "/products" },
       {
-        label: "Kitchen & Wardrobe Accessories",
+        label: "Smart Kitchen & Wardrobe Solutions",
         href: "/products/kitchen-wardrobe-accessories",
       },
       {

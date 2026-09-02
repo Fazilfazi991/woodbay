@@ -28,6 +28,19 @@ const productSchema = z.object({
   status: z.enum(statuses),
   sort_order: z.coerce.number().int().min(0).max(100000).default(0),
 });
+const variantSchema = z.object({
+  product_id: z.string().uuid(),
+  variant_id: z.string().uuid().optional(),
+  name: z.string().trim().min(1).max(160),
+  sku: z.string().trim().max(100).optional(),
+  dimension: z.string().trim().max(160).optional(),
+  size: z.string().trim().max(160).optional(),
+  finish: z.string().trim().max(160).optional(),
+  colour: z.string().trim().max(160).optional(),
+  material: z.string().trim().max(160).optional(),
+  packing_information: z.string().trim().max(300).optional(),
+  sort_order: z.coerce.number().int().min(0).max(100000).default(0),
+});
 
 export type ProductStatus = (typeof statuses)[number];
 
@@ -144,7 +157,7 @@ export async function getAdminProduct(productId: string) {
   const { data, error } = await createAdminClient()
     .from("products")
     .select(
-      "id,name,slug,category_id,short_description,description,product_code,catalogue_page_number,catalogue_source_reference,raw_catalogue_data,status,is_featured,sort_order,updated_at,product_images(id,storage_key,alt_text,sort_order,is_primary)",
+      "id,name,slug,category_id,short_description,description,product_code,catalogue_page_number,catalogue_source_reference,raw_catalogue_data,status,is_featured,sort_order,updated_at,product_images(id,storage_key,alt_text,sort_order,is_primary),product_variants(id,name,sku,dimension,size,finish,colour,material,packing_information,sort_order,is_active)",
     )
     .eq("id", z.string().uuid().parse(productId))
     .maybeSingle();
@@ -228,6 +241,79 @@ export async function updateProduct(form: FormData) {
   revalidatePath(`/admin/products/${productId.data}`);
   revalidatePath("/admin/products");
   redirect(`/admin/products/${productId.data}?saved=1`);
+}
+
+export async function saveProductVariant(form: FormData) {
+  await requireAdmin();
+  let value;
+  try {
+    value = variantSchema.parse(Object.fromEntries(form));
+  } catch (error) {
+    const productId = String(form.get("product_id") ?? "");
+    redirect(
+      errorPath(
+        `/admin/products/${productId}`,
+        error instanceof Error ? error.message : "Please check the variant.",
+      ),
+    );
+  }
+  const client = createAdminClient();
+  const { data: product } = await client
+    .from("products")
+    .select("id")
+    .eq("id", value.product_id)
+    .maybeSingle();
+  if (!product)
+    redirect(errorPath("/admin/products", "Product not found."));
+  const row = {
+    product_id: value.product_id,
+    name: value.name,
+    sku: value.sku || null,
+    dimension: value.dimension || null,
+    size: value.size || null,
+    finish: value.finish || null,
+    colour: value.colour || null,
+    material: value.material || null,
+    packing_information: value.packing_information || null,
+    sort_order: value.sort_order,
+    is_active: true,
+  };
+  const query = value.variant_id
+    ? client
+        .from("product_variants")
+        .update(row)
+        .eq("id", value.variant_id)
+        .eq("product_id", value.product_id)
+    : client.from("product_variants").insert(row);
+  const { error } = await query;
+  if (error)
+    redirect(
+      errorPath(
+        `/admin/products/${value.product_id}`,
+        "Unable to save the variant.",
+      ),
+    );
+  revalidatePath("/products");
+  revalidatePath(`/admin/products/${value.product_id}`);
+  redirect(`/admin/products/${value.product_id}?variants=1`);
+}
+
+export async function archiveProductVariant(form: FormData) {
+  await requireAdmin();
+  const productId = z.string().uuid().parse(form.get("product_id"));
+  const variantId = z.string().uuid().parse(form.get("variant_id"));
+  const { error } = await createAdminClient()
+    .from("product_variants")
+    .update({ is_active: false })
+    .eq("id", variantId)
+    .eq("product_id", productId);
+  if (error)
+    redirect(
+      errorPath(`/admin/products/${productId}`, "Unable to archive the variant."),
+    );
+  revalidatePath("/products");
+  revalidatePath(`/admin/products/${productId}`);
+  redirect(`/admin/products/${productId}?variants=1`);
 }
 
 export async function uploadProductImages(form: FormData) {

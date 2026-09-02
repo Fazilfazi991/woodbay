@@ -9,7 +9,7 @@ export type ProductDivision = {
 export const productDivisions: readonly ProductDivision[] = [
   {
     slug: "kitchen-wardrobe-accessories",
-    name: "Kitchen & Wardrobe Accessories",
+    name: "Smart Kitchen & Wardrobe Solutions",
     description:
       "Pantry, pullout, corner, sink and wardrobe systems from the Woodbay catalogue.",
     image: "/images/products/glass-pantry-with-bidding.webp",
@@ -81,18 +81,18 @@ export const divisionSubcategorySlugs = {
   "home-decor": [
     "decor",
     "wallpaper",
-    "pu-stone-panels",
+    "pu-panels",
     "glass-mosaic-tiles",
     "3d-pvc-panels",
-    "pu-feather-panels",
     "charcoal-louvers",
     "metallic-sheets-louvers",
     "metallic-sheets",
     "uv-marble-sheets",
     "crystal-acrylic-paintings",
-    "pocket-spring-mattresses",
+    "mattresses",
     "blinds",
     "artificial-vertical-gardens",
+    "artificial-grass",
     "water-fountains",
     "ceiling-lights",
     "decorative-lighting",
