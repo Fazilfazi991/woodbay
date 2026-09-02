@@ -349,7 +349,7 @@ export async function getPublishedProductRouteParams() {
 
 export async function getHomepageCatalogueProducts() {
   const slugs = [
-    "glass-pantry",
+    "glass-pantry-with-bidding",
     "tandem-box-system",
     "wardrobe-lift",
     "wallpaper",

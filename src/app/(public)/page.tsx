@@ -4,6 +4,7 @@ import {
   ConversionGatewaySection,
   FeaturedProductsSection,
   ManufacturingSection,
+  SmartSection,
 } from "@/features/home/components/homepage-sections";
 import { HomeTwoHero } from "@/features/home/components/home-two-hero";
 import { pageMetadata } from "@/lib/seo";
@@ -18,6 +19,7 @@ export default function HomePage() {
       <HomeTwoHero />
       <CategoriesSection />
       <FeaturedProductsSection />
+      <SmartSection />
       <ManufacturingSection />
       <ConversionGatewaySection />
     </>

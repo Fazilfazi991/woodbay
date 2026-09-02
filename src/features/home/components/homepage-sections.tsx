@@ -25,6 +25,7 @@ import { productDivisions } from "@/features/products/data/taxonomy";
 import { getHomepageCatalogueProducts } from "@/features/products/data/catalogue";
 import { ProductCard } from "@/features/products/components/catalogue-ui";
 import type { CatalogueProduct } from "@/features/products/types";
+import { ProductCarousel } from "./product-carousel";
 
 const divisionPresentation = {
   "kitchen-wardrobe-accessories": {
@@ -214,11 +215,11 @@ export async function FeaturedProductsSection() {
           />
         </div>
         {products.length > 0 ? (
-          <div className="mt-8 grid grid-cols-2 gap-x-2.5 gap-y-4 sm:mt-12 sm:gap-4 lg:grid-cols-4">
-            {products.slice(0, 4).map((product) => (
+          <ProductCarousel>
+            {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
-          </div>
+          </ProductCarousel>
         ) : (
           <p className="mt-8 border border-[color:var(--border-light)] bg-[color:var(--surface-elevated)] p-6 text-sm text-[color:var(--muted-dark)]">
             Featured catalogue products will appear here as they are published.
@@ -313,7 +314,7 @@ export function SmartSection() {
       title: "Smart Waterfall Sinks",
       text: "Advanced preparation, rinsing and utility in one refined workspace.",
       image: "/images/products/waterfall-sink.webp",
-      href: "/products/kitchen-wardrobe-accessories?subcategory=smart-kitchen-waterfall-sinks",
+      href: "/products/kitchen-wardrobe-accessories/smart-kitchen-waterfall-sinks",
     },
   ] as const;
   return (
