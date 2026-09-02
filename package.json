@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "audit:seo": "node scripts/seo-production-audit.mjs"
+    "audit:seo": "node scripts/seo-production-audit.mjs",
+    "audit:images": "node scripts/catalogue-image-audit.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

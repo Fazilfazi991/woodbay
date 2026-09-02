@@ -74,8 +74,8 @@ select extensions.is(
 );
 select extensions.is(
   (select count(*)::integer from public.product_images i join public.products p on p.id = i.product_id where p.slug = 'artificial-grass'),
-  0,
-  'artificial grass has no unverified image attached'
+  1,
+  'artificial grass has one approved representative image attached'
 );
 select extensions.is(
   (select count(*)::integer from public.product_categories where slug in ('pu-stone-panels','pu-feather-panels','pocket-spring-mattresses') and is_active),
