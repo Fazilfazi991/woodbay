@@ -18,24 +18,37 @@ function readEnv(file) {
 }
 
 const localEnv = readEnv(path.resolve(".env.local"));
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? localEnv.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? localEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-if (!supabaseUrl || !supabaseKey) throw new Error("Supabase public environment is required");
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL ?? localEnv.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+  localEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+if (!supabaseUrl || !supabaseKey)
+  throw new Error("Supabase public environment is required");
 
 const supabase = createClient(supabaseUrl, supabaseKey, {
   auth: { persistSession: false, autoRefreshToken: false },
 });
 const { data: products, error } = await supabase
   .from("products")
-  .select("name,slug,product_images(storage_key,alt_text,is_primary,sort_order)")
+  .select(
+    "name,slug,product_images(storage_key,alt_text,is_primary,sort_order)",
+  )
   .eq("status", "published")
   .order("slug");
 if (error) throw error;
 
-const manifest = JSON.parse(readFileSync("product-images-manifest.json", "utf8"));
+const manifest = JSON.parse(
+  readFileSync("product-images-manifest.json", "utf8"),
+);
+const manifestBySlug = new Map(
+  manifest.map((entry) => [entry.productSlug, entry]),
+);
 const expectedPaths = new Set([
   ...manifest.map((entry) => entry.imagePath),
   "/images/products/artificial-grass.webp",
+  "/images/products/tall-pantry.webp",
+  "/images/products/aluminium-profile.webp",
 ]);
 const fileRows = await Promise.all(
   [...expectedPaths].map(async (publicPath) => {
@@ -62,10 +75,22 @@ const duplicateGroups = Object.values(
     return groups;
   }, {}),
 ).filter((paths) => paths.length > 1);
-const imageLess = products.filter((product) => product.product_images.length === 0).map((product) => product.slug);
+const imageLess = products
+  .filter((product) => {
+    if (product.product_images.length > 0) return false;
+    const fallback = manifestBySlug.get(product.slug)?.imagePath;
+    return (
+      !fallback || !existsSync(path.join("public", fallback.replace(/^\//, "")))
+    );
+  })
+  .map((product) => product.slug);
 const brokenReferences = products.flatMap((product) =>
   product.product_images
-    .filter((image) => image.storage_key.startsWith("/") && !existsSync(path.join("public", image.storage_key.replace(/^\//, ""))))
+    .filter(
+      (image) =>
+        image.storage_key.startsWith("/") &&
+        !existsSync(path.join("public", image.storage_key.replace(/^\//, ""))),
+    )
     .map((image) => ({ slug: product.slug, storageKey: image.storage_key })),
 );
 const invalidAltText = products.flatMap((product) =>
@@ -86,6 +111,12 @@ const summary = {
 };
 console.log(JSON.stringify(summary, null, 2));
 
-if (products.length !== 76) throw new Error(`Expected 76 published products, found ${products.length}`);
-if (missingFiles.length || brokenReferences.length || duplicateGroups.length || invalidAltText.length) process.exitCode = 1;
-
+if (products.length !== 76)
+  throw new Error(`Expected 76 published products, found ${products.length}`);
+if (
+  missingFiles.length ||
+  brokenReferences.length ||
+  duplicateGroups.length ||
+  invalidAltText.length
+)
+  process.exitCode = 1;

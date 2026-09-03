@@ -2,11 +2,14 @@ import type { CatalogueImage } from "../types";
 
 const localProductImages: Record<string, string> = {
   "glass-pantry": "/images/products/glass-pantry-with-bidding.webp",
-  "glass-pantry-with-bidding": "/images/products/glass-pantry-with-bidding.webp",
+  "glass-pantry-with-bidding":
+    "/images/products/glass-pantry-with-bidding.webp",
+  "tall-pantry": "/images/products/tall-pantry.webp",
   "tandem-box-system": "/images/products/slim-box-dark-grey.webp",
   "wardrobe-lift": "/images/products/wardrobe-lifter.webp",
   wallpaper: "/images/products/wallpaper.webp",
-  "soft-close-hinge": "/images/products/five-hole-ss-3d-hydraulic-hinge-premium.webp",
+  "soft-close-hinge":
+    "/images/products/five-hole-ss-3d-hydraulic-hinge-premium.webp",
   "bottle-pullout": "/images/products/glass-bpo-with-bidding.webp",
   "corner-basket": "/images/products/s-corner-white.webp",
   "wardrobe-trouser-rack": "/images/products/trouser-rack.webp",
@@ -16,6 +19,7 @@ const localProductImages: Record<string, string> = {
   "charcoal-louvers": "/images/products/charcoal-louvers.webp",
   "glass-mosaic-tiles": "/images/products/glass-mosaic-tiles.webp",
   "smart-furniture": "/images/products/smart-wifi-side-table.webp",
+  "aluminium-profile": "/images/products/aluminium-profile.webp",
 };
 
 export function localProductImage(

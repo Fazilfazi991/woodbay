@@ -126,3 +126,7 @@ export function matchesCatalogueSearch(
 ) {
   return catalogueSearchScore(query, fields) > 0;
 }
+
+export function globalSearchResultsPath(query: string) {
+  return `/products?q=${encodeURIComponent(query.trim().slice(0, 100))}`;
+}

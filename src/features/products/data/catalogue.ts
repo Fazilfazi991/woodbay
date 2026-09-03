@@ -367,6 +367,107 @@ export async function getFeaturedProducts(limit = 4) {
   })) as CatalogueProduct[];
 }
 
+export type GlobalCatalogueSearchResult = {
+  products: CatalogueProduct[];
+  categories: Array<CatalogueCategory & { href: string }>;
+  total: number;
+};
+
+export async function getGlobalCatalogueSearch(
+  rawQuery: string,
+  productLimit?: number,
+): Promise<GlobalCatalogueSearchResult> {
+  const q = rawQuery.trim().slice(0, 100);
+  if (q.length < 2) return { products: [], categories: [], total: 0 };
+
+  const supabase = await createClient();
+  const [
+    { data: products, error: productError },
+    { data: categories, error: categoryError },
+  ] = await Promise.all([
+    supabase
+      .from("products")
+      .select(
+        "id,name,slug,short_description,description,product_code,category_id,created_at,raw_catalogue_data,product_categories(name,slug,parent_id),product_images(storage_key,alt_text,sort_order,is_primary),product_variants(id)",
+      )
+      .eq("status", "published"),
+    supabase
+      .from("product_categories")
+      .select("id,name,slug,description,parent_id,sort_order,is_active")
+      .eq("is_active", true),
+  ]);
+  if (productError) throw productError;
+  if (categoryError) throw categoryError;
+
+  const categoryRows = (categories ?? []) as CatalogueCategory[];
+  const categoryById = new Map(
+    categoryRows.map((category) => [category.id, category]),
+  );
+  const mapped = (products ?? []).map((product) => ({
+    ...product,
+    category: Array.isArray(product.product_categories)
+      ? (product.product_categories[0] ?? null)
+      : product.product_categories,
+    images: product.product_images ?? [],
+    variants: product.product_variants ?? [],
+  })) as CatalogueProduct[];
+
+  const fieldsFor = (product: CatalogueProduct) => {
+    const category = categoryRows.find((row) => row.id === product.category_id);
+    const parent = category?.parent_id
+      ? categoryById.get(category.parent_id)
+      : null;
+    return {
+      productName: product.name,
+      productSlug: product.slug,
+      productCode: product.product_code,
+      shortDescription: product.short_description,
+      description: product.description,
+      rawCatalogueData: product.raw_catalogue_data,
+      categoryName: category?.name,
+      categorySlug: category?.slug,
+      parentName: parent?.name,
+      parentSlug: parent?.slug,
+    };
+  };
+  const matches = mapped
+    .map((product) => ({
+      product,
+      score: catalogueSearchScore(q, fieldsFor(product)),
+    }))
+    .filter(({ score }) => score > 0)
+    .sort(
+      (a, b) =>
+        b.score - a.score || a.product.name.localeCompare(b.product.name),
+    );
+
+  const categoryMatches = categoryRows
+    .filter((category) =>
+      matchesCatalogueSearch(q, {
+        productName: category.name,
+        categoryName: category.name,
+        categorySlug: category.slug,
+        description: category.description,
+      }),
+    )
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .slice(0, 4)
+    .map((category) => ({
+      ...category,
+      href: category.parent_id
+        ? `/products/${divisionSlugForCategory(category.slug)}/${category.slug}`
+        : `/products/${divisionSlugForCategory(category.slug)}`,
+    }));
+
+  return {
+    products: matches
+      .slice(0, productLimit ?? matches.length)
+      .map(({ product }) => product),
+    categories: categoryMatches,
+    total: matches.length,
+  };
+}
+
 export async function getSitemapCatalogueEntries() {
   const supabase = await createClient();
   const [

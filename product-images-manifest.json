@@ -801,6 +801,27 @@
     "dimensions": "1200x1200",
     "fileSizeBytes": 97822,
     "qaStatus": "passed"
+  },
+  {
+    "productSlug": "tall-pantry",
+    "productName": "Tall Pantry",
+    "category": "Kitchen & Wardrobe Accessories",
+    "subcategory": "Pantry Solutions",
+    "catalogueReference": "AI-generated representative image from documented generic product identity",
+    "imagePath": "/images/products/tall-pantry.webp",
+    "dimensions": "1200x1200",
+    "fileSizeBytes": 138098,
+    "qaStatus": "passed"
+  },
+  {
+    "productSlug": "aluminium-profile",
+    "productName": "Aluminium Profile",
+    "category": "Hardware Fittings & Aluminium Profiles",
+    "subcategory": "Aluminium Profiles",
+    "catalogueReference": "AI-generated representative image from documented generic product identity",
+    "imagePath": "/images/products/aluminium-profile.webp",
+    "dimensions": "1200x1200",
+    "fileSizeBytes": 144958,
+    "qaStatus": "passed"
   }
 ]
-

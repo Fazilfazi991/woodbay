@@ -81,47 +81,69 @@ export function CatalogueControls({
   return (
     <form
       action={path}
-      className="grid gap-2.5 border-y border-[color:var(--border-dark)] py-4 md:grid-cols-[1fr_auto_auto]"
+      className="grid gap-3 border-y border-[color:var(--border-dark)] py-5 md:grid-cols-[1fr_auto_auto]"
     >
-      <label className="relative">
-        <span className="sr-only">Search products</span>
-        <Search
-          size={17}
-          className="absolute top-1/2 left-4 -translate-y-1/2 text-[color:var(--gold)]"
-        />
-        <input
-          name="q"
-          defaultValue={q}
-          placeholder="Search products or product code"
-          className="min-h-12 w-full border border-[color:var(--border-dark)] bg-transparent pr-4 pl-11 text-sm text-[color:var(--foreground-light)] outline-none placeholder:text-[#85847d] focus:border-[color:var(--gold)]"
-        />
+      <div className="md:col-span-3">
+        <h2 className="font-display text-2xl text-[color:var(--foreground-light)]">
+          Search catalogue
+        </h2>
+        <p className="mt-1 text-xs text-[color:var(--muted)]">
+          Search by product, category or product code, then refine the results.
+        </p>
+      </div>
+      <label>
+        <span className="mb-1.5 block text-xs font-bold tracking-[.12em] text-[color:var(--gold)] uppercase">
+          Search
+        </span>
+        <span className="relative block">
+          <Search
+            size={17}
+            className="absolute top-1/2 left-4 -translate-y-1/2 text-[color:var(--gold)]"
+          />
+          <input
+            name="q"
+            defaultValue={q}
+            placeholder="Search products, categories, codes…"
+            className="min-h-12 w-full border border-[color:var(--border-dark)] bg-transparent pr-4 pl-11 text-sm text-[color:var(--foreground-light)] outline-none placeholder:text-[#85847d] focus:border-[color:var(--gold)]"
+          />
+        </span>
       </label>
-      <label className="flex min-h-12 items-center gap-2 border border-[color:var(--border-dark)] px-3 text-xs text-[color:var(--foreground-light)]">
-        <SlidersHorizontal size={15} className="text-[color:var(--gold)]" />
-        <span className="sr-only">Filter by subcategory</span>
+      <label>
+        <span className="mb-1.5 block text-xs font-bold tracking-[.12em] text-[color:var(--gold)] uppercase">
+          Category
+        </span>
+        <span className="flex min-h-12 items-center gap-2 border border-[color:var(--border-dark)] px-3 text-xs text-[color:var(--foreground-light)]">
+          <SlidersHorizontal size={15} className="text-[color:var(--gold)]" />
+          <select
+            aria-label="Category"
+            name="subcategory"
+            defaultValue={subcategory ?? ""}
+            className="h-12 flex-1 bg-transparent outline-none"
+          >
+            <option value="">All categories</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.slug}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </span>
+      </label>
+      <label>
+        <span className="mb-1.5 block text-xs font-bold tracking-[.12em] text-[color:var(--gold)] uppercase">
+          Sort by
+        </span>
         <select
-          name="subcategory"
-          defaultValue={subcategory ?? ""}
-          className="h-12 flex-1 bg-transparent outline-none"
+          aria-label="Sort products"
+          name="sort"
+          defaultValue={sort}
+          className="min-h-12 border border-[color:var(--border-dark)] bg-transparent px-3 text-xs text-[color:var(--foreground-light)] outline-none"
         >
-          <option value="">All categories</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.slug}>
-              {category.name}
-            </option>
-          ))}
+          <option value="default">Recommended</option>
+          <option value="name-asc">Name A–Z</option>
+          <option value="name-desc">Name Z–A</option>
         </select>
       </label>
-      <select
-        aria-label="Sort products"
-        name="sort"
-        defaultValue={sort}
-        className="min-h-12 border border-[color:var(--border-dark)] bg-transparent px-3 text-xs text-[color:var(--foreground-light)] outline-none"
-      >
-        <option value="default">Recommended</option>
-        <option value="name-asc">Name A–Z</option>
-        <option value="name-desc">Name Z–A</option>
-      </select>
       <input type="hidden" name="page" value="1" />
       <Button type="submit" className="md:col-start-3">
         Apply filters
@@ -140,7 +162,8 @@ export function EmptyProducts({
     <div className="border border-[color:var(--border-gold)] bg-[color:var(--surface-dark)] px-5 py-8 text-center sm:px-6 sm:py-10">
       <p className="font-display text-3xl">No matching products</p>
       <p className="mt-3 text-sm text-[color:var(--muted)]">
-        Try a different search or clear your filters to browse the full catalogue.
+        Try a different search or clear your filters to browse the full
+        catalogue.
       </p>
       <div className="mt-5 flex flex-wrap justify-center gap-3">
         <Link href={clearPath} className={buttonClassName("secondary")}>

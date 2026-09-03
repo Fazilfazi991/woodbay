@@ -1,11 +1,12 @@
 "use client";
 import Link from "next/link";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { ChevronDown, Menu, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { primaryNavigation } from "@/config/navigation";
 import { BrandMark } from "./brand-mark";
 import { CartLink } from "@/features/cart/cart-link";
+import { GlobalSearch } from "@/features/products/components/global-search";
 
 const headerNavigation = primaryNavigation;
 const desktopNavLabelClass = "desktop-nav-link";
@@ -15,8 +16,10 @@ export function Header() {
   const isHomeTwo = pathname === "/home-2";
   const [open, setOpen] = useState<string | null>(null);
   const [drawer, setDrawer] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   useEffect(() => {
     const close = (event: MouseEvent) => {
       if (!navRef.current?.contains(event.target as Node)) setOpen(null);
@@ -50,16 +53,29 @@ export function Header() {
     };
   }, [drawer]);
   useEffect(() => {
-    document.body.style.overflow = drawer ? "hidden" : "";
+    document.body.style.overflow = drawer || searchOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [drawer]);
+  }, [drawer, searchOpen]);
+  useEffect(() => {
+    const header = headerRef.current;
+    const parent = header?.parentElement;
+    if (!header || !parent || !searchOpen) return;
+    const siblings = [...parent.children].filter((node) => node !== header);
+    siblings.forEach((node) => node.setAttribute("inert", ""));
+    return () => siblings.forEach((node) => node.removeAttribute("inert"));
+  }, [searchOpen]);
   return (
     <header
+      ref={headerRef}
       className={`sticky top-0 z-50 border-b border-[color:var(--border-dark)] ${isHomeTwo ? "home-two-header bg-[#0e0e0e]" : "bg-[color:var(--background-dark)]"}`}
     >
-      <div className="mx-auto flex h-[4.25rem] max-w-[1440px] items-center px-5 md:px-8 xl:h-20 xl:px-14">
+      <div
+        aria-hidden={searchOpen || undefined}
+        inert={searchOpen || undefined}
+        className="mx-auto flex h-[4.25rem] max-w-[1440px] items-center px-5 md:px-8 xl:h-20 xl:px-14"
+      >
         <BrandMark />
         <nav
           ref={navRef}
@@ -114,10 +130,19 @@ export function Header() {
             ),
           )}
         </nav>
-        <div className="ml-1 hidden xl:block">
+        <button
+          type="button"
+          aria-label="Search catalogue"
+          aria-expanded={searchOpen}
+          onClick={() => setSearchOpen(true)}
+          className="ml-auto grid min-h-11 min-w-11 place-items-center text-[#f7f3eb] hover:text-[color:var(--gold)] xl:ml-1"
+        >
+          <Search size={21} strokeWidth={1.5} />
+        </button>
+        <div className="ml-0 hidden xl:block">
           <CartLink />
         </div>
-        <div className="ml-auto xl:hidden">
+        <div className="ml-0 xl:hidden">
           <CartLink />
         </div>
         <button
@@ -167,6 +192,7 @@ export function Header() {
           </nav>
         </div>
       )}
+      <GlobalSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
   );
 }

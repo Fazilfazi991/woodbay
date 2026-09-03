@@ -43,7 +43,16 @@ MISSING: Tall Pantry; Aluminium Profile.
 
 Generation used the built-in image-generation workflow. The final prompt requested one unbranded artificial-grass roll and sample on a warm-neutral studio background, product-led square framing, realistic material, and explicitly prohibited text, logos, watermarks, packaging, landscaping, people, sports markings, and technical claims.
 
-## Client input needed
+## Final generated-asset resolution (2026-09-03)
+
+The client authorized representative generated imagery after the source audit confirmed no genuine asset existed. Tall Pantry now uses a photorealistic, generic full-height pull-out pantry mechanism in cabinetry. Aluminium Profile now uses a technically neutral arrangement of furniture/interior aluminium extrusions and deliberately makes no GOLA, handle, glass-frame, or proprietary-family claim. Both are 1200×1200 WebP assets; their generated provenance is recorded in the product metadata and image migration.
+
+Resolved paths:
+
+- Tall Pantry — `/images/products/tall-pantry.webp`
+- Aluminium Profile — `/images/products/aluminium-profile.webp`
+
+## Original client input request
 
 - Tall Pantry — provide one clear front-view catalogue/product photograph, or confirm whether this record means a tall pantry pull-out basket system and identify its configuration.
 - Aluminium Profile — provide one clear profile photograph/cross-section, or confirm whether it is a cabinet, glass-frame, GOLA, handle, wardrobe, or other extrusion profile.

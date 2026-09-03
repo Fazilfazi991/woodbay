@@ -9,6 +9,7 @@ import {
   productDetailPath,
   productSpecifications,
 } from "./catalogue";
+import { globalSearchResultsPath } from "./search";
 
 describe("catalogue helpers", () => {
   it("parses safe URL-driven filters", () =>
@@ -151,6 +152,29 @@ describe("catalogue helpers", () => {
     ).toBe(
       "/products/kitchen-wardrobe-accessories/kitchen-accessories/glass-pantry",
     ));
+
+  it("preserves a global-search query in the full catalogue URL", () => {
+    expect(globalSearchResultsPath("  Pantry units  ")).toBe(
+      "/products?q=Pantry%20units",
+    );
+  });
+
+  it.each([
+    ["Tall Pantry", "tall-pantry", "/images/products/tall-pantry.webp"],
+    [
+      "Aluminium Profile",
+      "aluminium-profile",
+      "/images/products/aluminium-profile.webp",
+    ],
+  ])("provides the approved generated fallback for %s", (name, slug, path) => {
+    expect(
+      primaryImage({
+        name,
+        slug,
+        images: [],
+      } as never),
+    ).toMatchObject({ storage_key: path, is_primary: true });
+  });
 
   it("omits blank product specifications", () =>
     expect(

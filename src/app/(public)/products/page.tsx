@@ -9,22 +9,40 @@ import {
   Section,
   SectionHeader,
 } from "@/components/layout/primitives";
-import { getFeaturedProducts } from "@/features/products/data/catalogue";
-import { ProductCard } from "@/features/products/components/catalogue-ui";
+import {
+  getFeaturedProducts,
+  getGlobalCatalogueSearch,
+} from "@/features/products/data/catalogue";
+import {
+  EmptyProducts,
+  ProductCard,
+} from "@/features/products/components/catalogue-ui";
 import type { CatalogueProduct } from "@/features/products/types";
 import { productDivisions } from "@/features/products/data/taxonomy";
 import { pageMetadata } from "@/lib/seo";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = pageMetadata({
   title: "Interior Products & Furniture Accessories in Kollam",
-  description: "Browse Woodbay kitchen and wardrobe accessories, hardware fittings, aluminium profiles, smart furniture and home decor products in Kollam.",
+  description:
+    "Browse Woodbay kitchen and wardrobe accessories, hardware fittings, aluminium profiles, smart furniture and home decor products in Kollam.",
   path: "/products",
 });
 const image = "/images/preview/woodbay-kitchen-preview.png";
-export default async function ProductsPage() {
+export default async function ProductsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string | string[] }>;
+}) {
+  const rawQuery = (await searchParams).q;
+  const q = (Array.isArray(rawQuery) ? rawQuery[0] : (rawQuery ?? ""))
+    .trim()
+    .slice(0, 100);
   let featured: CatalogueProduct[] = [];
+  let searchResults: CatalogueProduct[] = [];
   try {
-    featured = await getFeaturedProducts(8);
+    if (q.length >= 2)
+      searchResults = (await getGlobalCatalogueSearch(q)).products;
+    else featured = await getFeaturedProducts(8);
   } catch {
     /* Product pages render a safe catalogue-unavailable state below. */
   }
@@ -69,19 +87,51 @@ export default async function ProductsPage() {
       <Section tone="dark">
         <Container>
           <SectionHeader
-            eyebrow="Featured range"
-            title="Explore the collection."
-            description="Featured products appear here as they are published in the Woodbay catalogue."
+            eyebrow={q ? "Catalogue search" : "Featured range"}
+            title={q ? `Results for “${q}”` : "Explore the collection."}
+            description={
+              q
+                ? `${searchResults.length} matching product${searchResults.length === 1 ? "" : "s"} across the full Woodbay catalogue.`
+                : "Featured products appear here as they are published in the Woodbay catalogue."
+            }
           />
-          <div
+          <form
             id="catalogue-search"
-            className="mt-12 grid grid-cols-2 gap-x-2.5 gap-y-4 sm:gap-4 lg:grid-cols-4"
+            action="/products"
+            className="mt-8 flex flex-col gap-2 sm:flex-row"
           >
-            {featured.map((product) => (
+            <label className="flex-1">
+              <span className="sr-only">Search catalogue</span>
+              <input
+                name="q"
+                defaultValue={q}
+                placeholder="Search products, categories, codes…"
+                className="min-h-12 w-full border border-[color:var(--border-dark)] bg-transparent px-4 text-sm text-[color:var(--foreground-light)] outline-none placeholder:text-[#85847d] focus:border-[color:var(--gold)]"
+              />
+            </label>
+            <button className="min-h-12 bg-[color:var(--gold)] px-6 text-xs font-bold tracking-[.14em] text-[#11120f] uppercase">
+              Search
+            </button>
+            {q && (
+              <Link
+                href="/products#catalogue-search"
+                className="inline-flex min-h-12 items-center justify-center border border-white/20 px-5 text-xs font-bold tracking-[.12em] uppercase"
+              >
+                Clear
+              </Link>
+            )}
+          </form>
+          <div className="mt-12 grid grid-cols-2 gap-x-2.5 gap-y-4 sm:gap-4 lg:grid-cols-4">
+            {(q ? searchResults : featured).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
-          {featured.length === 0 && (
+          {q && searchResults.length === 0 && (
+            <div className="mt-10">
+              <EmptyProducts clearPath="/products#catalogue-search" />
+            </div>
+          )}
+          {!q && featured.length === 0 && (
             <div className="mt-10 border border-[color:var(--border-gold)] p-8 text-sm text-[color:var(--muted)]">
               No featured products are published yet. Browse a division to
               explore the available category structure.
