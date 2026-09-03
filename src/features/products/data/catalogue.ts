@@ -12,56 +12,13 @@ import { divisionSlugForCategory, divisionSubcategorySlugs } from "./taxonomy";
 import { localProductImage } from "./local-images";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { getSupabasePublicEnv } from "@/lib/env";
+import { catalogueSearchScore, matchesCatalogueSearch } from "./search";
+export {
+  catalogueSearchScore,
+  matchesCatalogueSearch,
+  normalizeCatalogueSearch,
+} from "./search";
 export const PAGE_SIZE = 12;
-
-const GENERIC_CATALOGUE_TERMS = new Set([
-  "product",
-  "solution",
-  "system",
-  "unit",
-]);
-
-export function normalizeCatalogueSearch(value: string) {
-  return value
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLocaleLowerCase("en")
-    .replace(/\bpull\s+out\b/g, "pullout")
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((term) => (term.length > 3 && term.endsWith("s") ? term.slice(0, -1) : term));
-}
-
-export function matchesCatalogueSearch(
-  query: string,
-  searchableValues: unknown[],
-) {
-  const queryTerms = normalizeCatalogueSearch(query);
-  if (!queryTerms.length) return true;
-  const specificTerms = queryTerms.filter(
-    (term) => !GENERIC_CATALOGUE_TERMS.has(term),
-  );
-  const terms = specificTerms.length ? specificTerms : queryTerms;
-  const documentTerms = normalizeCatalogueSearch(
-    searchableValues
-      .filter((value) => value !== null && value !== undefined)
-      .map((value) =>
-        typeof value === "string" ? value : JSON.stringify(value),
-      )
-      .join(" "),
-  );
-  return terms.every((term) =>
-    documentTerms.some(
-      (candidate) =>
-        candidate === term ||
-        (term.length >= 3 &&
-          candidate.length >= 3 &&
-          candidate.includes(term)),
-    ),
-  );
-}
 export function parseCatalogueParams(
   input: Record<string, string | string[] | undefined>,
 ): CatalogueParams {
@@ -288,24 +245,32 @@ export async function getDivisionProducts(
     images: product.product_images ?? [],
     variants: product.product_variants ?? [],
   })) as CatalogueProduct[];
+  const searchFields = (product: CatalogueProduct) => ({
+    productName: product.name,
+    productSlug: product.slug,
+    productCode: product.product_code,
+    shortDescription: product.short_description,
+    description: product.description,
+    rawCatalogueData: product.raw_catalogue_data,
+    categoryName: product.category?.name,
+    categorySlug: product.category?.slug,
+    parentName: division.name,
+    parentSlug: division.slug,
+  });
   const matching = params.q
-    ? mapped.filter((product) =>
-        matchesCatalogueSearch(params.q, [
-          product.name,
-          product.slug,
-          product.product_code,
-          product.short_description,
-          product.description,
-          product.raw_catalogue_data,
-          product.category?.name,
-          product.category?.slug,
-        ]),
-      )
+    ? mapped
+        .filter((product) =>
+          matchesCatalogueSearch(params.q, searchFields(product)),
+        )
+        .sort((a, b) =>
+          params.sort === "default"
+            ? catalogueSearchScore(params.q, searchFields(b)) -
+              catalogueSearchScore(params.q, searchFields(a))
+            : 0,
+        )
     : mapped;
   const total = params.q ? matching.length : (count ?? 0);
-  const products = params.q
-    ? matching.slice(from, from + PAGE_SIZE)
-    : matching;
+  const products = params.q ? matching.slice(from, from + PAGE_SIZE) : matching;
   return {
     products,
     count: total,
@@ -348,27 +313,32 @@ export async function getProducts(
     images: product.product_images ?? [],
     variants: product.product_variants ?? [],
   })) as CatalogueProduct[];
+  const searchFields = (product: CatalogueProduct) => ({
+    productName: product.name,
+    productSlug: product.slug,
+    productCode: product.product_code,
+    shortDescription: product.short_description,
+    description: product.description,
+    rawCatalogueData: product.raw_catalogue_data,
+    categoryName: product.category?.name,
+    categorySlug: product.category?.slug,
+    parentName: category.name,
+    parentSlug: category.slug,
+  });
   const matching = params.q
-    ? mapped.filter((product) =>
-        matchesCatalogueSearch(params.q, [
-          product.name,
-          product.slug,
-          product.product_code,
-          product.short_description,
-          product.description,
-          product.raw_catalogue_data,
-          product.category?.name,
-          product.category?.slug,
-          category.name,
-          category.slug,
-          category.description,
-        ]),
-      )
+    ? mapped
+        .filter((product) =>
+          matchesCatalogueSearch(params.q, searchFields(product)),
+        )
+        .sort((a, b) =>
+          params.sort === "default"
+            ? catalogueSearchScore(params.q, searchFields(b)) -
+              catalogueSearchScore(params.q, searchFields(a))
+            : 0,
+        )
     : mapped;
   const total = params.q ? matching.length : (count ?? 0);
-  const products = params.q
-    ? matching.slice(from, from + PAGE_SIZE)
-    : matching;
+  const products = params.q ? matching.slice(from, from + PAGE_SIZE) : matching;
   return {
     products,
     count: total,
@@ -399,35 +369,79 @@ export async function getFeaturedProducts(limit = 4) {
 
 export async function getSitemapCatalogueEntries() {
   const supabase = await createClient();
-  const [{ data: products, error: productError }, { data: categories, error: categoryError }] = await Promise.all([
-    supabase.from("products").select("slug,created_at,category_id,product_categories(slug,parent_id)").eq("status", "published"),
-    supabase.from("product_categories").select("id,slug,parent_id").eq("is_active", true),
+  const [
+    { data: products, error: productError },
+    { data: categories, error: categoryError },
+  ] = await Promise.all([
+    supabase
+      .from("products")
+      .select("slug,created_at,category_id,product_categories(slug,parent_id)")
+      .eq("status", "published"),
+    supabase
+      .from("product_categories")
+      .select("id,slug,parent_id")
+      .eq("is_active", true),
   ]);
   if (productError) throw productError;
   if (categoryError) throw categoryError;
-  const categoryById = new Map((categories ?? []).map((category) => [category.id, category]));
-  const populated = new Set((products ?? []).map((product) => product.category_id));
-  const categoryEntries = (categories ?? []).filter((category) => category.parent_id && populated.has(category.id)).map((category) => {
-    const parent = categoryById.get(category.parent_id!);
-    return parent ? { url: `/products/${divisionSlugForCategory(category.slug)}/${category.slug}`, changeFrequency: "weekly" as const, priority: .7 } : null;
-  }).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
+  const categoryById = new Map(
+    (categories ?? []).map((category) => [category.id, category]),
+  );
+  const populated = new Set(
+    (products ?? []).map((product) => product.category_id),
+  );
+  const categoryEntries = (categories ?? [])
+    .filter((category) => category.parent_id && populated.has(category.id))
+    .map((category) => {
+      const parent = categoryById.get(category.parent_id!);
+      return parent
+        ? {
+            url: `/products/${divisionSlugForCategory(category.slug)}/${category.slug}`,
+            changeFrequency: "weekly" as const,
+            priority: 0.7,
+          }
+        : null;
+    })
+    .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
   const productEntries = (products ?? []).flatMap((product) => {
-    const relation = Array.isArray(product.product_categories) ? product.product_categories[0] : product.product_categories;
+    const relation = Array.isArray(product.product_categories)
+      ? product.product_categories[0]
+      : product.product_categories;
     if (!relation) return [];
-    return [{ url: `/products/${divisionSlugForCategory(relation.slug)}/${relation.slug}/${product.slug}`, lastModified: product.created_at, changeFrequency: "monthly" as const, priority: .6 }];
+    return [
+      {
+        url: `/products/${divisionSlugForCategory(relation.slug)}/${relation.slug}/${product.slug}`,
+        lastModified: product.created_at,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      },
+    ];
   });
   return [...categoryEntries, ...productEntries];
 }
 
 export async function getPublishedProductRouteParams() {
   const { url, key } = getSupabasePublicEnv();
-  const supabase = createSupabaseClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
-  const { data, error } = await supabase.from("products").select("slug,product_categories(slug)").eq("status", "published");
+  const supabase = createSupabaseClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  const { data, error } = await supabase
+    .from("products")
+    .select("slug,product_categories(slug)")
+    .eq("status", "published");
   if (error) throw error;
   return (data ?? []).flatMap((product) => {
-    const category = Array.isArray(product.product_categories) ? product.product_categories[0] : product.product_categories;
+    const category = Array.isArray(product.product_categories)
+      ? product.product_categories[0]
+      : product.product_categories;
     if (!category) return [];
-    return [{ categorySlug: divisionSlugForCategory(category.slug), subcategorySlug: category.slug, productSlug: product.slug }];
+    return [
+      {
+        categorySlug: divisionSlugForCategory(category.slug),
+        subcategorySlug: category.slug,
+        productSlug: product.slug,
+      },
+    ];
   });
 }
 

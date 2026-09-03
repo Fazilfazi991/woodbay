@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "audit:seo": "node scripts/seo-production-audit.mjs",
-    "audit:images": "node scripts/catalogue-image-audit.mjs"
+    "audit:images": "node scripts/catalogue-image-audit.mjs",
+    "audit:search": "node --env-file-if-exists=.env.local --experimental-strip-types scripts/catalogue-search-audit.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

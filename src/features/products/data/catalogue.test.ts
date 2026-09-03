@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   PAGE_SIZE,
+  catalogueSearchScore,
   matchesCatalogueSearch,
   normalizeCatalogueSearch,
   parseCatalogueParams,
@@ -55,7 +56,8 @@ describe("catalogue helpers", () => {
 
   it("normalizes spacing, case, plurals and pull-out wording", () => {
     expect(normalizeCatalogueSearch("  PULL OUT units  ")).toEqual([
-      "pullout",
+      "pull",
+      "out",
       "unit",
     ]);
   });
@@ -68,30 +70,76 @@ describe("catalogue helpers", () => {
     "pantry solutions",
   ])("matches category intent for %s", (query) => {
     expect(
-      matchesCatalogueSearch(query, [
-        "Glass Pantry With Bidding",
-        "Pantry Solutions",
-      ]),
+      matchesCatalogueSearch(query, {
+        productName: "Glass Pantry With Bidding",
+        categoryName: "Pantry Solutions",
+      }),
     ).toBe(true);
   });
 
   it("matches useful raw names and normalized partial terms", () => {
     expect(
-      matchesCatalogueSearch("pull out", [
-        "Glass BPO With Bidding",
-        "bottle-pullout",
-        { product_name: "Glass Bottle Pullout" },
-      ]),
+      matchesCatalogueSearch("pull out", {
+        productName: "Glass BPO With Bidding",
+        productSlug: "bottle-pullout",
+        rawCatalogueData: { product_name: "Glass Bottle Pullout" },
+      }),
     ).toBe(true);
-    expect(matchesCatalogueSearch("alum", ["Aluminium Profiles"])).toBe(true);
-    expect(matchesCatalogueSearch("nonexistent", ["Pantry Solutions"])).toBe(
-      false,
-    );
     expect(
-      matchesCatalogueSearch("pantry", [
-        "Shoe Rack is a fitted wardrobe accessory for personal storage.",
-      ]),
+      matchesCatalogueSearch("alum", { productName: "Aluminium Profiles" }),
+    ).toBe(true);
+    expect(
+      matchesCatalogueSearch("nonexistent", {
+        productName: "Pantry Solutions",
+      }),
     ).toBe(false);
+    expect(
+      matchesCatalogueSearch("pantry", {
+        productName: "Shoe Rack",
+        description: "A fitted wardrobe accessory for personal storage.",
+      }),
+    ).toBe(false);
+  });
+
+  it("supports generic joined, separated, hyphenated and spelling variants", () => {
+    const pullout = { productName: "Bottle Pullout" };
+    expect(matchesCatalogueSearch("pullout", pullout)).toBe(true);
+    expect(matchesCatalogueSearch("pull out", pullout)).toBe(true);
+    expect(matchesCatalogueSearch("pull-out", pullout)).toBe(true);
+    expect(
+      matchesCatalogueSearch("aluminum profile", {
+        productName: "Aluminium Profile",
+      }),
+    ).toBe(true);
+  });
+
+  it("allows strong parent-category phrases without broad single-word leakage", () => {
+    const fields = {
+      productName: "Glass Pantry With Bidding",
+      categoryName: "Pantry Solutions",
+      parentName: "Smart Kitchen & Wardrobe Solutions",
+      parentSlug: "kitchen-wardrobe-accessories",
+    };
+    expect(matchesCatalogueSearch("kitchen accessories", fields)).toBe(true);
+    expect(matchesCatalogueSearch("smart kitchen wardrobe", fields)).toBe(true);
+    expect(matchesCatalogueSearch("smart", fields)).toBe(false);
+  });
+
+  it("ranks product names above categories and low-value metadata", () => {
+    const exactProduct = catalogueSearchScore("pantry", {
+      productName: "Pantry",
+      categoryName: "Kitchen Accessories",
+    });
+    const categoryMatch = catalogueSearchScore("pantry", {
+      productName: "Tall Cabinet",
+      categoryName: "Pantry Solutions",
+    });
+    const metadataMatch = catalogueSearchScore("pantry", {
+      productName: "Tall Cabinet",
+      rawCatalogueData: { keywords: "pantry" },
+    });
+    expect(exactProduct).toBeGreaterThan(categoryMatch);
+    expect(categoryMatch).toBeGreaterThan(metadataMatch);
   });
 
   it("creates the hierarchical product detail route", () =>
