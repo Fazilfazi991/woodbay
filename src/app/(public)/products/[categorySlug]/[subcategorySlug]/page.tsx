@@ -86,11 +86,11 @@ export default async function SubcategoryPage({
             sort={parsed.sort}
             categories={[]}
           />
-          <p className="mt-7 text-sm text-[color:var(--muted)]">
-            {result.count === 0
-              ? "No published products"
-              : `Showing ${(parsed.page - 1) * 12 + 1}–${Math.min(parsed.page * 12, result.count)} of ${result.count} products`}
-          </p>
+          {result.count > 0 && (
+            <p className="mt-7 text-sm text-[color:var(--muted)]">
+              Showing {(parsed.page - 1) * 12 + 1}–{Math.min(parsed.page * 12, result.count)} of {result.count} products
+            </p>
+          )}
           {failed ? (
             <div className="mt-8 border border-[color:var(--border-gold)] p-8 text-sm text-[color:var(--muted)]">
               The catalogue could not be loaded right now. Please try again
@@ -104,7 +104,10 @@ export default async function SubcategoryPage({
             </div>
           ) : (
             <div className="mt-8">
-              <EmptyProducts path={path} />
+              <EmptyProducts
+                clearPath={path}
+                browsePath={`/products/${parent.slug}`}
+              />
             </div>
           )}
           <Pagination

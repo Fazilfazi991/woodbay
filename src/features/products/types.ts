@@ -22,12 +22,13 @@ export type CatalogueProduct = {
   name: string;
   slug: string;
   short_description: string | null;
+  description?: string | null;
   product_code: string | null;
   category_id: string;
   created_at: string;
   catalogue_page_number?: string | null;
   catalogue_source_reference?: string | null;
-  raw_catalogue_data?: Record<string, unknown>;
+  raw_catalogue_data?: Record<string, unknown> | null;
   whatsapp_enabled?: boolean;
   category?: Pick<CatalogueCategory, "name" | "slug"> | null;
   images: CatalogueImage[];

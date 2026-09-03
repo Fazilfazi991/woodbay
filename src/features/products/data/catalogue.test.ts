@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   PAGE_SIZE,
+  matchesCatalogueSearch,
+  normalizeCatalogueSearch,
   parseCatalogueParams,
   primaryImage,
   productDetailPath,
@@ -26,6 +28,9 @@ describe("catalogue helpers", () => {
   it("falls back safely for invalid pagination", () =>
     expect(parseCatalogueParams({ page: "-3" }).page).toBe(1));
 
+  it("clears an empty category selection instead of retaining a stale filter", () =>
+    expect(parseCatalogueParams({ subcategory: "  " }).subcategory).toBeNull());
+
   it("prefers primary images", () =>
     expect(
       primaryImage({
@@ -47,6 +52,47 @@ describe("catalogue helpers", () => {
     ).toBe("primary"));
 
   it("uses a scalable page size", () => expect(PAGE_SIZE).toBe(12));
+
+  it("normalizes spacing, case, plurals and pull-out wording", () => {
+    expect(normalizeCatalogueSearch("  PULL OUT units  ")).toEqual([
+      "pullout",
+      "unit",
+    ]);
+  });
+
+  it.each([
+    "pantry",
+    "Pantry unit",
+    "Pantry units",
+    "pantry solution",
+    "pantry solutions",
+  ])("matches category intent for %s", (query) => {
+    expect(
+      matchesCatalogueSearch(query, [
+        "Glass Pantry With Bidding",
+        "Pantry Solutions",
+      ]),
+    ).toBe(true);
+  });
+
+  it("matches useful raw names and normalized partial terms", () => {
+    expect(
+      matchesCatalogueSearch("pull out", [
+        "Glass BPO With Bidding",
+        "bottle-pullout",
+        { product_name: "Glass Bottle Pullout" },
+      ]),
+    ).toBe(true);
+    expect(matchesCatalogueSearch("alum", ["Aluminium Profiles"])).toBe(true);
+    expect(matchesCatalogueSearch("nonexistent", ["Pantry Solutions"])).toBe(
+      false,
+    );
+    expect(
+      matchesCatalogueSearch("pantry", [
+        "Shoe Rack is a fitted wardrobe accessory for personal storage.",
+      ]),
+    ).toBe(false);
+  });
 
   it("creates the hierarchical product detail route", () =>
     expect(

@@ -13,19 +13,68 @@ import { localProductImage } from "./local-images";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { getSupabasePublicEnv } from "@/lib/env";
 export const PAGE_SIZE = 12;
+
+const GENERIC_CATALOGUE_TERMS = new Set([
+  "product",
+  "solution",
+  "system",
+  "unit",
+]);
+
+export function normalizeCatalogueSearch(value: string) {
+  return value
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("en")
+    .replace(/\bpull\s+out\b/g, "pullout")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((term) => (term.length > 3 && term.endsWith("s") ? term.slice(0, -1) : term));
+}
+
+export function matchesCatalogueSearch(
+  query: string,
+  searchableValues: unknown[],
+) {
+  const queryTerms = normalizeCatalogueSearch(query);
+  if (!queryTerms.length) return true;
+  const specificTerms = queryTerms.filter(
+    (term) => !GENERIC_CATALOGUE_TERMS.has(term),
+  );
+  const terms = specificTerms.length ? specificTerms : queryTerms;
+  const documentTerms = normalizeCatalogueSearch(
+    searchableValues
+      .filter((value) => value !== null && value !== undefined)
+      .map((value) =>
+        typeof value === "string" ? value : JSON.stringify(value),
+      )
+      .join(" "),
+  );
+  return terms.every((term) =>
+    documentTerms.some(
+      (candidate) =>
+        candidate === term ||
+        (term.length >= 3 &&
+          candidate.length >= 3 &&
+          candidate.includes(term)),
+    ),
+  );
+}
 export function parseCatalogueParams(
   input: Record<string, string | string[] | undefined>,
 ): CatalogueParams {
   const rawPage = Array.isArray(input.page) ? input.page[0] : input.page;
   const sort = Array.isArray(input.sort) ? input.sort[0] : input.sort;
+  const rawSubcategory = Array.isArray(input.subcategory)
+    ? input.subcategory[0]
+    : input.subcategory;
   return {
     q: (Array.isArray(input.q) ? input.q[0] : (input.q ?? ""))
       .trim()
       .slice(0, 100),
-    subcategory:
-      (Array.isArray(input.subcategory)
-        ? input.subcategory[0]
-        : input.subcategory) ?? null,
+    subcategory: rawSubcategory?.trim() || null,
     page: Math.max(1, Number.parseInt(rawPage ?? "1", 10) || 1),
     sort: sort === "name-asc" || sort === "name-desc" ? sort : "default",
   };
@@ -212,7 +261,7 @@ export async function getDivisionProducts(
   let query = supabase
     .from("products")
     .select(
-      "id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary),product_variants(id)",
+      "id,name,slug,short_description,description,product_code,category_id,created_at,raw_catalogue_data,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary),product_variants(id)",
       { count: "exact" },
     )
     .in(
@@ -220,10 +269,6 @@ export async function getDivisionProducts(
       selected.map((category) => category.id),
     )
     .eq("status", "published");
-  if (params.q)
-    query = query.or(
-      `name.ilike.%${params.q}%,product_code.ilike.%${params.q}%,short_description.ilike.%${params.q}%`,
-    );
   query =
     params.sort === "name-desc"
       ? query.order("name", { ascending: false })
@@ -231,9 +276,11 @@ export async function getDivisionProducts(
         ? query.order("name", { ascending: true })
         : query.order("sort_order").order("name");
   const from = (params.page - 1) * PAGE_SIZE;
-  const { data, error, count } = await query.range(from, from + PAGE_SIZE - 1);
+  const { data, error, count } = params.q
+    ? await query
+    : await query.range(from, from + PAGE_SIZE - 1);
   if (error) throw error;
-  const products = (data ?? []).map((product) => ({
+  const mapped = (data ?? []).map((product) => ({
     ...product,
     category: Array.isArray(product.product_categories)
       ? (product.product_categories[0] ?? null)
@@ -241,10 +288,28 @@ export async function getDivisionProducts(
     images: product.product_images ?? [],
     variants: product.product_variants ?? [],
   })) as CatalogueProduct[];
+  const matching = params.q
+    ? mapped.filter((product) =>
+        matchesCatalogueSearch(params.q, [
+          product.name,
+          product.slug,
+          product.product_code,
+          product.short_description,
+          product.description,
+          product.raw_catalogue_data,
+          product.category?.name,
+          product.category?.slug,
+        ]),
+      )
+    : mapped;
+  const total = params.q ? matching.length : (count ?? 0);
+  const products = params.q
+    ? matching.slice(from, from + PAGE_SIZE)
+    : matching;
   return {
     products,
-    count: count ?? 0,
-    pageCount: Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE)),
+    count: total,
+    pageCount: Math.max(1, Math.ceil(total / PAGE_SIZE)),
   };
 }
 export async function getProducts(
@@ -261,23 +326,21 @@ export async function getProducts(
   let query = supabase
     .from("products")
     .select(
-      "id,name,slug,short_description,product_code,category_id,created_at,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary),product_variants(id)",
+      "id,name,slug,short_description,description,product_code,category_id,created_at,raw_catalogue_data,product_categories(name,slug),product_images(storage_key,alt_text,sort_order,is_primary),product_variants(id)",
       { count: "exact" },
     )
     .in("category_id", categoryIds)
     .eq("status", "published");
-  if (params.q)
-    query = query.or(
-      `name.ilike.%${params.q}%,product_code.ilike.%${params.q}%,short_description.ilike.%${params.q}%`,
-    );
   query =
     params.sort === "name-desc"
       ? query.order("name", { ascending: false })
       : query.order("name", { ascending: true });
   const from = (params.page - 1) * PAGE_SIZE;
-  const { data, error, count } = await query.range(from, from + PAGE_SIZE - 1);
+  const { data, error, count } = params.q
+    ? await query
+    : await query.range(from, from + PAGE_SIZE - 1);
   if (error) throw error;
-  const products = (data ?? []).map((product) => ({
+  const mapped = (data ?? []).map((product) => ({
     ...product,
     category: Array.isArray(product.product_categories)
       ? (product.product_categories[0] ?? null)
@@ -285,10 +348,31 @@ export async function getProducts(
     images: product.product_images ?? [],
     variants: product.product_variants ?? [],
   })) as CatalogueProduct[];
+  const matching = params.q
+    ? mapped.filter((product) =>
+        matchesCatalogueSearch(params.q, [
+          product.name,
+          product.slug,
+          product.product_code,
+          product.short_description,
+          product.description,
+          product.raw_catalogue_data,
+          product.category?.name,
+          product.category?.slug,
+          category.name,
+          category.slug,
+          category.description,
+        ]),
+      )
+    : mapped;
+  const total = params.q ? matching.length : (count ?? 0);
+  const products = params.q
+    ? matching.slice(from, from + PAGE_SIZE)
+    : matching;
   return {
     products,
-    count: count ?? 0,
-    pageCount: Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE)),
+    count: total,
+    pageCount: Math.max(1, Math.ceil(total / PAGE_SIZE)),
   };
 }
 export async function getFeaturedProducts(limit = 4) {

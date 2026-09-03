@@ -85,11 +85,11 @@ export default async function CategoryPage({ params, searchParams }: Props) {
               categories={categories}
             />
           </div>
-          <p className="mt-6 text-sm text-[color:var(--muted)]">
-            {result.count
-              ? `${result.count} catalogue product${result.count === 1 ? "" : "s"}`
-              : "No published products"}
-          </p>
+          {result.count > 0 && (
+            <p className="mt-6 text-sm text-[color:var(--muted)]">
+              {result.count} catalogue product{result.count === 1 ? "" : "s"}
+            </p>
+          )}
           {failed ? (
             <div className="mt-8 border border-[color:var(--border-gold)] p-8 text-sm text-[color:var(--muted)]">
               The catalogue could not be loaded right now.
@@ -102,7 +102,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
             </div>
           ) : (
             <div className="mt-8">
-              <EmptyProducts path={path} />
+              <EmptyProducts clearPath={path} />
             </div>
           )}
           <Pagination

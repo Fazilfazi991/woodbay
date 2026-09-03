@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { primaryImage, productDetailPath } from "../data/catalogue";
 import type { CatalogueCategory, CatalogueProduct } from "../types";
-import { Button } from "@/components/ui/button";
+import { Button, buttonClassName } from "@/components/ui/button";
 export { CategoryChips } from "./category-chips";
 export function ProductCard({ product }: { product: CatalogueProduct }) {
   const image = primaryImage(product);
@@ -129,16 +129,27 @@ export function CatalogueControls({
     </form>
   );
 }
-export function EmptyProducts({ path }: { path: string }) {
+export function EmptyProducts({
+  clearPath,
+  browsePath = "/products",
+}: {
+  clearPath: string;
+  browsePath?: string;
+}) {
   return (
     <div className="border border-[color:var(--border-gold)] bg-[color:var(--surface-dark)] px-5 py-8 text-center sm:px-6 sm:py-10">
-      <p className="font-display text-3xl">No products here yet</p>
+      <p className="font-display text-3xl">No matching products</p>
       <p className="mt-3 text-sm text-[color:var(--muted)]">
-        Try another category or browse the full catalogue.
+        Try a different search or clear your filters to browse the full catalogue.
       </p>
-      <Link href={path} className="mt-5 inline-block">
-        <Button>Browse all products</Button>
-      </Link>
+      <div className="mt-5 flex flex-wrap justify-center gap-3">
+        <Link href={clearPath} className={buttonClassName("secondary")}>
+          Clear filters
+        </Link>
+        <Link href={browsePath} className={buttonClassName("gold")}>
+          Browse all products
+        </Link>
+      </div>
     </div>
   );
 }
