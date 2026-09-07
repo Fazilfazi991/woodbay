@@ -3,136 +3,155 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import {
+  type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { buttonClassName } from "@/components/ui/button";
+import { homepageHeroSlides as slides } from "@/config/homepage";
 
-const slides = [
-  {
-    title: "Smart Kitchen &\nWardrobe Solutions.",
-    description:
-      "Considered pantry, pullout, sink and wardrobe systems for modern interiors.",
-    image: "/images/home-2/hero-interiors.png",
-    alt: "Contemporary kitchen fitted with Woodbay interior solutions",
-  },
-  {
-    title: "Hardware Fittings &\nAluminium Profiles.",
-    description:
-      "Hinges, lift-up systems, furniture hardware, handles and profiles made for dependable performance.",
-    image: "/images/categories/hardware-fittings.png",
-    alt: "Woodbay hardware fittings and aluminium profile collection",
-  },
-  {
-    title: "Smart Furniture &\nHome Decor.",
-    description:
-      "Connected furniture and material-led decor for spaces that feel composed and personal.",
-    image: "/images/home-2/hero-smart-living.png",
-    alt: "Woodbay smart furniture and home decor interior",
-  },
-] as const;
+const AUTOPLAY_DELAY = 6500;
+const SWIPE_THRESHOLD = 44;
 
 export function HomeTwoHero() {
   const [activeSlide, setActiveSlide] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [interaction, setInteraction] = useState(0);
+  const pointerStart = useRef<number | null>(null);
+  const slide = slides[activeSlide];
 
   useEffect(() => {
-    if (paused) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (paused || reducedMotion.matches) return;
     const timer = window.setInterval(
       () => setActiveSlide((slide) => (slide + 1) % slides.length),
-      6500,
+      AUTOPLAY_DELAY,
     );
     return () => window.clearInterval(timer);
-  }, [paused]);
+  }, [interaction, paused]);
 
-  const selectSlide = (slide: number) => setActiveSlide(slide);
-  const previous = () =>
+  const selectSlide = (index: number) => {
+    setActiveSlide(index);
+    setInteraction((value) => value + 1);
+  };
+  const previous = () => {
     setActiveSlide((slide) => (slide - 1 + slides.length) % slides.length);
-  const next = () => setActiveSlide((slide) => (slide + 1) % slides.length);
+    setInteraction((value) => value + 1);
+  };
+  const next = () => {
+    setActiveSlide((slide) => (slide + 1) % slides.length);
+    setInteraction((value) => value + 1);
+  };
+  const onPointerDown = (event: ReactPointerEvent<HTMLElement>) => {
+    if (event.pointerType === "mouse") return;
+    pointerStart.current = event.clientX;
+  };
+  const onPointerUp = (event: ReactPointerEvent<HTMLElement>) => {
+    if (pointerStart.current === null) return;
+    const distance = event.clientX - pointerStart.current;
+    pointerStart.current = null;
+    if (Math.abs(distance) < SWIPE_THRESHOLD) return;
+    if (distance > 0) previous();
+    else next();
+  };
+  const imagePosition = {
+    "--hero-mobile-position": slide.mobilePosition,
+    "--hero-desktop-position": slide.desktopPosition,
+  } as CSSProperties;
 
   return (
     <section
-      className="relative min-h-[clamp(560px,76svh,690px)] overflow-hidden bg-[color:var(--background-dark)] text-[color:var(--foreground-light)] md:min-h-[calc(88svh-5rem)]"
+      className="relative min-h-[clamp(38rem,calc(100svh-7rem),42.5rem)] touch-pan-y overflow-hidden bg-[color:var(--background-dark)] text-[color:var(--foreground-light)] md:min-h-[calc(88svh-5rem)]"
       aria-roledescription="carousel"
-      aria-label="Woodbay highlights"
+      aria-label="Woodbay product ranges"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+      onPointerCancel={() => {
+        pointerStart.current = null;
+      }}
+      onKeyDown={(event) => {
+        if (event.key === "ArrowLeft") previous();
+        if (event.key === "ArrowRight") next();
+      }}
     >
-      {slides.map((slide, index) => (
-        <div
-          key={slide.title}
-          aria-hidden={index !== activeSlide}
-          className={`absolute inset-0 transition-opacity duration-700 ease-out ${index === activeSlide ? "opacity-100" : "pointer-events-none opacity-0"}`}
-        >
-          <Image
-            src={slide.image}
-            alt={index === activeSlide ? slide.alt : ""}
-            fill
-            preload={index === 0}
-            loading={index === 0 ? undefined : "lazy"}
-            sizes="100vw"
-            className={`object-cover ${index === 1 ? "object-center" : "object-[62%_center]"}`}
-          />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,13,10,.58)_0%,rgba(12,13,10,.74)_100%)] sm:bg-[linear-gradient(90deg,rgba(12,13,10,.94)_0%,rgba(12,13,10,.78)_42%,rgba(12,13,10,.24)_74%,rgba(12,13,10,.12)_100%)]" />
-        </div>
-      ))}
+      <div key={slide.image} className="hero-slide-image absolute inset-0">
+        <Image
+          src={slide.image}
+          alt={slide.alt}
+          fill
+          preload={activeSlide === 0}
+          loading={activeSlide === 0 ? undefined : "eager"}
+          sizes="100vw"
+          style={imagePosition}
+          className="object-cover"
+        />
+      </div>
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(11,12,10,.12)_0%,rgba(11,12,10,.32)_32%,rgba(11,12,10,.91)_70%,rgba(11,12,10,.98)_100%)] sm:bg-[linear-gradient(90deg,rgba(12,13,10,.94)_0%,rgba(12,13,10,.78)_42%,rgba(12,13,10,.24)_74%,rgba(12,13,10,.12)_100%)]" />
       <div
         className="absolute inset-y-0 left-0 w-1 bg-[color:var(--gold)]"
         aria-hidden="true"
       />
-      <div className="relative mx-auto flex min-h-[clamp(560px,76svh,690px)] max-w-[1440px] flex-col justify-center px-5 pt-14 pb-28 sm:pt-20 sm:pb-32 md:min-h-[calc(88svh-5rem)] md:px-8 xl:px-14">
-        {slides.map((slide, index) => (
-          <div
-            key={slide.title}
-            className={`max-w-2xl transition-all duration-700 ${index === activeSlide ? "translate-y-0 opacity-100" : "pointer-events-none absolute translate-y-3 opacity-0"}`}
+      <div className="relative mx-auto flex min-h-[clamp(38rem,calc(100svh-7rem),42.5rem)] max-w-[1440px] flex-col justify-end px-5 pt-24 pb-[6.5rem] sm:justify-center sm:pt-20 sm:pb-32 md:min-h-[calc(88svh-5rem)] md:px-8 xl:px-14">
+        <div
+          key={slide.title}
+          id={`hero-panel-${activeSlide}`}
+          role="tabpanel"
+          className="hero-slide-copy max-w-2xl"
+        >
+          <p className="text-[11px] leading-none font-bold tracking-[.16em] text-[color:var(--gold)] uppercase sm:text-xs">
+            {slide.eyebrow}
+          </p>
+          <h1 className="font-display mt-3 max-w-[11ch] text-[clamp(2rem,9.4vw,2.45rem)] leading-[.96] tracking-[-.02em] whitespace-pre-line sm:mt-4 sm:text-6xl lg:text-[5.25rem]">
+            {slide.title}
+          </h1>
+          <p className="mt-4 max-w-[34rem] text-[14px] leading-6 text-[#e2ddd4] sm:mt-6 sm:text-base sm:leading-7">
+            {slide.description}
+          </p>
+          <Link
+            href={slide.href}
+            className={`${buttonClassName("gold", "min-h-11 !px-4 sm:!px-5")} mt-6 sm:mt-8`}
           >
-            {index === 0 ? (
-              <h1 className="font-display max-w-[11ch] text-[2.75rem] leading-[.94] tracking-[-.02em] whitespace-pre-line sm:text-6xl lg:text-[5.25rem]">{slide.title}</h1>
-            ) : (
-              <h2 className="font-display max-w-[11ch] text-[2.75rem] leading-[.94] tracking-[-.02em] whitespace-pre-line sm:text-6xl lg:text-[5.25rem]">{slide.title}</h2>
-            )}
-            <p className="mt-6 max-w-lg text-[15px] leading-7 text-[#d7d1c6] sm:text-base">
-              {slide.description}
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/products" tabIndex={index === activeSlide ? 0 : -1}>
-                <Button variant="gold">
-                  Explore Products <ArrowRight size={15} />
-                </Button>
-              </Link>
-              <Link
-                href="/dealers/become-a-dealer"
-                tabIndex={index === activeSlide ? 0 : -1}
-              >
-                <Button variant="secondary">Become a Dealer</Button>
-              </Link>
-            </div>
-          </div>
-        ))}
-        <div className="absolute inset-x-5 bottom-6 flex items-center justify-between border-t border-white/20 pt-4 md:inset-x-8 lg:bottom-8 xl:inset-x-14">
+            {slide.cta} <ArrowRight size={15} />
+          </Link>
+        </div>
+        <p className="sr-only" aria-live="polite" aria-atomic="true">
+          Slide {activeSlide + 1} of {slides.length}: {slide.eyebrow}
+        </p>
+        <div className="absolute inset-x-5 bottom-4 flex min-h-14 items-center justify-between border-t border-white/25 pt-2 md:inset-x-8 lg:bottom-7 xl:inset-x-14">
+          <span className="min-w-14 text-[11px] font-bold tracking-[.12em] text-white tabular-nums">
+            {String(activeSlide + 1).padStart(2, "0")} /{" "}
+            {String(slides.length).padStart(2, "0")}
+          </span>
           <div
-            className="flex items-center gap-3"
+            className="flex items-center"
             role="tablist"
-            aria-label="Hero slides"
+            aria-label="Choose a product range"
           >
-            {slides.map((slide, index) => (
+            {slides.map((item, index) => (
               <button
-                key={slide.title}
+                key={item.title}
                 type="button"
                 role="tab"
                 aria-selected={index === activeSlide}
-                aria-label={`Show slide ${index + 1}: ${slide.title.replace("\n", " ")}`}
+                aria-controls={`hero-panel-${activeSlide}`}
+                aria-label={`Show slide ${index + 1}: ${item.eyebrow}`}
                 onClick={() => selectSlide(index)}
-                className={`flex min-h-11 items-center gap-2 text-[10px] font-bold tracking-[.14em] transition-colors ${index === activeSlide ? "text-[color:var(--gold)]" : "text-white/55 hover:text-white"}`}
+                className="group grid size-7 place-items-center sm:size-9"
               >
-                <span>0{index + 1}</span>
                 <span
-                  className={`h-px transition-all ${index === activeSlide ? "w-9 bg-[color:var(--gold)]" : "w-5 bg-white/30"}`}
+                  className={`block h-1.5 rounded-full transition-all ${index === activeSlide ? "w-5 bg-[color:var(--gold)]" : "w-1.5 bg-white/45 group-hover:bg-white"}`}
                 />
               </button>
             ))}
           </div>
-          <div className="flex gap-2">
+          <div className="mr-0 hidden min-w-24 justify-end gap-2 min-[1800px]:mr-0 sm:flex lg:mr-40">
             <button
               type="button"
               aria-label="Previous slide"
@@ -150,6 +169,7 @@ export function HomeTwoHero() {
               <ArrowRight size={17} strokeWidth={1.5} />
             </button>
           </div>
+          <span className="min-w-14 sm:hidden" aria-hidden="true" />
         </div>
       </div>
     </section>

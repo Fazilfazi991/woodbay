@@ -10,8 +10,8 @@ export function BrandMark() {
         height={341}
         unoptimized
         priority
-        sizes="(max-width: 640px) 168px, 240px"
-        className="h-auto w-[10.5rem] object-contain sm:w-60"
+        sizes="(max-width: 640px) 144px, 240px"
+        className="h-auto w-36 object-contain sm:w-60"
         style={{ height: "auto" }}
       />
     </Link>

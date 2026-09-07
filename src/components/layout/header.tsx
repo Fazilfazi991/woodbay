@@ -74,7 +74,7 @@ export function Header() {
       <div
         aria-hidden={searchOpen || undefined}
         inert={searchOpen || undefined}
-        className="mx-auto flex h-[4.25rem] max-w-[1440px] items-center px-5 md:px-8 xl:h-20 xl:px-14"
+        className="mx-auto flex h-16 max-w-[1440px] items-center px-4 md:px-8 xl:h-20 xl:px-14"
       >
         <BrandMark />
         <nav
