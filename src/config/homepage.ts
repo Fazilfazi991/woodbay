@@ -166,7 +166,7 @@ export const homepageHeroSlides: readonly HomepageHeroSlide[] = [
     title: "Smarter Kitchens.\nBetter Living.",
     description:
       "Pantry, pullout, corner and sink systems designed around everyday life.",
-    image: "/images/home-2/hero-interiors.png",
+    image: "/images/home-2/hero-interiors.webp",
     mobilePosition: "64% center",
     desktopPosition: "62% center",
     cta: "Explore Kitchens",
@@ -178,7 +178,7 @@ export const homepageHeroSlides: readonly HomepageHeroSlide[] = [
     title: "A Place for\nEverything.",
     description:
       "Wardrobe organisers, lifters, racks and storage that make space work harder.",
-    image: "/images/categories/wardrobe-accessories.png",
+    image: "/images/categories/wardrobe-accessories.webp",
     mobilePosition: "50% center",
     desktopPosition: "50% center",
     cta: "Explore Wardrobes",
@@ -190,7 +190,7 @@ export const homepageHeroSlides: readonly HomepageHeroSlide[] = [
     title: "Furniture That\nDoes More.",
     description:
       "Connected tables, adaptable desks and lift-up furniture for modern rooms.",
-    image: "/images/home-2/hero-smart-living.png",
+    image: "/images/home-2/hero-smart-living.webp",
     mobilePosition: "67% center",
     desktopPosition: "62% center",
     cta: "Explore Smart Furniture",
@@ -202,7 +202,7 @@ export const homepageHeroSlides: readonly HomepageHeroSlide[] = [
     title: "Made Around\nYour Space.",
     description:
       "Furniture designed to measure, supported by Woodbay's dedicated factory service.",
-    image: "/images/home-2/hero-manufacturing.png",
+    image: "/images/home-2/hero-manufacturing.webp",
     mobilePosition: "72% center",
     desktopPosition: "68% center",
     cta: "Explore Furniture",
@@ -214,7 +214,7 @@ export const homepageHeroSlides: readonly HomepageHeroSlide[] = [
     title: "Details Built\nto Perform.",
     description:
       "Hinges, lift-up systems and dependable fittings for furniture that lasts.",
-    image: "/images/categories/hardware-fittings.png",
+    image: "/images/categories/hardware-fittings.webp",
     mobilePosition: "58% center",
     desktopPosition: "57% center",
     cta: "Explore Hardware",
@@ -238,7 +238,7 @@ export const homepageHeroSlides: readonly HomepageHeroSlide[] = [
     title: "Surfaces With\nCharacter.",
     description:
       "Wall finishes, panels, lighting and decor that give rooms their identity.",
-    image: "/images/homepage/home-decor-category-v2.png",
+    image: "/images/homepage/home-decor-category-v2.webp",
     mobilePosition: "65% center",
     desktopPosition: "62% center",
     cta: "Explore Home Decor",

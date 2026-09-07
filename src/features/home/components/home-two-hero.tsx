@@ -13,7 +13,7 @@ import {
 import { buttonClassName } from "@/components/ui/button";
 import { homepageHeroSlides as slides } from "@/config/homepage";
 
-const AUTOPLAY_DELAY = 6500;
+const AUTOPLAY_DELAY = 3000;
 const SWIPE_THRESHOLD = 44;
 
 export function HomeTwoHero() {
@@ -69,8 +69,6 @@ export function HomeTwoHero() {
       aria-label="Woodbay product ranges"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={() => setPaused(false)}
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
       onPointerCancel={() => {

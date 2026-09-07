@@ -33,4 +33,9 @@ describe("homepage configuration", () => {
       ),
     ).toBe(true);
   });
+
+  it("uses compressed WebP assets for every hero slide", () =>
+    expect(
+      homepageHeroSlides.every((slide) => slide.image.endsWith(".webp")),
+    ).toBe(true));
 });
