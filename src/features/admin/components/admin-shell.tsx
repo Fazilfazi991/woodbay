@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
   Boxes,
@@ -89,6 +89,37 @@ function pageTitle(pathname: string, view: string | null) {
   return "Admin";
 }
 
+function AdminNavigationLink({
+  href,
+  label,
+  Icon,
+  active,
+  onNavigate,
+}: {
+  href: string;
+  label: string;
+  Icon: typeof LayoutDashboard;
+  active: boolean;
+  onNavigate: () => void;
+}) {
+  const router = useRouter();
+  const prefetch = () => router.prefetch(href);
+
+  return (
+    <Link
+      href={href}
+      onMouseEnter={prefetch}
+      onFocus={prefetch}
+      onTouchStart={prefetch}
+      onClick={onNavigate}
+      aria-current={active ? "page" : undefined}
+    >
+      <Icon size={17} aria-hidden="true" />
+      <span>{label}</span>
+    </Link>
+  );
+}
+
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -155,15 +186,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             {group.items.map((item) => {
               const Icon = item.icon;
               return (
-                <Link
+                <AdminNavigationLink
                   key={item.href}
                   href={item.href}
-                  onClick={() => setOpen(false)}
-                  aria-current={isActive(item.href) ? "page" : undefined}
-                >
-                  <Icon size={17} aria-hidden="true" />
-                  <span>{item.label}</span>
-                </Link>
+                  label={item.label}
+                  Icon={Icon}
+                  active={isActive(item.href)}
+                  onNavigate={() => setOpen(false)}
+                />
               );
             })}
           </div>
