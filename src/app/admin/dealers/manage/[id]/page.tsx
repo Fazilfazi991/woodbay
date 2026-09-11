@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { siteConfig } from "@/config/site";
 import { getAdminDealer } from "@/features/dealers/admin";
 import { DealerEditForm } from "@/features/dealers/components/dealer-edit-form";
 import { getActiveAdmin } from "@/lib/auth/admin";
@@ -17,6 +18,9 @@ export default async function DealerPage({
   } catch {
     notFound();
   }
+  const publicPath = `/dealers/${dealer.slug}`;
+  const publicUrl = `${siteConfig.url}${publicPath}`;
+  const isPublic = dealer.status === "active" && dealer.is_visible;
 
   return (
     <main className="mx-auto max-w-5xl p-4 sm:p-6">
@@ -35,6 +39,26 @@ export default async function DealerPage({
           <DealerEditForm dealer={dealer} />
         </div>
       </div>
+      <section className="mt-6 border p-5 sm:p-6">
+        <p className="text-xs uppercase tracking-[.14em] text-[color:var(--gold)]">
+          Public URL
+        </p>
+        <p className="mt-3 break-all font-mono text-sm">{publicUrl}</p>
+        <div className="mt-4 flex flex-wrap items-center gap-4">
+          <Link
+            href={publicPath}
+            target="_blank"
+            className="font-semibold text-[color:var(--gold)] underline underline-offset-4"
+          >
+            Open public dealer page →
+          </Link>
+          {!isPublic && (
+            <span className="text-sm text-[color:var(--muted)]">
+              Set status to Active and enable public visibility to publish this page.
+            </span>
+          )}
+        </div>
+      </section>
     </main>
   );
 }

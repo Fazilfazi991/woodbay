@@ -133,7 +133,7 @@ export async function getAdminDealer(id: string) {
   const { data, error } = await createAdminClient()
     .from("dealers")
     .select(
-      "id,business_name,contact_person,phone,email,state,district,area,address,google_maps_url,latitude,longitude,payment_qr_image,shop_image,status,is_visible",
+      "id,business_name,slug,contact_person,phone,email,state,district,area,address,google_maps_url,latitude,longitude,payment_qr_image,shop_image,status,is_visible",
     )
     .eq("id", idSchema.parse(id))
     .maybeSingle();
