@@ -56,10 +56,6 @@ export default async function DealerApplicationsPage({
         </form>
         <div className="mt-8 space-y-3 md:hidden">
           {dealers.rows.map((row) => {
-            const relations = Array.isArray(row.dealer_applications)
-              ? row.dealer_applications
-              : [];
-            const applicationId = relations[0]?.id;
             return (
               <article key={row.id} className="rounded-lg border bg-white p-4">
                 <div className="flex items-start justify-between gap-3">
@@ -74,14 +70,12 @@ export default async function DealerApplicationsPage({
                   {row.is_visible ? "Public" : "Private"} ·{" "}
                   {row.payment_qr_image ? "QR ready" : "No payment QR"}
                 </p>
-                {applicationId && (
-                  <Link
-                    className="mt-4 inline-block text-sm font-semibold"
-                    href={`/admin/dealers/${applicationId}`}
-                  >
-                    View details →
-                  </Link>
-                )}
+                <Link
+                  className="mt-4 inline-block text-sm font-semibold"
+                  href={`/admin/dealers/manage/${row.id}`}
+                >
+                  Edit dealer →
+                </Link>
               </article>
             );
           })}
@@ -101,10 +95,6 @@ export default async function DealerApplicationsPage({
             </thead>
             <tbody>
               {dealers.rows.map((row) => {
-                const relations = Array.isArray(row.dealer_applications)
-                  ? row.dealer_applications
-                  : [];
-                const applicationId = relations[0]?.id;
                 return (
                   <tr key={row.id}>
                     <td className="p-3 font-semibold">{row.business_name}</td>
@@ -120,13 +110,9 @@ export default async function DealerApplicationsPage({
                       {row.payment_qr_image ? "Ready" : "Missing"}
                     </td>
                     <td className="p-3">
-                      {applicationId ? (
-                        <Link href={`/admin/dealers/${applicationId}`}>
-                          View details →
-                        </Link>
-                      ) : (
-                        "—"
-                      )}
+                      <Link href={`/admin/dealers/manage/${row.id}`}>
+                        Edit dealer →
+                      </Link>
                     </td>
                   </tr>
                 );

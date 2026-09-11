@@ -74,6 +74,7 @@ function pageTitle(pathname: string, view: string | null) {
   if (pathname === "/admin/products") return "Products";
   if (pathname.startsWith("/admin/enquiries/")) return "Enquiry details";
   if (pathname === "/admin/enquiries") return "Furniture enquiries";
+  if (pathname.startsWith("/admin/dealers/manage/")) return "Dealer profile";
   if (pathname.startsWith("/admin/dealers/")) return "Dealer application";
   if (pathname === "/admin/dealers")
     return view === "network" ? "Dealers" : "Dealer applications";

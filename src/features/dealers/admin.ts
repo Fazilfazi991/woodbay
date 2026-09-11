@@ -128,6 +128,19 @@ export async function listDealers(input: Record<string, string | undefined>) {
   return { rows: data ?? [], count: count ?? 0, q, status };
 }
 
+export async function getAdminDealer(id: string) {
+  await requireAdmin();
+  const { data, error } = await createAdminClient()
+    .from("dealers")
+    .select(
+      "id,business_name,contact_person,phone,email,state,district,area,address,google_maps_url,latitude,longitude,payment_qr_image,shop_image,status,is_visible",
+    )
+    .eq("id", idSchema.parse(id))
+    .maybeSingle();
+  if (error || !data) throw new Error("Dealer not found.");
+  return data;
+}
+
 export async function getDealerApplication(id: string) {
   await requireAdmin();
   const client = createAdminClient();
@@ -253,6 +266,7 @@ export async function updateDealer(formData: FormData) {
         metadata: { dealer_id: id },
       });
   revalidatePath("/admin/dealers");
+  revalidatePath(`/admin/dealers/manage/${id}`);
   revalidatePath("/dealers");
 }
 
@@ -318,6 +332,7 @@ export async function uploadDealerImage(formData: FormData) {
     } catch {}
   }
   revalidatePath("/admin/dealers");
+  revalidatePath(`/admin/dealers/manage/${dealerId}`);
   revalidatePath(`/admin/dealers/${dealerId}`);
   revalidatePath("/dealers");
 }
@@ -348,6 +363,7 @@ export async function removeDealerImage(formData: FormData) {
     } catch {}
   }
   revalidatePath("/admin/dealers");
+  revalidatePath(`/admin/dealers/manage/${dealerId}`);
   revalidatePath(`/admin/dealers/${dealerId}`);
   revalidatePath("/dealers");
 }
