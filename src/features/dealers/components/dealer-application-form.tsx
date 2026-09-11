@@ -50,7 +50,7 @@ export function DealerApplicationForm() {
   }
 
   return (
-    <form action={action} className="grid gap-7" noValidate>
+    <form action={action} className="grid gap-7">
       <input
         name="website"
         tabIndex={-1}

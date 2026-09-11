@@ -27,10 +27,12 @@ export async function submitDealerApplication(
     },
   );
   if (!result.success) {
+    const message = result.error.issues[0]?.message ?? "";
     return {
       ok: false,
-      message:
-        result.error.issues[0]?.message ?? "Check the form and try again.",
+      message: message.startsWith("Invalid input")
+        ? "Please complete all required fields and try again."
+        : message || "Check the form and try again.",
     };
   }
 
