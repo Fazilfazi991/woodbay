@@ -25,7 +25,6 @@ export const primaryNavigation: readonly NavigationItem[] = [
     ],
   },
   { label: "Furniture", href: "/furniture" },
-  { label: "Projects", href: "/projects" },
   {
     label: "Dealers",
     href: "/dealers",
@@ -43,7 +42,7 @@ export const footerNavigation = {
     { label: "About", href: "/about" },
     { label: "Projects", href: "/projects" },
   ],
-  dealers: primaryNavigation[6].children ?? [],
+  dealers: primaryNavigation[5].children ?? [],
   support: [
     { label: "Verify Voucher", href: "/redeem" },
     { label: "Contact", href: "/contact" },
