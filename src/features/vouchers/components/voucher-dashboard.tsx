@@ -68,6 +68,52 @@ function CopyCode({ code, label = "Copy" }: { code: string; label?: string }) {
   );
 }
 
+function DealerSelect({
+  name,
+  dealers,
+  defaultValue = "",
+  className,
+  ariaLabel,
+}: {
+  name: string;
+  dealers: VoucherOption[];
+  defaultValue?: string;
+  className: string;
+  ariaLabel?: string;
+}) {
+  const [dealerId, setDealerId] = useState(defaultValue);
+  const dealer = dealers.find((item) => item.id === dealerId);
+
+  return (
+    <div>
+      <select
+        name={name}
+        value={dealerId}
+        onChange={(event) => setDealerId(event.target.value)}
+        aria-label={ariaLabel}
+        className={className}
+      >
+        <option value="">{name === "dealer_id" ? "Customer selects at registration" : "All dealers"}</option>
+        {dealers.map((item) => (
+          <option key={item.id} value={item.id}>
+            {item.label}
+          </option>
+        ))}
+      </select>
+      {dealer && (
+        <Link
+          href={`/dealers/${dealer.slug}`}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-2 inline-block text-xs font-semibold text-[color:var(--gold)] underline underline-offset-4"
+        >
+          Open public dealer page →
+        </Link>
+      )}
+    </div>
+  );
+}
+
 function VoucherActions({ voucher }: { voucher: VoucherRow }) {
   const effectiveStatus = effectiveVoucherStatus(
     voucher.status,
@@ -266,17 +312,11 @@ function CreateVoucherModal({
                   (optional assignment)
                 </span>
               </span>
-              <select
+              <DealerSelect
                 name="dealer_id"
+                dealers={dealers}
                 className="min-h-11 w-full border border-[color:var(--border-dark)] bg-transparent px-3"
-              >
-                <option value="">Customer selects at registration</option>
-                {dealers.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.label}
-                  </option>
-                ))}
-              </select>
+              />
             </label>
             <label className="block text-sm">
               <span className="mb-2 block">
@@ -402,19 +442,13 @@ export function VoucherDashboard({
             </option>
           ))}
         </select>
-        <select
+        <DealerSelect
           name="dealer"
           defaultValue={dealerFilter}
+          dealers={dealers}
           aria-label="Filter by dealer"
           className="min-h-11 min-w-0 border border-[color:var(--border-dark)] bg-transparent px-3 sm:max-w-52"
-        >
-          <option value="">All dealers</option>
-          {dealers.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.label}
-            </option>
-          ))}
-        </select>
+        />
         <Button type="submit" variant="light">
           Search
         </Button>
